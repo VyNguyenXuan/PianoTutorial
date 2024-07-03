@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="noColor">#00000000</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="darkPurple">#FF3E3D54</color>
-    <color name="skinYellow">#FFF6E0B5</color>
+    <color name="blackGrey">#121212</color>
+    <color name="green">#FF1DB954</color>
     <color name="defaultColor">#FFFAFAFA</color>
     <color name="darkGrey">#FF808089</color>
     <color name="lightGrey">#FFF2F4F5</color>
     <color name="darkGreen">#FF198155</color>
-    <color name="green">#FF23C16B</color>
     <color name="lightGreen">#FFDAEFDE</color>
     <color name="skinColor">#FFFCD9BB</color>
     <color name="darkRed">#FFBF1D28</color>

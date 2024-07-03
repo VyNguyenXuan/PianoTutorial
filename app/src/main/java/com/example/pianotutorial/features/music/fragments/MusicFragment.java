@@ -1,4 +1,4 @@
-package com.example.pianotutorial.song.fragments;
+package com.example.pianotutorial.features.music.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,17 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import com.example.pianotutorial.R;
-import com.example.pianotutorial.databinding.FragmentSongBinding;
+import com.example.pianotutorial.databinding.FragmentMusicBinding;
 
-public class SongFragment extends Fragment {
+public class MusicFragment extends Fragment {
 
-    private FragmentSongBinding _fragmentSongBinding;
+    private FragmentMusicBinding _fragmentMusicBinding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        _fragmentSongBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_song, container, false);
+        _fragmentMusicBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_music, container, false);
 
-        return _fragmentSongBinding.getRoot();
+        return _fragmentMusicBinding.getRoot();
     }
 }

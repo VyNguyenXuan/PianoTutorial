@@ -1,7 +1,8 @@
-package com.example.pianotutorial;
+package com.example.pianotutorial.features;
 
 import android.os.Bundle;
 
+import com.example.pianotutorial.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;

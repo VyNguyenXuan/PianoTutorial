@@ -1,10 +1,10 @@
-package com.example.pianotutorial.navigation_bar.evenhandlers;
+package com.example.pianotutorial.features.navigation_bar.evenhandlers;
 import android.content.Context;
 
-import com.example.pianotutorial.course.fragments.CourseFragment;
-import com.example.pianotutorial.music.fragments.MusicFragment;
-import com.example.pianotutorial.navigation_bar.viewmodels.NavigationBarViewModel;
-import com.example.pianotutorial.song.fragments.SongFragment;
+import com.example.pianotutorial.features.course.fragments.CourseFragment;
+import com.example.pianotutorial.features.music.fragments.MusicFragment;
+import com.example.pianotutorial.features.navigation_bar.viewmodels.NavigationBarViewModel;
+import com.example.pianotutorial.features.song.fragments.SongFragment;
 
 import android.view.View;
 
