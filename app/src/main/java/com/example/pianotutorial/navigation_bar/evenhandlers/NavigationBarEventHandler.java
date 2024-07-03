@@ -2,7 +2,10 @@ package com.example.pianotutorial.navigation_bar.evenhandlers;
 import android.content.Context;
 
 import com.example.pianotutorial.course.fragments.CourseFragment;
+import com.example.pianotutorial.music.fragments.MusicFragment;
 import com.example.pianotutorial.navigation_bar.viewmodels.NavigationBarViewModel;
+import com.example.pianotutorial.song.fragments.SongFragment;
+
 import android.view.View;
 
 
@@ -20,5 +23,15 @@ public class NavigationBarEventHandler {
             _navigationBarViewModel.getCustomerFragment().setValue(new CourseFragment());
         }
     }
+    public void navigateToMusicFragment(View view) {
+        if(!(_navigationBarViewModel.getCustomerFragment().getValue() instanceof MusicFragment)){
+            _navigationBarViewModel.getCustomerFragment().setValue(new MusicFragment());
+        }
+    }public void navigateToSongFragment(View view) {
+        if(!(_navigationBarViewModel.getCustomerFragment().getValue() instanceof SongFragment)){
+            _navigationBarViewModel.getCustomerFragment().setValue(new SongFragment());
+        }
+    }
+
 
 }

@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.pianotutorial.course.fragments.CourseFragment;
 
 public class NavigationBarViewModel extends ViewModel {
-    private MutableLiveData<Fragment> customerFragment = new MutableLiveData<>(new CourseFragment());
+    private final MutableLiveData<Fragment> customerFragment = new MutableLiveData<>(new CourseFragment());
 
     public MutableLiveData<Fragment> getCustomerFragment() {
         return customerFragment;
