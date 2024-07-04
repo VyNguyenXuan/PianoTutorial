@@ -11,11 +11,9 @@ import android.view.View;
 
 public class NavigationBarEventHandler {
     private final NavigationBarViewModel _navigationBarViewModel;
-    private final Context _context;
 
     public NavigationBarEventHandler(NavigationBarViewModel navigationBarViewModel, Context context) {
         _navigationBarViewModel = navigationBarViewModel;
-        _context = context;
     }
 
     public void navigateToCourtFragment(View view) {
