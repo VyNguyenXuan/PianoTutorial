@@ -28,6 +28,11 @@
         </activity>
         <activity
             android:name=".features.navigation_bar.activities.NavigationBarActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PianoTutorial">
+        </activity>
+        <activity
+            android:name=".features.playscreen.activities.PlayScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.PianoTutorial">
             <intent-filter>
