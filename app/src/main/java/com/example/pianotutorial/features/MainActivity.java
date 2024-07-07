@@ -1,78 +1,79 @@
 package com.example.pianotutorial.features;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.common.MediaItem;
+import androidx.media3.exoplayer.ExoPlayer;
 
 import com.example.pianotutorial.R;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.pianotutorial.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
+import com.example.pianotutorial.features.components.paints.MusicView;
+import com.example.pianotutorial.features.components.paints.models.MeasurePaint;
+import com.example.pianotutorial.features.components.paints.models.Note;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    private ExoPlayer player;
+    private MusicView musicView;
+    private Button playButton;
+    private Handler handler = new Handler();
+    private Runnable updateStaff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        musicView = findViewById(R.id.music_view);
+        playButton = findViewById(R.id.play_button);
 
-        setSupportActionBar(binding.toolbar);
+        float screenWidth = getResources().getDisplayMetrics().widthPixels;
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        // Measure 1
+        MeasurePaint measure1 = new MeasurePaint(1);
+        musicView.addMeasure(measure1);
+        musicView.addNoteToMeasure(1, new Note(screenWidth, 200, 1000, 0.1f));
+        musicView.addNoteToMeasure(1, new Note(screenWidth, 300, 2000, 0.1f));
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+        // Measure 2
+        MeasurePaint measure2 = new MeasurePaint(2);
+        musicView.addMeasure(measure2);
+        musicView.addNoteToMeasure(2, new Note(screenWidth, 250, 3000, 0.1f));
+        musicView.addNoteToMeasure(2, new Note(screenWidth, 350, 4000, 0.1f));
+
+        // Initialize ExoPlayer
+        player = new ExoPlayer.Builder(this).build();
+        MediaItem mediaItem = MediaItem.fromUri("file:///android_asset/your_audio_file.mp3");
+        player.setMediaItem(mediaItem);
+        player.prepare();
+
+        playButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
+            public void onClick(View v) {
+                player.play();
+                musicView.startDrawing(System.currentTimeMillis());
+                startNoteAnimation();
             }
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void startNoteAnimation() {
+        updateStaff = new Runnable() {
+            @Override
+            public void run() {
+                musicView.updateView();
+                handler.postDelayed(this, 16); // roughly 60fps
+            }
+        };
+        handler.post(updateStaff);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+    protected void onDestroy() {
+        super.onDestroy();
+        player.release();
+        handler.removeCallbacks(updateStaff);
     }
 }
