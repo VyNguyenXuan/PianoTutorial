@@ -8,20 +8,26 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.example.pianotutorial.features.components.paints.models.MeasurePaint;
-import com.example.pianotutorial.features.components.paints.models.Note;
+import androidx.annotation.NonNull;
+
+import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintWhiteSpace;
 import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaint;
+import com.example.pianotutorial.models.Measure;
+import com.example.pianotutorial.models.SongNote;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MusicView extends View {
+    private static final int FIXED_HEIGHT = 400;
+    private static final float MEASURE_WIDTH = 600; // Fixed width for each measure
     private Paint staffPaint;
     private Paint measurePaint; // Paint object for drawing measure lines
-    private List<Note> notes;
-    private List<MeasurePaint> measures;
+    private List<Measure> measures;
     private long startTime;
 
     public MusicView(Context context) {
@@ -48,21 +54,19 @@ public class MusicView extends View {
         measurePaint.setColor(Color.BLACK);
         measurePaint.setStrokeWidth(5);
 
-        notes = new ArrayList<>();
         measures = new ArrayList<>();
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         drawStaff(canvas);
-        drawNotes(canvas);
-        drawMeasureLines(canvas); // Draw measure lines
+        drawNotesAndMeasures(canvas);
     }
 
     private void drawStaff(Canvas canvas) {
-        float staffHeight = getHeight() / 2;
+        float staffHeight = (float) FIXED_HEIGHT;
         float lineSpacing = staffHeight / 8;
 
         for (int i = 0; i < 5; i++) {
@@ -71,82 +75,125 @@ public class MusicView extends View {
         }
     }
 
-    private void drawNotes(Canvas canvas) {
+    private void drawNotesAndMeasures(Canvas canvas) {
         long currentTime = System.currentTimeMillis() - startTime;
-        float staffHeight = getHeight() / 2;
+        float staffHeight = (float) FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22; // Height of the original circular part in the vector (as part of path height)
-        float noteOriginalHeight = 180; // Original height of the entire vector path
-        float noteOriginalWidth = 86; // Original width of the vector path
+        float measureDuration = 2.0f; // Duration of each measure
 
-        for (Note note : notes) {
-            if (currentTime >= note.getTime()) {
-                float elapsedTime = currentTime - note.getTime();
-                float xPosition = note.getInitialX() - elapsedTime * note.getSpeed();
+        float currentX = getWidth() - (currentTime * 0.1f); // Adjust currentX based on elapsed time
+
+        for (Measure measure : measures) {
+            float measureStartX = currentX;
+            float measureEndX = measureStartX + MEASURE_WIDTH;
+
+            // Draw the measure lines
+            float topY = staffHeight / 2; // Top line
+            float bottomY = staffHeight / 2 + 4 * (staffHeight / 8); // Slightly below the bottom line
+            canvas.drawLine(measureEndX, topY, measureEndX, bottomY, measurePaint);
+
+            for (SongNote songNote : measure.getSongNotes()) {
+                float noteDuration = songNote.getDuration();
+                float segmentWidth = MEASURE_WIDTH / measureDuration;
+
+                // Adjust the x-position based on the note's position within the measure
+                float notePositionWithinMeasure = songNote.getPosition() * segmentWidth;
+                float xPosition = measureStartX + notePositionWithinMeasure;
+
+                // Select the appropriate paint and path based on note duration
+                Paint notePaint;
+                Path notePath;
+                switch ((int) (noteDuration * 4)) {
+                    case 1: // 0.25 duration
+                        notePaint = SixteenthNotePaint.create();
+                        notePath = SixteenthNotePaint.createPath();
+                        break;
+                    case 2: // 0.5 duration
+                        notePaint = EighthNotePaint.create();
+                        notePath = EighthNotePaint.createPath();
+                        break;
+                    case 4: // 1 duration
+                        notePaint = QuarterNotePaint.create();
+                        notePath = QuarterNotePaint.createPath();
+                        break;
+                    case 8: // 2 duration
+                        notePaint = HalfNotePaint.create();
+                        notePath = HalfNotePaint.createPath();
+                        break;
+                    case 16: // 4 duration
+                        notePaint = WholeNotePaint.create();
+                        notePath = WholeNotePaint.createPath();
+                        break;
+                    default:
+                        notePaint = WholeNotePaint.create(); // Default to Whole Note
+                        notePath = WholeNotePaint.createPath();
+                        break;
+                }
 
                 // Save the canvas state
                 canvas.save();
 
                 // Translate the canvas to the note position
-                canvas.translate(xPosition, note.getY());
+                canvas.translate(xPosition, convertPitchToY(songNote.getNotePitch(), songNote.getNoteOctave()));
 
                 // Calculate the scale factor to fit the note head within one-fifth of the staff height
                 float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight; // Half the current factor
                 canvas.scale(scaleFactor, scaleFactor);
 
-                // Draw the note path using the black paint object
-                Paint blackPaint = WholeNotePaint.create();
-                Paint whitePaint = SixteenthNotePaintWhiteSpace.create();
-                Path blackPath = WholeNotePaint.createPath();
-                Path whitePath = SixteenthNotePaintWhiteSpace.createPath();
+                // Draw the note path
+                canvas.drawPath(notePath, notePaint);
+                if(noteDuration==0.25){
+                    notePaint = SixteenthNotePaintWhiteSpace.create();
+                    notePath = SixteenthNotePaintWhiteSpace.createPath();
+                    canvas.drawPath(notePath, notePaint);
 
-                // Draw the black part of the note path
-                canvas.drawPath(blackPath, blackPaint);
-
-                // Draw the white part of the note path
-                //canvas.drawPath(whitePath, whitePaint);
+                }
 
                 // Restore the canvas state
                 canvas.restore();
             }
+            currentX += MEASURE_WIDTH;
         }
     }
 
-    private void drawMeasureLines(Canvas canvas) {
-        long currentTime = System.currentTimeMillis() - startTime;
-        float staffHeight = getHeight() / 2;
 
-        for (MeasurePaint measure : measures) {
-            List<Note> measureNotes = measure.getNotes();
-            if (!measureNotes.isEmpty()) {
-                // Get the last note of the measure to draw the measure line
-                Note lastNote = measureNotes.get(measureNotes.size() - 1);
-                if (currentTime >= lastNote.getTime()) {
-                    float elapsedTime = currentTime - lastNote.getTime();
-                    float xPosition = lastNote.getInitialX() - elapsedTime * lastNote.getSpeed();
-                    float barXPosition = xPosition;
 
-                    // Ensure the bar line stays within the staff bounds
-                    float topY = staffHeight / 2; // Top line
 
-                    // Draw the measure line, ensuring it does not exceed the staff bounds
-                    canvas.drawLine(barXPosition, topY, barXPosition, staffHeight / 2 + 4 * (staffHeight / 8), measurePaint);
-                }
-            }
-        }
+    public void setMeasures(List<Measure> measures) {
+        this.measures = measures;
     }
 
-    public void addNoteToMeasure(int measureId, Note note) {
-        for (MeasurePaint measure : measures) {
-            if (measure.getId() == measureId) {
-                measure.addNote(note);
-                notes.add(note);
+    private float convertPitchToY(String pitch, int octave) {
+        // Conversion logic based on pitch and octave to y coordinate on the staff
+        // This is a simple example and may need to be adjusted based on your specific requirements
+        int pitchValue;
+        switch (pitch) {
+            case "C":
+                pitchValue = 0;
                 break;
-            }
+            case "D":
+                pitchValue = 1;
+                break;
+            case "E":
+                pitchValue = 2;
+                break;
+            case "F":
+                pitchValue = 3;
+                break;
+            case "G":
+                pitchValue = 4;
+                break;
+            case "A":
+                pitchValue = 5;
+                break;
+            case "B":
+                pitchValue = 6;
+                break;
+            default:
+                pitchValue = 0;
+                break;
         }
-    }
-
-    public void addMeasure(MeasurePaint measure) {
-        measures.add(measure);
+        return FIXED_HEIGHT - (octave * 7 + pitchValue) * (FIXED_HEIGHT / 56); // Simplified example
     }
 
     public void startDrawing(long startTime) {

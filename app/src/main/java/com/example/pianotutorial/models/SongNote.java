@@ -22,7 +22,7 @@ public class SongNote {
     private int noteOctave;
 
     @SerializedName("duration")
-    private String duration;
+    private float duration;
 
     @SerializedName("measure_id")
     private int measureId;
@@ -31,7 +31,7 @@ public class SongNote {
     private int position;
 
 
-    public SongNote(int id, int sheetID, int noteId, String noteName, String notePitch, int noteOctave, String duration, int measureId, int position) {
+    public SongNote(int id, int sheetID, int noteId, String noteName, String notePitch, int noteOctave, float duration, int measureId, int position) {
         this.id = id;
         this.sheetID = sheetID;
         this.noteId = noteId;
@@ -91,11 +91,11 @@ public class SongNote {
         this.noteOctave = noteOctave;
     }
 
-    public String getDuration() {
+    public float getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(float duration) {
         this.duration = duration;
     }
 

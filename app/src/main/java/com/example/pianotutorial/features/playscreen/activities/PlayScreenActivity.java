@@ -57,12 +57,13 @@ public class PlayScreenActivity extends AppCompatActivity {
         List<Measure> measures = new ArrayList<>();
 
         List<SongNote> notes1 = new ArrayList<>();
-        notes1.add(new SongNote(1, 0, 1, "C", "C", 4, "4", 1, 1));
-        notes1.add(new SongNote(2, 0, 2, "D", "D", 4, "2", 1, 2));
+        notes1.add(new SongNote(1, 0, 1, "C", "C", 4, 4, 1, 1));
+        notes1.add(new SongNote(2, 0, 2, "D", "D", 4, 2, 1, 2));
+
 
         List<SongNote> notes2 = new ArrayList<>();
-        notes2.add(new SongNote(3, 0, 3, "E", "E", 4, "1", 2, 1));
-        notes2.add(new SongNote(4, 0, 4, "F", "F", 4, "1", 2, 2));
+        notes2.add(new SongNote(3, 0, 3, "E", "E", 4, 1, 2, 1));
+        notes2.add(new SongNote(4, 0, 4, "F", "F", 4, 1, 2, 2));
 
         measures.add(new Measure(1, 1, 1, notes1));
         measures.add(new Measure(2, 1, 2, notes2));
