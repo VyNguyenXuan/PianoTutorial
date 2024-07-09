@@ -87,11 +87,11 @@ public class MusicView extends View {
         float measureDuration = 2.0f; // Duration of each measure
 
         // Increase the speed by changing the multiplier from 0.1f to 0.3f
-        float currentX = getWidth() - (currentTime * 0.3f); // Adjust currentX based on elapsed time
+        float currentX = getWidth() - (currentTime * 0.4f); // Adjust currentX based on elapsed time
 
         for (Measure measure : measures) {
             float measureStartX = currentX;
-            float measureEndX = measureStartX + MEASURE_WIDTH;
+            float measureEndX = measureStartX + MEASURE_WIDTH+MEASURE_WIDTH/16;
 
             // Draw the measure lines
             float topY = staffHeight / 2; // Top line
@@ -102,7 +102,6 @@ public class MusicView extends View {
 
             for (SongNote songNote : measure.getSongNotes()) {
                 float noteDuration = songNote.getDuration();
-                float segmentWidth = MEASURE_WIDTH / measureDuration;
 
                 // Adjust the x-position based on the note's position within the measure
                 float xPosition = measureStartX + notePositionWithinMeasure;
@@ -167,7 +166,8 @@ public class MusicView extends View {
                 canvas.save();
 
                 // Translate the canvas to the note position
-                canvas.translate(xPosition, convertPitchToY(songNote.getNotePitch(), songNote.getNoteOctave()));
+                float noteY = convertPitchToY(songNote.getNotePitch(), songNote.getNoteOctave());
+                canvas.translate(xPosition, noteY);
 
                 // Calculate the scale factor to fit the note head within one-fifth of the staff height
                 float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight; // Half the current factor
@@ -189,12 +189,113 @@ public class MusicView extends View {
 
                 // Restore the canvas state
                 canvas.restore();
+
+                // Draw ledger lines if the note is outside the D4-G5 range
+                drawLedgerLines(canvas, xPosition, noteY, songNote.getNotePitch(), songNote.getNoteOctave());
             }
             currentX += MEASURE_WIDTH;
         }
     }
 
 
+    private int calculateLedgerLines(String pitch, int octave) {
+        int ledgerLines = 0;
+        // Determine the position based on pitch and octave
+        if (octave < 4 || (octave == 4 && "C".equals(pitch))) {
+            switch (pitch) {
+                case "C":
+                    ledgerLines = 1;
+                    break;
+                case "B":
+                    ledgerLines = 1;
+                    break;
+                case "A":
+                    ledgerLines = 2;
+                    break;
+                case "G":
+                    ledgerLines = 2;
+                    break;
+                case "F":
+                    ledgerLines = 3;
+                    break;
+                case "E":
+                    ledgerLines = 3;
+                    break;
+                case "D":
+                    ledgerLines = 4;
+                    break;
+                default:
+                    ledgerLines = 0;
+                    break;
+            }
+        } else if (octave > 5 || (octave == 5 && "A".equals(pitch)) || (octave == 5 && "B".equals(pitch))) {
+            switch (pitch) {
+                case "A":
+                    ledgerLines = 1;
+                    break;
+                case "B":
+                    ledgerLines = 1;
+                    break;
+                case "C":
+                    ledgerLines = 2;
+                    break;
+                case "D":
+                    ledgerLines = 2;
+                    break;
+                case "E":
+                    ledgerLines = 3;
+                    break;
+                case "F":
+                    ledgerLines = 3;
+                    break;
+                case "G":
+                    ledgerLines = 4;
+                    break;
+                default:
+                    ledgerLines = 0;
+                    break;
+            }
+        }
+        return ledgerLines;
+    }
+
+    private void drawLedgerLines(Canvas canvas, float xPosition, float noteY, String pitch, int octave) {
+        float staffHeight = (float) FIXED_HEIGHT;
+        float lineSpacing = staffHeight / 8;
+        float topLineY = staffHeight / 2;
+        float bottomLineY = topLineY + 4 * lineSpacing;
+
+        int ledgerLineCount = calculateLedgerLines(pitch, octave);
+
+        for (int i = 0; i < ledgerLineCount; i++) {
+            float y = (octave < 4 || (octave == 4 && "C".equals(pitch)))
+                    ? bottomLineY + (i + 1) * lineSpacing
+                    : topLineY - (i + 1) * lineSpacing;
+            canvas.drawLine(xPosition + 32, y, xPosition + 120, y, staffPaint);
+        }
+    }
+
+
+    private int pitchValue(String pitch) {
+        switch (pitch) {
+            case "C":
+                return 0;
+            case "D":
+                return 1;
+            case "E":
+                return 2;
+            case "F":
+                return 3;
+            case "G":
+                return 4;
+            case "A":
+                return 5;
+            case "B":
+                return 6;
+            default:
+                return -1;
+        }
+    }
 
     public void setMeasures(List<Measure> measures) {
         this.measures = measures;
@@ -206,33 +307,7 @@ public class MusicView extends View {
         float noteSpacing = 25;
 
         // Calculate PitchValue
-        int pitchValue;
-        switch (pitch) {
-            case "C":
-                pitchValue = 0;
-                break;
-            case "D":
-                pitchValue = 1;
-                break;
-            case "E":
-                pitchValue = 2;
-                break;
-            case "F":
-                pitchValue = 3;
-                break;
-            case "G":
-                pitchValue = 4;
-                break;
-            case "A":
-                pitchValue = 5;
-                break;
-            case "B":
-                pitchValue = 6;
-                break;
-            default:
-                pitchValue = -1;
-                break;
-        }
+        int pitchValue = pitchValue(pitch);
 
         // Calculate height based on pitchValue and Octave
         return baseHeight - pitchValue * noteSpacing - (octave - 4) * 7 * noteSpacing;

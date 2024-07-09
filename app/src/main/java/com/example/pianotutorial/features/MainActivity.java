@@ -45,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
         // Measure 2
         List<SongNote> songNotes2 = new ArrayList<>();
         songNotes2.add(new SongNote(3, 1, 3, "E", "E", 4, 0.5f, 2, 0)); // Eighth note
-        songNotes2.add(new SongNote(4, 1, 4, "F", "F", 4, 0.5f, 2, 1)); // Eighth note
-        songNotes2.add(new SongNote(5, 1, 5, "G", "G", 4, 1f, 2, 2)); // Quarter note
+        songNotes2.add(new SongNote(4, 1, 4, "G", "G", 4, 1f, 2, 2)); // Quarter note
+        songNotes2.add(new SongNote(5, 1, 5, "E", "E", 4, 0.25f, 2, 0)); // Eighth note
+        songNotes2.add(new SongNote(6, 1, 6, "E", "E", 4, 0.25f, 2, 0)); // Eighth note
+
 
 
         Measure measure2 = new Measure(2, 1, 2, songNotes2);
