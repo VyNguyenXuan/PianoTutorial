@@ -11,9 +11,14 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverse;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverseWhiteSpace;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintWhiteSpace;
 import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaint;
 import com.example.pianotutorial.models.Measure;
@@ -81,7 +86,8 @@ public class MusicView extends View {
         float noteHeadOriginalHeight = 22; // Height of the original circular part in the vector (as part of path height)
         float measureDuration = 2.0f; // Duration of each measure
 
-        float currentX = getWidth() - (currentTime * 0.1f); // Adjust currentX based on elapsed time
+        // Increase the speed by changing the multiplier from 0.1f to 0.3f
+        float currentX = getWidth() - (currentTime * 0.3f); // Adjust currentX based on elapsed time
 
         for (Measure measure : measures) {
             float measureStartX = currentX;
@@ -92,41 +98,68 @@ public class MusicView extends View {
             float bottomY = staffHeight / 2 + 4 * (staffHeight / 8); // Slightly below the bottom line
             canvas.drawLine(measureEndX, topY, measureEndX, bottomY, measurePaint);
 
+            float notePositionWithinMeasure = 0; // To keep track of note position within the measure
+
             for (SongNote songNote : measure.getSongNotes()) {
                 float noteDuration = songNote.getDuration();
                 float segmentWidth = MEASURE_WIDTH / measureDuration;
 
                 // Adjust the x-position based on the note's position within the measure
-                float notePositionWithinMeasure = songNote.getPosition() * segmentWidth;
                 float xPosition = measureStartX + notePositionWithinMeasure;
 
-                // Select the appropriate paint and path based on note duration
+                // Select the appropriate paint and path based on note duration and pitch
                 Paint notePaint;
                 Path notePath;
                 switch ((int) (noteDuration * 4)) {
                     case 1: // 0.25 duration
-                        notePaint = SixteenthNotePaint.create();
-                        notePath = SixteenthNotePaint.createPath();
+                        if (songNote.getNoteOctave() > 4 || (songNote.getNoteOctave() == 4 && songNote.getNotePitch().equals("B"))) {
+                            notePaint = SixteenthNotePaintReverse.create();
+                            notePath = SixteenthNotePaintReverse.createPath();
+                        } else {
+                            notePaint = SixteenthNotePaint.create();
+                            notePath = SixteenthNotePaint.createPath();
+                        }
+                        notePositionWithinMeasure += MEASURE_WIDTH / 8; // Move to next position
                         break;
                     case 2: // 0.5 duration
-                        notePaint = EighthNotePaint.create();
-                        notePath = EighthNotePaint.createPath();
+                        if (songNote.getNoteOctave() > 4 || (songNote.getNoteOctave() == 4 && songNote.getNotePitch().equals("B"))) {
+                            notePaint = EighthNotePaintReverse.create();
+                            notePath = EighthNotePaintReverse.createPath();
+                        } else {
+                            notePaint = EighthNotePaint.create();
+                            notePath = EighthNotePaint.createPath();
+                        }
+                        notePositionWithinMeasure += MEASURE_WIDTH / 4; // Move to next position
                         break;
                     case 4: // 1 duration
-                        notePaint = QuarterNotePaint.create();
-                        notePath = QuarterNotePaint.createPath();
+                        if (songNote.getNoteOctave() > 4 || (songNote.getNoteOctave() == 4 && songNote.getNotePitch().equals("B"))) {
+                            notePaint = QuarterNotePaintReverse.create();
+                            notePath = QuarterNotePaintReverse.createPath();
+                        } else {
+                            notePaint = QuarterNotePaint.create();
+                            notePath = QuarterNotePaint.createPath();
+                        }
+                        notePositionWithinMeasure += MEASURE_WIDTH / 2; // Move to next position
                         break;
                     case 8: // 2 duration
-                        notePaint = HalfNotePaint.create();
-                        notePath = HalfNotePaint.createPath();
+                        if (songNote.getNoteOctave() > 4 || (songNote.getNoteOctave() == 4 && songNote.getNotePitch().equals("B"))) {
+                            notePaint = HalfNotePaintReverse.create();
+                            notePath = HalfNotePaintReverse.createPath();
+                        } else {
+                            notePaint = HalfNotePaint.create();
+                            notePath = HalfNotePaint.createPath();
+                        }
+                        notePositionWithinMeasure += MEASURE_WIDTH; // Move to next position
                         break;
                     case 16: // 4 duration
                         notePaint = WholeNotePaint.create();
                         notePath = WholeNotePaint.createPath();
+                        notePositionWithinMeasure += MEASURE_WIDTH; // Move to next position
                         break;
                     default:
                         notePaint = WholeNotePaint.create(); // Default to Whole Note
                         notePath = WholeNotePaint.createPath();
+                        notePositionWithinMeasure += MEASURE_WIDTH; // Move to next position
                         break;
                 }
 
@@ -142,11 +175,16 @@ public class MusicView extends View {
 
                 // Draw the note path
                 canvas.drawPath(notePath, notePaint);
-                if(noteDuration==0.25){
-                    notePaint = SixteenthNotePaintWhiteSpace.create();
-                    notePath = SixteenthNotePaintWhiteSpace.createPath();
-                    canvas.drawPath(notePath, notePaint);
-
+                if (noteDuration == 0.25) {
+                    if (songNote.getNoteOctave() > 4 || (songNote.getNoteOctave() == 4 && songNote.getNotePitch().equals("B"))) {
+                        notePaint = SixteenthNotePaintReverseWhiteSpace.create();
+                        notePath = SixteenthNotePaintReverseWhiteSpace.createPath();
+                        canvas.drawPath(notePath, notePaint);
+                    } else {
+                        notePaint = SixteenthNotePaintWhiteSpace.create();
+                        notePath = SixteenthNotePaintWhiteSpace.createPath();
+                        canvas.drawPath(notePath, notePaint);
+                    }
                 }
 
                 // Restore the canvas state
@@ -158,14 +196,16 @@ public class MusicView extends View {
 
 
 
-
     public void setMeasures(List<Measure> measures) {
         this.measures = measures;
     }
 
     private float convertPitchToY(String pitch, int octave) {
-        // Conversion logic based on pitch and octave to y coordinate on the staff
-        // This is a simple example and may need to be adjusted based on your specific requirements
+        // Determine base height based on the pitch and octave
+        float baseHeight = 287f;
+        float noteSpacing = 25;
+
+        // Calculate PitchValue
         int pitchValue;
         switch (pitch) {
             case "C":
@@ -190,10 +230,12 @@ public class MusicView extends View {
                 pitchValue = 6;
                 break;
             default:
-                pitchValue = 0;
+                pitchValue = -1;
                 break;
         }
-        return FIXED_HEIGHT - (octave * 7 + pitchValue) * (FIXED_HEIGHT / 56); // Simplified example
+
+        // Calculate height based on pitchValue and Octave
+        return baseHeight - pitchValue * noteSpacing - (octave - 4) * 7 * noteSpacing;
     }
 
     public void startDrawing(long startTime) {
