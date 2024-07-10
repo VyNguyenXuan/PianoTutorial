@@ -6,7 +6,7 @@ import android.graphics.Path;
 public class SixteenthNotePaintReverseWhiteSpace {
     public static Paint create() {
         Paint whitePaint = new Paint();
-        whitePaint.setColor(0xFFFFFFFF); // White color
+        whitePaint.setColor(0xFF1DB954); // White color
         whitePaint.setStyle(Paint.Style.FILL);
         whitePaint.setStrokeWidth(3);
 
