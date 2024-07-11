@@ -46,26 +46,12 @@ public class MainActivity extends AppCompatActivity {
         List<Measure> measureList = new ArrayList<>();
         List<SongNote> songNotes = new ArrayList<>();
         Measure measure = new Measure(1, 1, 1, songNotes);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
-        measureList.add(measure);
+
 
         // Measure 1 - Various note types and durations
         List<SongNote> songNotes1 = new ArrayList<>();
-        songNotes1.add(new SongNote(1, 1, 1, "C", "C", 4, 1f, 1, 0)); // Quarter note
-        songNotes1.add(new SongNote(2, 1, 2, "F", "F", 4, 1f, 1, 1)); // Quarter note
+        songNotes1.add(new SongNote(1, 1, 1, "C", "C", 4, 1.5f, 1, 0)); // Quarter note
+        songNotes1.add(new SongNote(2, 1, 2, "F", "F", 4, 0.5f, 1, 1)); // Quarter note
         Measure measure1 = new Measure(1, 1, 1, songNotes1);
         measureList.add(measure1);
 
@@ -80,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Measure 3
         List<SongNote> songNotes3 = new ArrayList<>();
-        songNotes3.add(new SongNote(5, 1, 5, "F", "F", 4, 1f, 3, 0)); // Quarter note
-        songNotes3.add(new SongNote(6, 1, 6, "G", "G", 4, 1f, 3, 1)); // Quarter note
+        songNotes3.add(new SongNote(5, 1, 5, "F", "F", 4, 1.5f, 3, 0)); // Quarter note
+        songNotes3.add(new SongNote(6, 1, 6, "G", "G", 4, 0.5f, 3, 1)); // Quarter note
         Measure measure3 = new Measure(3, 1, 3, songNotes3);
         measureList.add(measure3);
 

@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 public class LeftLineDrawer {
-    private Paint leftLinePaint;
+    private final Paint leftLinePaint;
 
     public LeftLineDrawer() {
         leftLinePaint = new Paint();

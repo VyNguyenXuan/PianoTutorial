@@ -5,30 +5,35 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 import com.example.pianotutorial.constants.GlobalVariables;
+import com.example.pianotutorial.features.components.helpers.MusicUtils;
+import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverseWhiteSpace;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintWhiteSpace;
+import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaint;
 import com.example.pianotutorial.models.Measure;
 import com.example.pianotutorial.models.SongNote;
 
 import java.util.List;
 
-import com.example.pianotutorial.features.components.paints.notepaints.*;
-
 public class NotesAndMeasuresDrawer {
-    private static final float MEASURE_WIDTH = 600;
-    private Paint measurePaint;
-    private Paint staffPaint; // Define staffPaint
-    private Paint changedColorPaint; // Define changedColorPaint
-    private List<Measure> measures;
+    private final Paint measurePaint;
+    private final Paint staffPaint;
+    private final Paint changedColorPaint;
+    private final List<Measure> measures;
 
     public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaint) {
         this.measurePaint = measurePaint;
-        this.staffPaint = staffPaint; // Initialize staffPaint
-        this.changedColorPaint = changedColorPaint; // Initialize changedColorPaint
+        this.staffPaint = staffPaint;
+        this.changedColorPaint = changedColorPaint;
         this.measures = measures;
     }
 
     public void draw(Canvas canvas, int width, int height, long startTime) {
         long currentTime = System.currentTimeMillis() - startTime;
-        float staffHeight = 400;
+        float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
         float measureDuration = 2.0f;
 
@@ -36,7 +41,7 @@ public class NotesAndMeasuresDrawer {
 
         for (Measure measure : measures) {
             float measureStartX = currentX;
-            float measureEndX = measureStartX + MEASURE_WIDTH + MEASURE_WIDTH / 16;
+            float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH;
 
             float topY = staffHeight / 2;
             float bottomY = staffHeight / 2 + 4 * (staffHeight / 8);
@@ -50,42 +55,34 @@ public class NotesAndMeasuresDrawer {
 
                 Paint notePaint;
                 Path notePath;
-                switch ((int) (noteDuration * 4)) {
-                    case 1:
-                        notePaint = SixteenthNotePaint.create();
-                        notePath = SixteenthNotePaint.createPath();
-                        notePositionWithinMeasure += MEASURE_WIDTH / 8;
-                        break;
-                    case 2:
-                        notePaint = EighthNotePaint.create();
-                        notePath = EighthNotePaint.createPath();
-                        notePositionWithinMeasure += MEASURE_WIDTH / 4;
-                        break;
-                    case 4:
-                        notePaint = QuarterNotePaint.create();
-                        notePath = QuarterNotePaint.createPath();
-                        notePositionWithinMeasure += MEASURE_WIDTH / 2;
-                        break;
-                    case 8:
-                        notePaint = HalfNotePaint.create();
-                        notePath = HalfNotePaint.createPath();
-                        notePositionWithinMeasure += MEASURE_WIDTH;
-                        break;
-                    case 16:
-                        notePaint = WholeNotePaint.create();
-                        notePath = WholeNotePaint.createPath();
-                        notePositionWithinMeasure += MEASURE_WIDTH;
-                        break;
-                    default:
-                        notePaint = WholeNotePaint.create();
-                        notePath = WholeNotePaint.createPath();
-                        notePositionWithinMeasure += MEASURE_WIDTH;
-                        break;
+                if(noteDuration<8&&noteDuration>=4){
+                    notePaint = WholeNotePaint.create();
+                    notePath = WholeNotePaint.createPath();
                 }
+                else if(noteDuration<4&&noteDuration>=2){
+                    notePaint = HalfNotePaint.create();
+                    notePath = HalfNotePaint.createPath();
+                }
+                else if(noteDuration<2&&noteDuration>=1){
+                    notePaint = QuarterNotePaint.create();
+                    notePath = QuarterNotePaint.createPath();
+                }
+                else if(noteDuration<1&&noteDuration>=0.5){
+                    notePaint = EighthNotePaint.create();
+                    notePath = EighthNotePaint.createPath();
+                }
+                else{
+                    notePaint = SixteenthNotePaint.create();
+                    notePath = SixteenthNotePaint.createPath();
+                }
+                notePositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / 2)*(noteDuration);
 
-                // Change note color if xPosition <= 600
-                if (xPosition <= 580) {
-                    notePaint = changedColorPaint;
+                // Change note color and alpha if xPosition <= 580
+                if (xPosition <= GlobalVariables.CHECK_LINE_X-20) {
+                    notePaint = new Paint(changedColorPaint);
+                    if (xPosition < GlobalVariables.CHECK_LINE_X-160) {
+                        notePaint.setAlpha(0);
+                    }
                 }
 
                 canvas.save();
@@ -112,125 +109,60 @@ public class NotesAndMeasuresDrawer {
                     }
                 }
 
+                // Draw dotted notes
+                int dottedNoteCount = MusicUtils.countDottedNotes(noteDuration);
+                if (dottedNoteCount > 0) {
+                    drawDottedNotes(canvas, notePaint, dottedNoteCount, noteHeadOriginalHeight, staffHeight, songNote.getNotePitch(), songNote.getNoteOctave());
+                }
+
                 canvas.restore();
 
-                drawLedgerLines(canvas, xPosition, noteY, songNote.getNotePitch(), songNote.getNoteOctave());
+                drawLedgerLines(canvas, xPosition, noteY, songNote.getNotePitch(), songNote.getNoteOctave(), xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
             }
-            currentX += MEASURE_WIDTH;
+            currentX += GlobalVariables.MEASURE_WIDTH;
         }
     }
 
-    private int pitchValue(String pitch) {
-        switch (pitch) {
-            case "C":
-                return 0;
-            case "D":
-                return 1;
-            case "E":
-                return 2;
-            case "F":
-                return 3;
-            case "G":
-                return 4;
-            case "A":
-                return -1;
-            case "B":
-                return -2;
-            default:
-                return 5;
+    private void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, float staffHeight, String notePitch, int noteOctave) {
+        float dotRadius = noteHeadOriginalHeight / 4;
+        float dotSpacing = noteHeadOriginalHeight;
+        float dotX = noteHeadOriginalHeight + dotSpacing;
+        float dotY = noteHeadOriginalHeight*4;
+        if (MusicUtils.isNoteOnLine(notePitch, noteOctave)) {
+            dotY-=GlobalVariables.FIXED_HEIGHT / 32; //If isNoteOnLine move up a note
+        }
+        for (int i = 0; i < dottedNoteCount; i++) {
+            canvas.drawCircle(dotX + (i * dotSpacing)+30, dotY, dotRadius, notePaint);
         }
     }
 
-    private int calculateLedgerLines(String pitch, int octave) {
-        int ledgerLines = 0;
-        // Determine the position based on pitch and octave
-        if (octave < 4 || (octave == 4 && "C".equals(pitch)) || (octave == 4 && "B".equals(pitch)) || (octave == 4 && "A".equals(pitch))) {
-            switch (pitch) {
-                case "C":
-                    ledgerLines = 1;
-                    break;
-                case "B":
-                    ledgerLines = 1;
-                    break;
-                case "A":
-                    ledgerLines = 2;
-                    break;
-                case "G":
-                    ledgerLines = 2;
-                    break;
-                case "F":
-                    ledgerLines = 3;
-                    break;
-                case "E":
-                    ledgerLines = 3;
-                    break;
-                case "D":
-                    ledgerLines = 4;
-                    break;
-                default:
-                    ledgerLines = 0;
-                    break;
-            }
-        } else if (octave > 5) {
-            switch (pitch) {
-                case "A":
-                    ledgerLines = 1;
-                    break;
-                case "B":
-                    ledgerLines = 1;
-                    break;
-                case "C":
-                    ledgerLines = 2;
-                    break;
-                case "D":
-                    ledgerLines = 2;
-                    break;
-                case "E":
-                    ledgerLines = 3;
-                    break;
-                case "F":
-                    ledgerLines = 3;
-                    break;
-                case "G":
-                    ledgerLines = 4;
-                    break;
-                default:
-                    ledgerLines = 0;
-                    break;
-            }
-        }
-        return ledgerLines;
-    }
-
-    private void drawLedgerLines(Canvas canvas, float xPosition, float noteY, String pitch, int octave) {
-        float staffHeight = (float) GlobalVariables.FIXED_HEIGHT;
+    private void drawLedgerLines(Canvas canvas, float xPosition, float noteY, String pitch, int octave, Paint linePaint, float noteXPosition) {
+        float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float lineSpacing = staffHeight / 8;
         float topLineY = staffHeight / 2;
         float bottomLineY = topLineY + 4 * lineSpacing;
 
-        int ledgerLineCount = calculateLedgerLines(pitch, octave);
+        int ledgerLineCount = MusicUtils.calculateLedgerLines(pitch, octave);
 
         for (int i = 0; i < ledgerLineCount; i++) {
             float y = (octave < 4 || (octave == 4 && "C".equals(pitch)))
                     ? bottomLineY + (i + 1) * lineSpacing
                     : topLineY - (i + 1) * lineSpacing;
-            canvas.drawLine(xPosition + 32, y, xPosition + 120, y, staffPaint);
+
+            Paint paintToUse = new Paint(linePaint);
+            if (noteXPosition < 380) {
+                paintToUse.setAlpha(0);
+            }
+            canvas.drawLine(xPosition + 24, y, xPosition + 90, y, paintToUse);
         }
     }
 
-    public void setMeasures(List<Measure> measures) {
-        this.measures = measures;
-    }
-
     private float convertPitchToY(String pitch, int octave) {
-        // Determine base height based on the pitch and octave
-        float baseHeight = 287f; // D4
-        float noteSpacing = 25;
+        float baseHeight = GlobalVariables.C4_CURRENT_NOTE; // D4
+        float noteSpacing = GlobalVariables.FIXED_HEIGHT / 16;
 
-        // Calculate PitchValue
-        int pitchValue = pitchValue(pitch);
+        int pitchValue = MusicUtils.pitchValue(pitch);
 
-        // Calculate height based on pitchValue and Octave
         return baseHeight - pitchValue * noteSpacing - (octave - 4) * 7 * noteSpacing;
     }
 }

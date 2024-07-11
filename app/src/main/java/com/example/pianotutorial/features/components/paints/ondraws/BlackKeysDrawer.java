@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import com.example.pianotutorial.constants.GlobalVariables;
 
 public class BlackKeysDrawer {
-    private Drawable blackKeyDrawable;
+    private final Drawable blackKeyDrawable;
     private static final int[] BLACK_KEYS_POSITIONS = {0, 1, 3, 4, 5};
 
 
@@ -34,7 +34,6 @@ public class BlackKeysDrawer {
     }
 
     private boolean isBlackKey(int position) {
-        int octave = position / 7;
         int relativePosition = position % 7;
 
         for (int blackKeyPosition : BLACK_KEYS_POSITIONS) {
