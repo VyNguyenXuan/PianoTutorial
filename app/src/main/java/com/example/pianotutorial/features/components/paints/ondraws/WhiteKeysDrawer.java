@@ -7,9 +7,12 @@ import com.example.pianotutorial.constants.GlobalVariables;
 
 public class WhiteKeysDrawer {
     private Drawable whiteKeyDrawable;
+    private Drawable activeWhiteKeyDrawable;
+    private int activeKeyIndex = -1;
 
-    public WhiteKeysDrawer(Drawable whiteKeyDrawable) {
+    public WhiteKeysDrawer(Drawable whiteKeyDrawable, Drawable activeWhiteKeyDrawable) {
         this.whiteKeyDrawable = whiteKeyDrawable;
+        this.activeWhiteKeyDrawable = activeWhiteKeyDrawable;
     }
 
     public void draw(Canvas canvas, int width, int height) {
@@ -22,8 +25,17 @@ public class WhiteKeysDrawer {
             float bottom = height - 20;
 
             // Set the bounds for the Drawable
-            whiteKeyDrawable.setBounds((int) left, (int) top, (int) right, (int) bottom);
-            whiteKeyDrawable.draw(canvas);
+            if (i == activeKeyIndex) {
+                activeWhiteKeyDrawable.setBounds((int) left, (int) top, (int) right, (int) bottom);
+                activeWhiteKeyDrawable.draw(canvas);
+            } else {
+                whiteKeyDrawable.setBounds((int) left, (int) top, (int) right, (int) bottom);
+                whiteKeyDrawable.draw(canvas);
+            }
         }
+    }
+
+    public void setActiveKeyIndex(int index) {
+        activeKeyIndex = index;
     }
 }

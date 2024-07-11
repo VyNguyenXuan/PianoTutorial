@@ -46,8 +46,9 @@ public class MainActivity extends AppCompatActivity {
         List<Measure> measureList = new ArrayList<>();
         List<SongNote> songNotes = new ArrayList<>();
         Measure measure = new Measure(1, 1, 1, songNotes);
-
-
+        for(int i=0;i<15;i++){
+            measureList.add(measure);
+        }
         // Measure 1 - Various note types and durations
         List<SongNote> songNotes1 = new ArrayList<>();
         songNotes1.add(new SongNote(1, 1, 1, "C", "C", 4, 1.5f, 1, 0)); // Quarter note
