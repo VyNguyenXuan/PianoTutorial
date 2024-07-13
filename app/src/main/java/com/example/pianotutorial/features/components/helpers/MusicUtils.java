@@ -21,8 +21,15 @@ public class MusicUtils {
         return count;
     }
 
+    public static String getFirstCharacter(String pitch) {
+        if (pitch == null || pitch.isEmpty()) {
+            return "";
+        }
+        return String.valueOf(pitch.charAt(0));
+    }
 
     public static boolean isNoteOnLine(String pitch, int octave) {
+        pitch=getFirstCharacter(pitch);
         // Define the notes that are on lines for the treble clef across several octaves
         String[][] lineNotes = {
                 {"E", "G", "B", "D", "F"},  // 4th octave (E4, G4, B4, D5, F5)
@@ -48,6 +55,7 @@ public class MusicUtils {
     }
 
     public static int calculateLedgerLines(String pitch, int octave) {
+        pitch=getFirstCharacter(pitch);
         int ledgerLines = 0;
         if (octave < 4 || (octave == 4 && "C".equals(pitch)) || (octave == 4 && "B".equals(pitch)) || (octave == 4 && "A".equals(pitch))) {
             switch (pitch) {
@@ -96,6 +104,7 @@ public class MusicUtils {
     }
 
     public static int pitchValue(String pitch) {
+        pitch=getFirstCharacter(pitch);
         switch (pitch) {
             case "C":
                 return 0;

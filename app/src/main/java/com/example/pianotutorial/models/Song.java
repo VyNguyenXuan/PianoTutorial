@@ -1,36 +1,38 @@
 package com.example.pianotutorial.models;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
-
 
 public class Song {
     @SerializedName("id")
     private int id;
 
-    @SerializedName("song_id")
-    private int songId;
+    @SerializedName("title")
+    private String title;
 
-    @SerializedName("song_title")
-    private String songTitle;
+    @SerializedName("composer")
+    private String composer;
 
-    @SerializedName("instrument_id")
-    private int instrumentId;
+    @SerializedName("genre")
+    private String genre;
 
-    @SerializedName("instrument_name")
-    private String instrumentName;
+    @SerializedName("artistId")
+    private int artistId;
 
-    @SerializedName("measures")
-    private List<Measure> measures;
+    @SerializedName("artist")
+    private Artist artist;
 
-    public Song(int id, int songId, String songTitle, int instrumentId, String instrumentName, List<Measure> measures) {
+    @SerializedName("sheets")
+    private List<Sheet> sheets;
+
+    public Song(int id, String title, String composer, String genre, int artistId, Artist artist, List<Sheet> sheets) {
         this.id = id;
-        this.songId = songId;
-        this.songTitle = songTitle;
-        this.instrumentId = instrumentId;
-        this.instrumentName = instrumentName;
-        this.measures = measures;
+        this.title = title;
+        this.composer = composer;
+        this.genre = genre;
+        this.artistId = artistId;
+        this.artist = artist;
+        this.sheets = sheets;
     }
 
     public int getId() {
@@ -41,43 +43,51 @@ public class Song {
         this.id = id;
     }
 
-    public int getSongId() {
-        return songId;
+    public String getTitle() {
+        return title;
     }
 
-    public void setSongId(int songId) {
-        this.songId = songId;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getSongTitle() {
-        return songTitle;
+    public String getComposer() {
+        return composer;
     }
 
-    public void setSongTitle(String songTitle) {
-        this.songTitle = songTitle;
+    public void setComposer(String composer) {
+        this.composer = composer;
     }
 
-    public int getInstrumentId() {
-        return instrumentId;
+    public String getGenre() {
+        return genre;
     }
 
-    public void setInstrumentId(int instrumentId) {
-        this.instrumentId = instrumentId;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
-    public String getInstrumentName() {
-        return instrumentName;
+    public int getArtistId() {
+        return artistId;
     }
 
-    public void setInstrumentName(String instrumentName) {
-        this.instrumentName = instrumentName;
+    public void setArtistId(int artistId) {
+        this.artistId = artistId;
     }
 
-    public List<Measure> getMeasures() {
-        return measures;
+    public Artist getArtist() {
+        return artist;
     }
 
-    public void setMeasures(List<Measure> measures) {
-        this.measures = measures;
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+    }
+
+    public List<Sheet> getSheets() {
+        return sheets;
+    }
+
+    public void setSheets(List<Sheet> sheets) {
+        this.sheets = sheets;
     }
 }

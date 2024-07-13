@@ -13,14 +13,16 @@ import androidx.core.content.ContextCompat;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
+import com.example.pianotutorial.features.components.helpers.MusicUtils;
 import com.example.pianotutorial.features.components.paints.ondraws.BlackKeysDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.GlefDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.LeftLineDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.NotesAndMeasuresDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.StaffDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.WhiteKeysDrawer;
+import com.example.pianotutorial.models.Chord;
+import com.example.pianotutorial.models.ChordNote;
 import com.example.pianotutorial.models.Measure;
-import com.example.pianotutorial.models.SongNote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +38,7 @@ public class MusicView extends View {
     private Drawable activeWhiteKeyDrawable;
     private Drawable blackKeyDrawable;
     private List<Measure> measures;
-    private SongNote passedNote; // List to store notes that passed CHECK_LINE_X
+    private Chord passedChord; // List to store notes that passed CHECK_LINE_X
     private long startTime;
 
     private StaffDrawer staffDrawer;
@@ -126,20 +128,14 @@ public class MusicView extends View {
         whiteKeysDrawer.draw(canvas, getWidth(), getHeight());
         blackKeysDrawer.draw(canvas, getWidth(), getHeight());
 
-        // Draw the name of the passed note
-        if (passedNote != null) {
-            float x = leftLineX + 50; // Adjust the x position of the text
-            float y = 100; // Adjust the y position of the text
-            String noteName = passedNote.getNotePitch() + passedNote.getNoteOctave(); // Get the note name
-            canvas.drawText(noteName, x, y, textPaint); // Draw the text
-        }
-
         invalidate(); // Force a redraw to animate the notes
     }
 
     public void setMeasures(List<Measure> measures) {
-        this.measures = measures;
-        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaint, this); // Pass MusicView to NotesAndMeasuresDrawer
+        if (measures != null) {
+            this.measures = measures;
+            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaint, this); // Pass MusicView to NotesAndMeasuresDrawer
+        }
     }
 
     public void startDrawing(long startTime) {
@@ -151,18 +147,22 @@ public class MusicView extends View {
         invalidate();
     }
 
-    public void saveNoteValue(SongNote note) {
-        passedNote = note;
+    public void saveNoteValue(Chord chord) {
+        passedChord = chord;
 
-        // Calculate the index of the note in the range C2 to B7
-        int notePitchIndex = NOTE_PITCH_MAP.get(note.getNotePitch());
-        int noteIndex = (note.getNoteOctave() - 2) * 7 + notePitchIndex;
-        whiteKeysDrawer.setActiveKeyIndex(noteIndex);
-
-        invalidate(); // Request a redraw to show the new note
+        List<Integer> noteIndices = new ArrayList<>();
+        if (chord.getChordNotes() != null) {
+            for (ChordNote note : chord.getChordNotes()) {
+                int notePitchIndex = MusicUtils.pitchValue(note.getNotePitch());
+                if (notePitchIndex != 5) {
+                    int noteIndex = (note.getNoteOctave() - 2) * 7 + notePitchIndex;
+                    noteIndices.add(noteIndex);
+                }
+            }
+            whiteKeysDrawer.setActiveKeyIndices(noteIndices);
+            invalidate(); // Request a redraw to show the new notes
+        }
     }
 
-    public SongNote getPassedNote() {
-        return passedNote;
-    }
+
 }
