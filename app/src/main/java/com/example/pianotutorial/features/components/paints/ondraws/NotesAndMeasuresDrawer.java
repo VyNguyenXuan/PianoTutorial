@@ -35,11 +35,10 @@ public class NotesAndMeasuresDrawer {
         this.musicView = musicView;
     }
 
-    public void draw(Canvas canvas, int width, int height, long startTime) {
+    public void draw(Canvas canvas, int width, long startTime) {
         long currentTime = System.currentTimeMillis() - startTime;
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
-        float measureDuration = 2.0f;
 
         float currentX = width - (currentTime * 0.6f);
 
@@ -79,7 +78,7 @@ public class NotesAndMeasuresDrawer {
                             notePath = SixteenthNotePaint.createPath();
                         }
 
-                        chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / 2) * noteDuration;
+                        chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
 
                         // Change note color and alpha if xPosition <= CHECK_LINE_X
                         if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
@@ -119,12 +118,12 @@ public class NotesAndMeasuresDrawer {
                                 // Draw dotted notes
                                 int dottedNoteCount = MusicUtils.countDottedNotes(noteDuration);
                                 if (dottedNoteCount > 0) {
-                                    drawDottedNotes(canvas, notePaint, dottedNoteCount, noteHeadOriginalHeight, staffHeight, chordNote.getNotePitch(), chordNote.getNoteOctave());
+                                    drawDottedNotes(canvas, notePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNotePitch(), chordNote.getNoteOctave());
                                 }
 
                                 canvas.restore();
 
-                                drawLedgerLines(canvas, xPosition, noteY, chordNote.getNotePitch(), chordNote.getNoteOctave(), xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
+                                drawLedgerLines(canvas, xPosition, chordNote.getNotePitch(), chordNote.getNoteOctave(), xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
                             }
                         }
 
@@ -137,20 +136,19 @@ public class NotesAndMeasuresDrawer {
 
     }
 
-    private void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, float staffHeight, String notePitch, int noteOctave) {
+    private void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, String notePitch, int noteOctave) {
         float dotRadius = noteHeadOriginalHeight / 4;
-        float dotSpacing = noteHeadOriginalHeight;
-        float dotX = noteHeadOriginalHeight + dotSpacing;
+        float dotX = noteHeadOriginalHeight + noteHeadOriginalHeight;
         float dotY = noteHeadOriginalHeight * 4;
         if (MusicUtils.isNoteOnLine(notePitch, noteOctave)) {
-            dotY -= GlobalVariables.FIXED_HEIGHT / 32; // If isNoteOnLine move up a note
+            dotY -= (float) GlobalVariables.FIXED_HEIGHT / 32; // If isNoteOnLine move up a note
         }
         for (int i = 0; i < dottedNoteCount; i++) {
-            canvas.drawCircle(dotX + (i * dotSpacing) + 30, dotY, dotRadius, notePaint);
+            canvas.drawCircle(dotX + (i * noteHeadOriginalHeight) + 30, dotY, dotRadius, notePaint);
         }
     }
 
-    private void drawLedgerLines(Canvas canvas, float xPosition, float noteY, String pitch, int octave, Paint linePaint, float noteXPosition) {
+    private void drawLedgerLines(Canvas canvas, float xPosition, String pitch, int octave, Paint linePaint, float noteXPosition) {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float lineSpacing = staffHeight / 8;
         float topLineY = staffHeight / 2;
@@ -173,7 +171,7 @@ public class NotesAndMeasuresDrawer {
 
     private float convertPitchToY(String pitch, int octave) {
         float baseHeight = GlobalVariables.C4_CURRENT_NOTE; // D4
-        float noteSpacing = GlobalVariables.FIXED_HEIGHT / 16;
+        float noteSpacing = (float) GlobalVariables.FIXED_HEIGHT / 16;
 
         int pitchValue = MusicUtils.pitchValue(pitch);
 

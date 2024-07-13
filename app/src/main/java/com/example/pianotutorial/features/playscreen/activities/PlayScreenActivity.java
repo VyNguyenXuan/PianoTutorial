@@ -2,7 +2,6 @@ package com.example.pianotutorial.features.playscreen.activities;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -16,18 +15,16 @@ import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewMo
 
 public class PlayScreenActivity extends AppCompatActivity {
 
-    private PlayScreenViewModel playScreenViewModel;
     private PlayScreenEventHandler playScreenEventHandler;
     private ActivityPlayscreenBinding activityPlayscreenBinding;
-    private Handler handler = new Handler();
-    private Runnable updateStaff;
+    private final Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         activityPlayscreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_playscreen);
-        playScreenViewModel = new ViewModelProvider(this).get(PlayScreenViewModel.class);
+        PlayScreenViewModel playScreenViewModel = new ViewModelProvider(this).get(PlayScreenViewModel.class);
         playScreenEventHandler = new PlayScreenEventHandler(playScreenViewModel, this);
 
         activityPlayscreenBinding.setViewModel(playScreenViewModel);
@@ -54,7 +51,8 @@ public class PlayScreenActivity extends AppCompatActivity {
     }
 
     private void startUpdatingStaff() {
-        updateStaff = new Runnable() {
+        // Refresh the view every 16 milliseconds (approx. 60 FPS)
+        Runnable updateStaff = new Runnable() {
             @Override
             public void run() {
                 activityPlayscreenBinding.musicView.updateView();

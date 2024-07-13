@@ -12,7 +12,7 @@ public class StaffDrawer {
         this.staffPaint = staffPaint;
     }
 
-    public void draw(Canvas canvas, int width, int height) {
+    public void draw(Canvas canvas, int width) {
         float staffHeight = (float) GlobalVariables.FIXED_HEIGHT;
         float lineSpacing = staffHeight / 8;
 

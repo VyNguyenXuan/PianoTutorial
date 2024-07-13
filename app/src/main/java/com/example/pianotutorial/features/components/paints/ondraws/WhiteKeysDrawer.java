@@ -8,8 +8,8 @@ import com.example.pianotutorial.constants.GlobalVariables;
 import java.util.List;
 
 public class WhiteKeysDrawer {
-    private Drawable whiteKeyDrawable;
-    private Drawable activeWhiteKeyDrawable;
+    private final Drawable whiteKeyDrawable;
+    private final Drawable activeWhiteKeyDrawable;
     private List<Integer> activeKeyIndices;
 
     public WhiteKeysDrawer(Drawable whiteKeyDrawable, Drawable activeWhiteKeyDrawable) {

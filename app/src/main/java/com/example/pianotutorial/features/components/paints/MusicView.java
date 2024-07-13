@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.example.pianotutorial.R;
-import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.components.helpers.MusicUtils;
 import com.example.pianotutorial.features.components.paints.ondraws.BlackKeysDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.GlefDrawer;
@@ -25,20 +24,13 @@ import com.example.pianotutorial.models.ChordNote;
 import com.example.pianotutorial.models.Measure;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MusicView extends View {
     private Paint staffPaint;
     private Paint measurePaint;
     private Paint changedColorPaint; // Define changedColorPaint
-    private Paint textPaint; // Define textPaint for drawing note names
-    private Drawable whiteKeyDrawable;
-    private Drawable activeWhiteKeyDrawable;
-    private Drawable blackKeyDrawable;
     private List<Measure> measures;
-    private Chord passedChord; // List to store notes that passed CHECK_LINE_X
     private long startTime;
 
     private StaffDrawer staffDrawer;
@@ -47,19 +39,7 @@ public class MusicView extends View {
     private BlackKeysDrawer blackKeysDrawer;
 
     private LeftLineDrawer leftLineDrawer; // New instance of LeftLineDrawer
-    private GlefDrawer gClefDrawer; // New instance of GlefDrawer
-
-    private static final Map<String, Integer> NOTE_PITCH_MAP = new HashMap<>();
-
-    static {
-        NOTE_PITCH_MAP.put("C", 0);
-        NOTE_PITCH_MAP.put("D", 1);
-        NOTE_PITCH_MAP.put("E", 2);
-        NOTE_PITCH_MAP.put("F", 3);
-        NOTE_PITCH_MAP.put("G", 4);
-        NOTE_PITCH_MAP.put("A", 5);
-        NOTE_PITCH_MAP.put("B", 6);
-    }
+    private GlefDrawer gClefDrawer; // New instance of ClefDrawer
 
     public MusicView(Context context) {
         super(context);
@@ -89,14 +69,15 @@ public class MusicView extends View {
         changedColorPaint.setColor(Color.BLUE); // Set the color to blue or any color you prefer
         changedColorPaint.setStrokeWidth(5);
 
-        textPaint = new Paint(); // Initialize textPaint
+        // Define textPaint for drawing note names
+        Paint textPaint = new Paint(); // Initialize textPaint
         textPaint.setColor(Color.RED); // Set the text color to red or any color you prefer
         textPaint.setTextSize(50); // Set the text size
         textPaint.setTextAlign(Paint.Align.CENTER);
 
-        whiteKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_white_button);
-        activeWhiteKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_white_button_active);
-        blackKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_black_button);
+        Drawable whiteKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_white_button);
+        Drawable activeWhiteKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_white_button_active);
+        Drawable blackKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_black_button);
 
         measures = new ArrayList<>();
 
@@ -106,7 +87,7 @@ public class MusicView extends View {
         blackKeysDrawer = new BlackKeysDrawer(blackKeyDrawable);
 
         leftLineDrawer = new LeftLineDrawer(); // Initialize LeftLineDrawer
-        gClefDrawer = new GlefDrawer(staffPaint, context); // Initialize GlefDrawer
+        gClefDrawer = new GlefDrawer(context); // Initialize GlefDrawer
     }
 
     @Override
@@ -120,11 +101,11 @@ public class MusicView extends View {
         leftLineDrawer.draw(canvas, leftLineX, topY, bottomY);
 
         // Draw the G-clef using GlefDrawer
-        gClefDrawer.draw(canvas, getWidth(), getHeight());
+        gClefDrawer.draw(canvas);
 
         // Draw other components
-        staffDrawer.draw(canvas, getWidth(), getHeight());
-        notesAndMeasuresDrawer.draw(canvas, getWidth(), getHeight(), startTime);
+        staffDrawer.draw(canvas, getWidth());
+        notesAndMeasuresDrawer.draw(canvas, getWidth(), startTime);
         whiteKeysDrawer.draw(canvas, getWidth(), getHeight());
         blackKeysDrawer.draw(canvas, getWidth(), getHeight());
 
@@ -148,7 +129,7 @@ public class MusicView extends View {
     }
 
     public void saveNoteValue(Chord chord) {
-        passedChord = chord;
+        // List to store notes that passed CHECK_LINE_X
 
         List<Integer> noteIndices = new ArrayList<>();
         if (chord.getChordNotes() != null) {
