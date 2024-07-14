@@ -2,24 +2,33 @@ package com.example.pianotutorial.features.components.helpers;
 
 public class MusicUtils {
     public static int countDottedNotes(float duration) {
-        // Define the base note durations
-        float[] noteDurations = {4.0f, 2.0f, 1.0f, 0.5f, 0.25f};
         int count = 0;
 
-        for (float noteDuration : noteDurations) {
-            if (duration == noteDuration) {
-                return 0;
-            } else if (duration > noteDuration) {
-                while (duration > noteDuration) {
-                    duration -= noteDuration + noteDuration / 2;
-                    count++;
-                    if (duration <= 0) return count;
-                }
+        // Loop to check for dotted notes
+        while (duration > 0) {
+            if (duration == 4.0f || duration == 2.0f || duration == 1.0f || duration == 0.5f || duration == 0.25f) {
+                return count;
+            } else {
+                if (duration > 4.0f) {
+                    duration -= 4.0f;
+                } else if (duration > 2.0f) {
+                    duration -= 2.0f;
+                } else if (duration > 1.0f) {
+                    duration -= 1.0f;
+                } else if (duration > 0.5f) {
+                    duration -= 0.5f;
+                } else if (duration > 0.25f) {
+                    duration -= 0.25f;
+                } else if (duration > 0.125f) {
+                duration -= 0.125f;
+            }
+
+                count++;
             }
         }
-
         return count;
     }
+
 
     public static String getFirstCharacter(String pitch) {
         if (pitch == null || pitch.isEmpty()) {
@@ -57,7 +66,7 @@ public class MusicUtils {
     public static int calculateLedgerLines(String pitch, int octave) {
         pitch=getFirstCharacter(pitch);
         int ledgerLines = 0;
-        if (octave < 4 || (octave == 4 && "C".equals(pitch)) || (octave == 4 && "B".equals(pitch)) || (octave == 4 && "A".equals(pitch))) {
+        if (octave < 4 || (octave == 4 && "C".equals(pitch))) {
             switch (pitch) {
                 case "C":
                 case "B":
@@ -75,10 +84,9 @@ public class MusicUtils {
                     ledgerLines = 4;
                     break;
                 default:
-                    ledgerLines = 0;
                     break;
             }
-        } else if (octave > 5) {
+        } else if (octave > 5 || (octave==5 && (("A".equals(pitch)) || ("B".equals(pitch))))) {
             switch (pitch) {
                 case "A":
                 case "B":
@@ -96,7 +104,6 @@ public class MusicUtils {
                     ledgerLines = 4;
                     break;
                 default:
-                    ledgerLines = 0;
                     break;
             }
         }
@@ -117,11 +124,11 @@ public class MusicUtils {
             case "G":
                 return 4;
             case "A":
-                return -2;
-            case "B":
-                return -1;
-            default:
                 return 5;
+            case "B":
+                return 6;
+            default:
+                return -1;
         }
     }
 }

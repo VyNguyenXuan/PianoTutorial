@@ -9,10 +9,12 @@ import com.example.pianotutorial.features.components.helpers.MusicUtils;
 import com.example.pianotutorial.features.components.paints.MusicView;
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaintReverse;
+import com.example.pianotutorial.features.components.paints.notepaints.FlatSignPaint;
 import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaintReverse;
+import com.example.pianotutorial.features.components.paints.notepaints.SharpSignPaint;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverseWhiteSpace;
@@ -63,8 +65,6 @@ public class NotesAndMeasuresDrawer {
                         float noteDuration = chord.getDuration();
                         float xPosition = measureStartX + chordPositionWithinMeasure;
 
-
-
                         chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
 
                         // Change note color and alpha if xPosition <= CHECK_LINE_X
@@ -84,7 +84,7 @@ public class NotesAndMeasuresDrawer {
                                 Paint notePaint;
                                 Path notePath;
 
-                                if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))){
+                                if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))) {
                                     if (noteDuration < 8 && noteDuration >= 4) {
                                         notePaint = WholeNotePaint.create();
                                         notePath = WholeNotePaint.createPath();
@@ -101,8 +101,7 @@ public class NotesAndMeasuresDrawer {
                                         notePaint = SixteenthNotePaintReverse.create();
                                         notePath = SixteenthNotePaintReverse.createPath();
                                     }
-                                }
-                                else{
+                                } else {
                                     if (noteDuration < 8 && noteDuration >= 4) {
                                         notePaint = WholeNotePaint.create();
                                         notePath = WholeNotePaint.createPath();
@@ -121,31 +120,55 @@ public class NotesAndMeasuresDrawer {
                                     }
                                 }
 
-                                canvas.drawPath(notePath, notePaint);
+                                // Change note color and alpha if xPosition <= CHECK_LINE_X
+                                Paint currentNotePaint = new Paint(notePaint);
+                                if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
+                                    currentNotePaint.setColor(changedColorPaint.getColor());
+                                }
+                                if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+                                    currentNotePaint.setAlpha(0);
+                                }
+
+                                canvas.drawPath(notePath, currentNotePaint);
 
                                 if (noteDuration == 0.25) {
-                                    if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))){
+                                    if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))) {
                                         notePaint = SixteenthNotePaintReverseWhiteSpace.create();
                                         notePath = SixteenthNotePaintReverseWhiteSpace.createPath();
-                                        canvas.drawPath(notePath, notePaint);
                                     } else {
                                         notePaint = SixteenthNotePaintWhiteSpace.create();
                                         notePath = SixteenthNotePaintWhiteSpace.createPath();
-                                        canvas.drawPath(notePath, notePaint);
                                     }
+                                    canvas.drawPath(notePath, currentNotePaint);
+                                }
+
+                                // Draw chromatic signs (flat or sharp)
+                                if (chordNote.getChromatic() == 0) { // Flat sign
+                                    Paint flatSignPaint = new Paint(FlatSignPaint.create());
+                                    if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
+                                        flatSignPaint.setColor(changedColorPaint.getColor());
+                                    }
+                                    if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+                                        flatSignPaint.setAlpha(0);
+                                    }
+                                    Path flatSignPath = FlatSignPaint.createPath();
+                                    drawChromaticSign(canvas, flatSignPaint, flatSignPath, noteHeadOriginalHeight);
+                                } else if (chordNote.getChromatic() == 2) { // Sharp sign
+                                    Paint sharpSignPaint = new Paint(SharpSignPaint.create());
+                                    if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
+                                        sharpSignPaint.setColor(changedColorPaint.getColor());
+                                    }
+                                    if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+                                        sharpSignPaint.setAlpha(0);
+                                    }
+                                    Path sharpSignPath = SharpSignPaint.createPath();
+                                    drawChromaticSign(canvas, sharpSignPaint, sharpSignPath, noteHeadOriginalHeight);
                                 }
 
                                 // Draw dotted notes
                                 int dottedNoteCount = MusicUtils.countDottedNotes(noteDuration);
                                 if (dottedNoteCount > 0) {
-                                    drawDottedNotes(canvas, notePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNotePitch(), chordNote.getNoteOctave());
-                                }
-
-                                if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
-                                    notePaint = new Paint(changedColorPaint);
-                                    if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
-                                        notePaint.setAlpha(0);
-                                    }
+                                    drawDottedNotes(canvas, currentNotePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNotePitch(), chordNote.getNoteOctave());
                                 }
 
                                 canvas.restore();
@@ -153,14 +176,22 @@ public class NotesAndMeasuresDrawer {
                                 drawLedgerLines(canvas, xPosition, chordNote.getNotePitch(), chordNote.getNoteOctave(), xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
                             }
                         }
-
                     }
                     currentX += GlobalVariables.MEASURE_WIDTH;
                 }
-
             }
         }
+    }
 
+    private void drawChromaticSign(Canvas canvas, Paint chromaticPaint, Path chromaticPath, float noteHeadOriginalHeight) {
+        float chromaticX = -noteHeadOriginalHeight * 1.5f + 30; // Adjust the x-position as needed
+        float chromaticY = 54f;
+        canvas.save();
+        canvas.translate(chromaticX, chromaticY);
+        float scaleFactor = noteHeadOriginalHeight / 24f; // Adjust the scale as needed
+        canvas.scale(scaleFactor, scaleFactor);
+        canvas.drawPath(chromaticPath, chromaticPaint);
+        canvas.restore();
     }
 
     private void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, String notePitch, int noteOctave) {
