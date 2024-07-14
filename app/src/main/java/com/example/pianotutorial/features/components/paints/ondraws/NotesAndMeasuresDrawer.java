@@ -8,9 +8,13 @@ import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.components.helpers.MusicUtils;
 import com.example.pianotutorial.features.components.paints.MusicView;
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverseWhiteSpace;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintWhiteSpace;
 import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaint;
@@ -59,33 +63,12 @@ public class NotesAndMeasuresDrawer {
                         float noteDuration = chord.getDuration();
                         float xPosition = measureStartX + chordPositionWithinMeasure;
 
-                        Paint notePaint;
-                        Path notePath;
-                        if (noteDuration < 8 && noteDuration >= 4) {
-                            notePaint = WholeNotePaint.create();
-                            notePath = WholeNotePaint.createPath();
-                        } else if (noteDuration < 4 && noteDuration >= 2) {
-                            notePaint = HalfNotePaint.create();
-                            notePath = HalfNotePaint.createPath();
-                        } else if (noteDuration < 2 && noteDuration >= 1) {
-                            notePaint = QuarterNotePaint.create();
-                            notePath = QuarterNotePaint.createPath();
-                        } else if (noteDuration < 1 && noteDuration >= 0.5) {
-                            notePaint = EighthNotePaint.create();
-                            notePath = EighthNotePaint.createPath();
-                        } else {
-                            notePaint = SixteenthNotePaint.create();
-                            notePath = SixteenthNotePaint.createPath();
-                        }
+
 
                         chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
 
                         // Change note color and alpha if xPosition <= CHECK_LINE_X
                         if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
-                            notePaint = new Paint(changedColorPaint);
-                            if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
-                                notePaint.setAlpha(0);
-                            }
                             musicView.saveNoteValue(chord); // Notify MusicView to save the note value
                         }
 
@@ -98,13 +81,50 @@ public class NotesAndMeasuresDrawer {
                                 float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight;
                                 canvas.scale(scaleFactor, scaleFactor);
 
+                                Paint notePaint;
+                                Path notePath;
+
+                                if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))){
+                                    if (noteDuration < 8 && noteDuration >= 4) {
+                                        notePaint = WholeNotePaint.create();
+                                        notePath = WholeNotePaint.createPath();
+                                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                                        notePaint = HalfNotePaintReverse.create();
+                                        notePath = HalfNotePaintReverse.createPath();
+                                    } else if (noteDuration < 2 && noteDuration >= 1) {
+                                        notePaint = QuarterNotePaintReverse.create();
+                                        notePath = QuarterNotePaintReverse.createPath();
+                                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                                        notePaint = EighthNotePaintReverse.create();
+                                        notePath = EighthNotePaintReverse.createPath();
+                                    } else {
+                                        notePaint = SixteenthNotePaintReverse.create();
+                                        notePath = SixteenthNotePaintReverse.createPath();
+                                    }
+                                }
+                                else{
+                                    if (noteDuration < 8 && noteDuration >= 4) {
+                                        notePaint = WholeNotePaint.create();
+                                        notePath = WholeNotePaint.createPath();
+                                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                                        notePaint = HalfNotePaint.create();
+                                        notePath = HalfNotePaint.createPath();
+                                    } else if (noteDuration < 2 && noteDuration >= 1) {
+                                        notePaint = QuarterNotePaint.create();
+                                        notePath = QuarterNotePaint.createPath();
+                                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                                        notePaint = EighthNotePaint.create();
+                                        notePath = EighthNotePaint.createPath();
+                                    } else {
+                                        notePaint = SixteenthNotePaint.create();
+                                        notePath = SixteenthNotePaint.createPath();
+                                    }
+                                }
+
                                 canvas.drawPath(notePath, notePaint);
 
                                 if (noteDuration == 0.25) {
-                                    int noteOctave = chordNote.getNoteOctave();
-                                    String notePitch = chordNote.getNotePitch();
-
-                                    if ((noteOctave > 4 || (noteOctave == 4 && notePitch.equals("B"))) && !(noteOctave == 5 && (notePitch.equals("A") || notePitch.equals("B")))) {
+                                    if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))){
                                         notePaint = SixteenthNotePaintReverseWhiteSpace.create();
                                         notePath = SixteenthNotePaintReverseWhiteSpace.createPath();
                                         canvas.drawPath(notePath, notePaint);
@@ -119,6 +139,13 @@ public class NotesAndMeasuresDrawer {
                                 int dottedNoteCount = MusicUtils.countDottedNotes(noteDuration);
                                 if (dottedNoteCount > 0) {
                                     drawDottedNotes(canvas, notePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNotePitch(), chordNote.getNoteOctave());
+                                }
+
+                                if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
+                                    notePaint = new Paint(changedColorPaint);
+                                    if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+                                        notePaint.setAlpha(0);
+                                    }
                                 }
 
                                 canvas.restore();
