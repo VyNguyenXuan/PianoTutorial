@@ -36,7 +36,7 @@ public class PlayScreenActivity extends AppCompatActivity {
 
         playScreenViewModel.getSheetList().observe(this, sheetList -> {
             if (sheetList != null) {
-                activityPlayscreenBinding.musicView.setMeasures(sheetList.get(0).getMeasures());
+                activityPlayscreenBinding.musicView.setMeasures(sheetList.get(4).getMeasures());
                 activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
             }
         });

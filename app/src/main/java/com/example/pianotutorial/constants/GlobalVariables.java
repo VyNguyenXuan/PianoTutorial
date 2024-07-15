@@ -8,7 +8,7 @@ public class GlobalVariables {
     public static float MEASURE_WIDTH = 300 * TOP_SIGNATURE;
     public static float CHECK_LINE_X = 600;
     public static int FIXED_HEIGHT = 300;
-    public static float C4_CURRENT_NOTE = 213f;
+    public static float C4_CURRENT_NOTE = 215f;
 
 
 }

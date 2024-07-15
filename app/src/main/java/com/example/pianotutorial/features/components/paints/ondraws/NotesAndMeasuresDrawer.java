@@ -3,7 +3,11 @@ package com.example.pianotutorial.features.components.paints.ondraws;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.Drawable;
 
+import androidx.core.content.res.ResourcesCompat;
+
+import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.components.helpers.MusicUtils;
 import com.example.pianotutorial.features.components.paints.MusicView;
@@ -52,7 +56,7 @@ public class NotesAndMeasuresDrawer {
             for (Measure measure : measures) {
 
                 float measureStartX = currentX;
-                float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH;
+                float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH+12;
 
                 float topY = staffHeight / 2;
                 float bottomY = staffHeight / 2 + 4 * (staffHeight / 8);
@@ -72,10 +76,10 @@ public class NotesAndMeasuresDrawer {
                             musicView.saveNoteValue(chord); // Notify MusicView to save the note value
                         }
 
-                        if (chord.getChordNotes() != null) {
+                        if (!chord.getChordNotes().isEmpty()) {
                             for (ChordNote chordNote : chord.getChordNotes()) {
                                 canvas.save();
-                                float noteY = convertPitchToY(chordNote.getNotePitch(), chordNote.getNoteOctave());
+                                float noteY = convertPitchToY(chordNote.getNoteId());
                                 canvas.translate(xPosition, noteY);
 
                                 float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight;
@@ -132,14 +136,14 @@ public class NotesAndMeasuresDrawer {
                                 canvas.drawPath(notePath, currentNotePaint);
 
                                 if (noteDuration == 0.25) {
-                                    if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))) {
+                                    if (chordNote.getNoteOctave() > 4 || (chordNote.getNoteOctave()==4 && chordNote.getNotePitch().equals("5B"))) {
                                         notePaint = SixteenthNotePaintReverseWhiteSpace.create();
                                         notePath = SixteenthNotePaintReverseWhiteSpace.createPath();
                                     } else {
                                         notePaint = SixteenthNotePaintWhiteSpace.create();
                                         notePath = SixteenthNotePaintWhiteSpace.createPath();
                                     }
-                                    canvas.drawPath(notePath, currentNotePaint);
+                                    canvas.drawPath(notePath, notePaint);
                                 }
 
                                 // Draw chromatic signs (flat or sharp)
@@ -175,6 +179,8 @@ public class NotesAndMeasuresDrawer {
 
                                 drawLedgerLines(canvas, xPosition, chordNote.getNotePitch(), chordNote.getNoteOctave(), xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
                             }
+                        } else {
+                            drawRest(canvas, xPosition, noteDuration, currentTime);
                         }
                     }
                     currentX += GlobalVariables.MEASURE_WIDTH;
@@ -227,12 +233,54 @@ public class NotesAndMeasuresDrawer {
         }
     }
 
-    private float convertPitchToY(String pitch, int octave) {
+    private void drawRest(Canvas canvas, float xPosition, float duration, long currentTime) {
+        Drawable restDrawable;
+        float yPosition;
+        float additionalOffset = 0;
+
+        // Select the appropriate drawable and y-position based on the duration
+        if (duration == 4) {
+            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_whole_rest, null);
+            yPosition = 196; // Set appropriate y-position
+            additionalOffset = 600; // Add additional left offset
+        } else if (duration == 2) {
+            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_whole_rest, null);
+            yPosition = 216; // Set appropriate y-position
+            additionalOffset = 300; // Add additional left offset
+        } else if (duration == 1) {
+            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_quarter_rest, null);
+            yPosition = 230; // Set appropriate y-position
+        } else if (duration == 0.5) {
+            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_eighth_rest, null);
+            yPosition = 232; // Set appropriate y-position
+        } else if (duration == 0.25) {
+            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_sixteenth_rest, null);
+            yPosition = 240; // Set appropriate y-position
+        } else {
+            return; // Invalid duration for rest
+        }
+
+        int intrinsicWidth = restDrawable != null ? restDrawable.getIntrinsicWidth() : 0;
+        int intrinsicHeight = restDrawable != null ? restDrawable.getIntrinsicHeight() : 0;
+
+        float top = yPosition - (float) intrinsicHeight / 2;
+        float right = xPosition + intrinsicWidth + additionalOffset;
+        float bottom = top + intrinsicHeight;
+
+        if (restDrawable != null) {
+            restDrawable.setBounds((int) (xPosition + additionalOffset), (int) top, (int) right, (int) bottom);
+        }
+
+        if (restDrawable != null) {
+            restDrawable.draw(canvas);
+        }
+    }
+
+    private float convertPitchToY(int noteId) {
         float baseHeight = GlobalVariables.C4_CURRENT_NOTE; // D4
+        int c4Id = 22;
+        int spacingValue = noteId - c4Id;
         float noteSpacing = (float) GlobalVariables.FIXED_HEIGHT / 16;
-
-        int pitchValue = MusicUtils.pitchValue(pitch);
-
-        return baseHeight - pitchValue * noteSpacing - (octave - 4) * 7 * noteSpacing;
+        return baseHeight - spacingValue * noteSpacing;
     }
 }

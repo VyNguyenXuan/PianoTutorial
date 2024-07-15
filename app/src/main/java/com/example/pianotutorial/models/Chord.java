@@ -75,4 +75,33 @@ public class Chord {
     public void setChordNotes(List<ChordNote> chordNotes) {
         this.chordNotes = chordNotes;
     }
+
+    public boolean isStemUp() {
+        int middleLinePitch = 28;
+        int belowMiddleLine = 0;
+        int aboveMiddleLine = 0;
+
+        for (ChordNote note : chordNotes) {
+            if (note.getNoteId() < middleLinePitch) {
+                belowMiddleLine++;
+            } else if (note.getNoteId() > middleLinePitch) {
+                aboveMiddleLine++;
+            }
+        }
+
+        if (belowMiddleLine > aboveMiddleLine) {
+            return true; // Stem up
+        } else if (aboveMiddleLine > belowMiddleLine) {
+            return false; // Stem down
+        } else {
+            // If equal, check the note farthest from middle line
+            int farthestNotePitch = chordNotes.get(0).getNoteId();
+            for (ChordNote note : chordNotes) {
+                if (Math.abs(note.getNoteId() - middleLinePitch) > Math.abs(farthestNotePitch - middleLinePitch)) {
+                    farthestNotePitch = note.getNoteId();
+                }
+            }
+            return farthestNotePitch < middleLinePitch; // Farthest note below middle line means stem up
+        }
+    }
 }
