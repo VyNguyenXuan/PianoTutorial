@@ -31,7 +31,7 @@ public class PlayScreenActivity extends AppCompatActivity {
         activityPlayscreenBinding.setEventHandler(playScreenEventHandler);
         activityPlayscreenBinding.setLifecycleOwner(this);
 
-        int resourceId = R.raw.theduck; // Replace 'your_audio_file' with your actual file name
+        int resourceId = R.raw.fur_elise_easy_ver; // Replace 'your_audio_file' with your actual file name
         playScreenViewModel.preparePlayer(resourceId, getPackageName());
 
         playScreenViewModel.getSheetList().observe(this, sheetList -> {
@@ -42,11 +42,8 @@ public class PlayScreenActivity extends AppCompatActivity {
         });
 
         playScreenViewModel.getIsPlayed().observe(this, isplayed -> {
-            if (isplayed) {
-                startUpdatingStaff();
-                playScreenEventHandler.onInitial();
-
-            }
+            startUpdatingStaff();
+            playScreenEventHandler.onInitial();
         });
     }
 

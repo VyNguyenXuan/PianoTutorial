@@ -50,7 +50,7 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX = width - (currentTime * 0.6f);
+        float currentX =  400- (currentTime * 0.6f);
 
         if (measures != null) {
             for (Measure measure : measures) {
@@ -172,7 +172,7 @@ public class NotesAndMeasuresDrawer {
                                 // Draw dotted notes
                                 int dottedNoteCount = MusicUtils.countDottedNotes(noteDuration);
                                 if (dottedNoteCount > 0) {
-                                    drawDottedNotes(canvas, currentNotePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNotePitch(), chordNote.getNoteOctave());
+                                    drawDottedNotes(canvas, currentNotePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNoteId());
                                 }
 
                                 canvas.restore();
@@ -200,11 +200,11 @@ public class NotesAndMeasuresDrawer {
         canvas.restore();
     }
 
-    private void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, String notePitch, int noteOctave) {
+    private void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, int noteId) {
         float dotRadius = noteHeadOriginalHeight / 4;
         float dotX = noteHeadOriginalHeight + noteHeadOriginalHeight;
         float dotY = noteHeadOriginalHeight * 4;
-        if (MusicUtils.isNoteOnLine(notePitch, noteOctave)) {
+        if (MusicUtils.isNoteOnLine(noteId)) {
             dotY -= (float) GlobalVariables.FIXED_HEIGHT / 32; // If isNoteOnLine move up a note
         }
         for (int i = 0; i < dottedNoteCount; i++) {

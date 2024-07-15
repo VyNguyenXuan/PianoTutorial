@@ -37,30 +37,9 @@ public class MusicUtils {
         return String.valueOf(pitch.charAt(0));
     }
 
-    public static boolean isNoteOnLine(String pitch, int octave) {
-        pitch=getFirstCharacter(pitch);
+    public static boolean isNoteOnLine(int noteId) {
         // Define the notes that are on lines for the treble clef across several octaves
-        String[][] lineNotes = {
-                {"E", "G", "B", "D", "F"},  // 4th octave (E4, G4, B4, D5, F5)
-                {"C", "E", "G", "B", "D"},  // 5th octave (C5, E5, G5, B5, D6)
-                {"A", "C", "E", "G", "B"},  // 3rd octave (A3, C4, E4, G4, B4)
-                {"F", "A", "C", "E", "G"},  // 6th octave (F5, A5, C6, E6, G6)
-                {"D", "F", "A", "C", "E"},  // 2nd octave (D3, F3, A3, C4, E4)
-                {"B", "D", "F", "A", "C"},  // 1st octave (B2, D3, F3, A3, C4)
-                {"G", "B", "D", "F", "A"},  // 7th octave (G5, B5, D6, F6, A6)
-                {"E", "G", "B", "D", "F"}   // 8th octave (E6, G6, B6, D7, F7)
-        };
-
-        int[] lineOctaves = {4, 5, 3, 6, 2, 1, 7, 8};
-
-        for (int i = 0; i < lineNotes.length; i++) {
-            for (int j = 0; j < lineNotes[i].length; j++) {
-                if (lineNotes[i][j].equals(pitch) && lineOctaves[i] == octave) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return noteId % 2 == 0;
     }
 
     public static int calculateLedgerLines(String pitch, int octave) {

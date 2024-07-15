@@ -52,6 +52,12 @@ public class PlayScreenViewModel extends AndroidViewModel {
         this.playbackPosition = playbackPosition;
     }
 
+    public void pausePlayer() {
+        if (player != null && player.isPlaying()) {
+            player.pause();
+        }
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

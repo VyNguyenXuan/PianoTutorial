@@ -26,6 +26,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/opacity_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
         <LinearLayout
             android:id="@+id/play_icon"
             android:layout_width="wrap_content"
@@ -34,6 +44,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <View
+                android:id="@+id/play_image"
                 android:onClick="@{eventHandler.onPlayIconClick}"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
@@ -66,7 +77,6 @@
 
             </View>
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

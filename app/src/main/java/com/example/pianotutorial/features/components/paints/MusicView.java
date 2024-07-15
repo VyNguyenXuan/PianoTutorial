@@ -32,6 +32,7 @@ public class MusicView extends View {
     private Paint changedColorPaint; // Define changedColorPaint
     private List<Measure> measures;
     private long startTime;
+    private long pauseTime;
 
     private StaffDrawer staffDrawer;
     private NotesAndMeasuresDrawer notesAndMeasuresDrawer;
@@ -40,6 +41,7 @@ public class MusicView extends View {
 
     private LeftLineDrawer leftLineDrawer; // New instance of LeftLineDrawer
     private GlefDrawer gClefDrawer; // New instance of ClefDrawer
+    private boolean isPaused; // Add this flag
 
     public MusicView(Context context) {
         super(context);
@@ -105,11 +107,14 @@ public class MusicView extends View {
 
         // Draw other components
         staffDrawer.draw(canvas, getWidth());
-        notesAndMeasuresDrawer.draw(canvas, getWidth(), startTime);
+        if (!isPaused) {
+            notesAndMeasuresDrawer.draw(canvas, getWidth(), startTime);
+            invalidate(); // Force a redraw to animate the notes
+        } else {
+            notesAndMeasuresDrawer.draw(canvas, getWidth(), pauseTime); // Draw with pauseTime to keep the notes at the same position
+        }
         whiteKeysDrawer.draw(canvas, getWidth(), getHeight());
         blackKeysDrawer.draw(canvas, getWidth(), getHeight());
-
-        invalidate(); // Force a redraw to animate the notes
     }
 
     public void setMeasures(List<Measure> measures) {
@@ -122,6 +127,21 @@ public class MusicView extends View {
     public void startDrawing(long startTime) {
         this.startTime = startTime;
         invalidate();
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setPaused(boolean paused) {
+        if (paused) {
+            this.isPaused = true;
+            this.pauseTime = System.currentTimeMillis() - startTime;
+        } else {
+            this.isPaused = false;
+            this.startTime = System.currentTimeMillis() - pauseTime;
+            invalidate();
+        }
     }
 
     public void updateView() {
@@ -144,6 +164,4 @@ public class MusicView extends View {
             invalidate(); // Request a redraw to show the new notes
         }
     }
-
-
 }
