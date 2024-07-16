@@ -8,22 +8,22 @@ import androidx.core.content.ContextCompat;
 
 import com.example.pianotutorial.R;
 
-public class GlefDrawer {
+public class GClefDrawer {
     private final VectorDrawable gClefDrawable;
 
-    public GlefDrawer(Context context) {
+    public GClefDrawer(Context context) {
         this.gClefDrawable = (VectorDrawable) ContextCompat.getDrawable(context, R.drawable.vector_g_clef);
     }
 
     public void draw(Canvas canvas) {
         // Set the bounds for the drawable
-        int left = 100; // Adjust as needed
-        int top = 110; // Adjust as needed
+        int left = 140; // Adjust as needed
+        int top = 130; // Adjust as needed
 
         // Calculate the new width and height for scaling
         int originalWidth = gClefDrawable.getIntrinsicWidth();
         int originalHeight = gClefDrawable.getIntrinsicHeight();
-        float scaleFactor = 0.5f; // Adjust this value to change the size of the G-clef
+        float scaleFactor = 0.6f; // Adjust this value to change the size of the G-clef
 
         int right = left + (int) (originalWidth * scaleFactor);
         int bottom = top + (int) (originalHeight * scaleFactor);

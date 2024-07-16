@@ -33,6 +33,25 @@ public class Sheet {
     @SerializedName("measures")
     private List<Measure> measures;
 
+    @SerializedName("leftHandSheetId")
+    private int leftHandSheetId;
+    @SerializedName("leftHandSheet")
+    private Sheet leftHandSheet;
+
+    public Sheet(int id, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, List<Measure> measures, int leftHandSheetId, Sheet leftHandSheet) {
+        this.id = id;
+        this.songId = songId;
+        this.songTitle = songTitle;
+        this.topSignature = topSignature;
+        this.bottomSignature = bottomSignature;
+        this.instrumentId = instrumentId;
+        this.instrumentName = instrumentName;
+        this.sheetFile = sheetFile;
+        this.measures = measures;
+        this.leftHandSheetId = leftHandSheetId;
+        this.leftHandSheet = leftHandSheet;
+    }
+
     public Sheet() {
         id = 0;
         songId = 0;
@@ -43,18 +62,8 @@ public class Sheet {
         instrumentName = "";
         sheetFile = "";
         measures = new ArrayList<>();
-    }
-
-    public Sheet(int id, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, List<Measure> measures) {
-        this.id = id;
-        this.songId = songId;
-        this.songTitle = songTitle;
-        this.topSignature = topSignature;
-        this.bottomSignature = bottomSignature;
-        this.instrumentId = instrumentId;
-        this.instrumentName = instrumentName;
-        this.sheetFile = sheetFile;
-        this.measures = measures;
+        leftHandSheetId=0;
+        leftHandSheet=null;
     }
 
     public int getId() {
@@ -127,5 +136,21 @@ public class Sheet {
 
     public void setMeasures(List<Measure> measures) {
         this.measures = measures;
+    }
+
+    public int getLeftHandSheetId() {
+        return leftHandSheetId;
+    }
+
+    public void setLeftHandSheetId(int leftHandSheetId) {
+        this.leftHandSheetId = leftHandSheetId;
+    }
+
+    public Sheet getLeftHandSheet() {
+        return leftHandSheet;
+    }
+
+    public void setLeftHandSheet(Sheet leftHandSheet) {
+        this.leftHandSheet = leftHandSheet;
     }
 }

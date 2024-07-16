@@ -40,7 +40,9 @@ public class NotesAndMeasuresDrawer {
     public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaint, MusicView musicView) {
         this.measurePaint = measurePaint;
         this.staffPaint = staffPaint;
+        staffPaint.setStrokeWidth(4);
         this.changedColorPaint = changedColorPaint;
+        changedColorPaint.setStrokeWidth(4);
         this.measures = measures;
         this.musicView = musicView;
     }
@@ -50,13 +52,13 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX =  400- (currentTime * 0.6f);
+        float currentX = 750 - (currentTime * 0.6f * GlobalVariables.SPEED);
 
         if (measures != null) {
             for (Measure measure : measures) {
 
                 float measureStartX = currentX;
-                float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH+12;
+                float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH + 12;
 
                 float topY = staffHeight / 2;
                 float bottomY = staffHeight / 2 + 4 * (staffHeight / 8);
@@ -136,7 +138,7 @@ public class NotesAndMeasuresDrawer {
                                 canvas.drawPath(notePath, currentNotePaint);
 
                                 if (noteDuration == 0.25) {
-                                    if (chordNote.getNoteOctave() > 4 || (chordNote.getNoteOctave()==4 && chordNote.getNotePitch().equals("5B"))) {
+                                    if (chordNote.getNoteOctave() > 4 || (chordNote.getNoteOctave() == 4 && chordNote.getNotePitch().equals("5B"))) {
                                         notePaint = SixteenthNotePaintReverseWhiteSpace.create();
                                         notePath = SixteenthNotePaintReverseWhiteSpace.createPath();
                                     } else {
@@ -190,7 +192,7 @@ public class NotesAndMeasuresDrawer {
     }
 
     private void drawChromaticSign(Canvas canvas, Paint chromaticPaint, Path chromaticPath, float noteHeadOriginalHeight) {
-        float chromaticX = -noteHeadOriginalHeight * 1.5f + 30; // Adjust the x-position as needed
+        float chromaticX = -noteHeadOriginalHeight * 1.5f + 36; // Adjust the x-position as needed
         float chromaticY = 54f;
         canvas.save();
         canvas.translate(chromaticX, chromaticY);
@@ -229,7 +231,7 @@ public class NotesAndMeasuresDrawer {
             if (noteXPosition < GlobalVariables.CHECK_LINE_X - 160) {
                 paintToUse.setAlpha(0);
             }
-            canvas.drawLine(xPosition + 24, y, xPosition + 90, y, paintToUse);
+            canvas.drawLine(xPosition + 28, y, xPosition +106, y, paintToUse);
         }
     }
 
@@ -241,21 +243,21 @@ public class NotesAndMeasuresDrawer {
         // Select the appropriate drawable and y-position based on the duration
         if (duration == 4) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_whole_rest, null);
-            yPosition = 196; // Set appropriate y-position
+            yPosition = 234; // Set appropriate y-position
             additionalOffset = 600; // Add additional left offset
         } else if (duration == 2) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_whole_rest, null);
-            yPosition = 216; // Set appropriate y-position
+            yPosition = 260; // Set appropriate y-position
             additionalOffset = 300; // Add additional left offset
         } else if (duration == 1) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_quarter_rest, null);
-            yPosition = 230; // Set appropriate y-position
+            yPosition = 280; // Set appropriate y-position
         } else if (duration == 0.5) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_eighth_rest, null);
-            yPosition = 232; // Set appropriate y-position
+            yPosition = 282; // Set appropriate y-position
         } else if (duration == 0.25) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_sixteenth_rest, null);
-            yPosition = 240; // Set appropriate y-position
+            yPosition = 290; // Set appropriate y-position
         } else {
             return; // Invalid duration for rest
         }

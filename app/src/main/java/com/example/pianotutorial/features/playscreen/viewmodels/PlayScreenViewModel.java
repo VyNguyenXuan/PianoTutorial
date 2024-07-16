@@ -16,6 +16,11 @@ import java.util.List;
 public class PlayScreenViewModel extends AndroidViewModel {
     private final MutableLiveData<Boolean> isPlayed = new MutableLiveData<>(false);
     private final MutableLiveData<List<Sheet>> sheetList = new MutableLiveData<>();
+    private final MutableLiveData<Sheet> currentSheet = new MutableLiveData<>();
+    private final MutableLiveData<Sheet> currentLeftSheet = new MutableLiveData<>();
+
+    private final MutableLiveData<Float> speed = new MutableLiveData<>(1f);
+
 
     private final ExoPlayer player;
     private long playbackPosition = 0;
@@ -46,6 +51,18 @@ public class PlayScreenViewModel extends AndroidViewModel {
 
     public long getPlaybackPosition() {
         return playbackPosition;
+    }
+
+    public MutableLiveData<Float> getSpeed() {
+        return speed;
+    }
+
+    public MutableLiveData<Sheet> getCurrentSheet() {
+        return currentSheet;
+    }
+
+    public MutableLiveData<Sheet> getCurrentLeftSheet() {
+        return currentLeftSheet;
     }
 
     public void setPlaybackPosition(long playbackPosition) {

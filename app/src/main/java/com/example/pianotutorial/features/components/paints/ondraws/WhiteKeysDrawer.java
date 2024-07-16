@@ -19,13 +19,13 @@ public class WhiteKeysDrawer {
 
     public void draw(Canvas canvas, int width, int height) {
         float keyWidth = (float) width / GlobalVariables.WHITE_KEYS_COUNT;
-        float keyHeight = 200;
+        float keyHeight = 160;
 
         for (int i = 0; i < GlobalVariables.WHITE_KEYS_COUNT; i++) {
             float left = i * keyWidth;
             float top = height - keyHeight;
             float right = left + keyWidth;
-            float bottom = height - 20;
+            float bottom = height - 10;
 
             boolean isActive = activeKeyIndices != null && activeKeyIndices.contains(i);
 

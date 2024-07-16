@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.media3.exoplayer.ExoPlayer;
 
+import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.playscreen.servicehandlers.PlayScreenServiceHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
 
@@ -24,34 +25,24 @@ public class PlayScreenEventHandler {
     public void onInitial() {
         playScreenServiceHandler.getAllSheets();
     }
+    /*public void onInitial(int sheetId,int leftSheetId) {
+        playScreenServiceHandler.getSheetById(sheetId);
+        playScreenServiceHandler.getLeftSheetById(sheetId);
+    }*/
 
     public void onPlayIconClick(View view) {
-        playScreenViewModel.getIsPlayed().setValue(Boolean.FALSE.equals(playScreenViewModel.getIsPlayed().getValue()));
-        ExoPlayer player = playScreenViewModel.getPlayer();
-        if (player.getPlaybackState() == ExoPlayer.STATE_ENDED) {
-            playScreenViewModel.setPlaybackPosition(0);
-            player.seekTo(playScreenViewModel.getPlaybackPosition());
-        } else {
-            playScreenViewModel.setPlaybackPosition(player.getCurrentPosition());
-        }
-
-        player.play();
-        startUpdatingStaff();
+        boolean isPlaying = Boolean.TRUE.equals(playScreenViewModel.getIsPlayed().getValue());
+        playScreenViewModel.getIsPlayed().setValue(!isPlaying);
     }
 
-    private void startUpdatingStaff() {
-        updateStaff = new Runnable() {
-            @Override
-            public void run() {
-                // Assuming you have a method in your view to update
-                // musicView.updateView();
-                handler.postDelayed(this, 16); // Refresh the view every 16 milliseconds (approx. 60 FPS)
-            }
-        };
-        handler.post(updateStaff);
+    public void onSpeed1Click(View view) {
+        playScreenViewModel.getSpeed().setValue(0.6f);
     }
-
-    public void clear() {
-        handler.removeCallbacks(updateStaff);
+    public void onSpeed2Click(View view) {
+        playScreenViewModel.getSpeed().setValue(0.8f);
+    }
+    public void onSpeed3Click(View view) {
+        playScreenViewModel.getSpeed().setValue(1f);
     }
 }
+

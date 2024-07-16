@@ -17,12 +17,12 @@ public class BlackKeysDrawer {
     public void draw(Canvas canvas, int width, int height) {
         float whiteKeyWidth = (float) width / GlobalVariables.WHITE_KEYS_COUNT;
         float blackKeyWidth = whiteKeyWidth / 2;
-        float blackKeyHeight = 120;
+        float blackKeyHeight = 100;
 
         for (int i = 0; i < GlobalVariables.WHITE_KEYS_COUNT; i++) {
             if (isBlackKey(i)) {
                 float left = i * whiteKeyWidth + whiteKeyWidth - blackKeyWidth / 2;
-                float top = height - 200;
+                float top = height - 160;
                 float right = left + blackKeyWidth;
                 float bottom = top + blackKeyHeight;
 

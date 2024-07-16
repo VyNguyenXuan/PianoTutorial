@@ -48,4 +48,42 @@ public class PlayScreenServiceHandler {
             }
         });
     }
+    public void getSheetById(int sheetId) {
+        Call<Sheet> call = _playScreenService.getSheetById(sheetId);
+        call.enqueue(new Callback<Sheet>() {
+            @Override
+            public void onResponse(@NonNull Call<Sheet> call, @NonNull Response<Sheet> response) {
+                ErrorHandling.httpErrorHandler(response, _context, () -> {
+                    Sheet sheetResponse = response.body();
+                    if (sheetResponse != null) {
+                        _playScreenViewModel.getCurrentSheet().setValue(sheetResponse);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Sheet> call, @NonNull Throwable throwable) {
+                Toast.makeText(_context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public void getLeftSheetById(int sheetId) {
+        Call<Sheet> call = _playScreenService.getSheetById(sheetId);
+        call.enqueue(new Callback<Sheet>() {
+            @Override
+            public void onResponse(@NonNull Call<Sheet> call, @NonNull Response<Sheet> response) {
+                ErrorHandling.httpErrorHandler(response, _context, () -> {
+                    Sheet sheetResponse = response.body();
+                    if (sheetResponse != null) {
+                        _playScreenViewModel.getCurrentLeftSheet().setValue(sheetResponse);
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Sheet> call, @NonNull Throwable throwable) {
+                Toast.makeText(_context, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
