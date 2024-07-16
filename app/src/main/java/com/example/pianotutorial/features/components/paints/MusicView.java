@@ -190,7 +190,7 @@ public class MusicView extends View {
         if (chord.getChordNotes() != null) {
             for (ChordNote note : chord.getChordNotes()) {
                 int notePitchIndex = MusicUtils.pitchValue(note.getNotePitch());
-                if (notePitchIndex != 5) {
+                if (notePitchIndex != -1) {
                     int noteIndex = (note.getNoteOctave() - 2) * 7 + notePitchIndex;
                     noteIndices.add(noteIndex);
                 }

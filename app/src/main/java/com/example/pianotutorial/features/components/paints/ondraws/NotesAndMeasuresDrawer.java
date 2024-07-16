@@ -81,7 +81,7 @@ public class NotesAndMeasuresDrawer {
                         if (!chord.getChordNotes().isEmpty()) {
                             for (ChordNote chordNote : chord.getChordNotes()) {
                                 canvas.save();
-                                float noteY = convertPitchToY(chordNote.getNoteId());
+                                float noteY = convertPitchToY(chordNote.getNoteId(),measure.getClef());
                                 canvas.translate(xPosition, noteY);
 
                                 float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight;
@@ -90,41 +90,81 @@ public class NotesAndMeasuresDrawer {
                                 Paint notePaint;
                                 Path notePath;
 
-                                if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))) {
-                                    if (noteDuration < 8 && noteDuration >= 4) {
-                                        notePaint = WholeNotePaint.create();
-                                        notePath = WholeNotePaint.createPath();
-                                    } else if (noteDuration < 4 && noteDuration >= 2) {
-                                        notePaint = HalfNotePaintReverse.create();
-                                        notePath = HalfNotePaintReverse.createPath();
-                                    } else if (noteDuration < 2 && noteDuration >= 1) {
-                                        notePaint = QuarterNotePaintReverse.create();
-                                        notePath = QuarterNotePaintReverse.createPath();
-                                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
-                                        notePaint = EighthNotePaintReverse.create();
-                                        notePath = EighthNotePaintReverse.createPath();
+                                if(measure.getClef()==0){
+                                    if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))) {
+                                        if (noteDuration < 8 && noteDuration >= 4) {
+                                            notePaint = WholeNotePaint.create();
+                                            notePath = WholeNotePaint.createPath();
+                                        } else if (noteDuration < 4 && noteDuration >= 2) {
+                                            notePaint = HalfNotePaintReverse.create();
+                                            notePath = HalfNotePaintReverse.createPath();
+                                        } else if (noteDuration < 2 && noteDuration >= 1) {
+                                            notePaint = QuarterNotePaintReverse.create();
+                                            notePath = QuarterNotePaintReverse.createPath();
+                                        } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                                            notePaint = EighthNotePaintReverse.create();
+                                            notePath = EighthNotePaintReverse.createPath();
+                                        } else {
+                                            notePaint = SixteenthNotePaintReverse.create();
+                                            notePath = SixteenthNotePaintReverse.createPath();
+                                        }
                                     } else {
-                                        notePaint = SixteenthNotePaintReverse.create();
-                                        notePath = SixteenthNotePaintReverse.createPath();
-                                    }
-                                } else {
-                                    if (noteDuration < 8 && noteDuration >= 4) {
-                                        notePaint = WholeNotePaint.create();
-                                        notePath = WholeNotePaint.createPath();
-                                    } else if (noteDuration < 4 && noteDuration >= 2) {
-                                        notePaint = HalfNotePaint.create();
-                                        notePath = HalfNotePaint.createPath();
-                                    } else if (noteDuration < 2 && noteDuration >= 1) {
-                                        notePaint = QuarterNotePaint.create();
-                                        notePath = QuarterNotePaint.createPath();
-                                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
-                                        notePaint = EighthNotePaint.create();
-                                        notePath = EighthNotePaint.createPath();
-                                    } else {
-                                        notePaint = SixteenthNotePaint.create();
-                                        notePath = SixteenthNotePaint.createPath();
+                                        if (noteDuration < 8 && noteDuration >= 4) {
+                                            notePaint = WholeNotePaint.create();
+                                            notePath = WholeNotePaint.createPath();
+                                        } else if (noteDuration < 4 && noteDuration >= 2) {
+                                            notePaint = HalfNotePaint.create();
+                                            notePath = HalfNotePaint.createPath();
+                                        } else if (noteDuration < 2 && noteDuration >= 1) {
+                                            notePaint = QuarterNotePaint.create();
+                                            notePath = QuarterNotePaint.createPath();
+                                        } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                                            notePaint = EighthNotePaint.create();
+                                            notePath = EighthNotePaint.createPath();
+                                        } else {
+                                            notePaint = SixteenthNotePaint.create();
+                                            notePath = SixteenthNotePaint.createPath();
+                                        }
                                     }
                                 }
+                                else {
+                                    if (chordNote.getNoteOctave() > 2 && (!chordNote.getNotePitch().equals("C3"))) {
+                                        if (noteDuration < 8 && noteDuration >= 4) {
+                                            notePaint = WholeNotePaint.create();
+                                            notePath = WholeNotePaint.createPath();
+                                        } else if (noteDuration < 4 && noteDuration >= 2) {
+                                            notePaint = HalfNotePaintReverse.create();
+                                            notePath = HalfNotePaintReverse.createPath();
+                                        } else if (noteDuration < 2 && noteDuration >= 1) {
+                                            notePaint = QuarterNotePaintReverse.create();
+                                            notePath = QuarterNotePaintReverse.createPath();
+                                        } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                                            notePaint = EighthNotePaintReverse.create();
+                                            notePath = EighthNotePaintReverse.createPath();
+                                        } else {
+                                            notePaint = SixteenthNotePaintReverse.create();
+                                            notePath = SixteenthNotePaintReverse.createPath();
+                                        }
+                                    } else {
+                                        if (noteDuration < 8 && noteDuration >= 4) {
+                                            notePaint = WholeNotePaint.create();
+                                            notePath = WholeNotePaint.createPath();
+                                        } else if (noteDuration < 4 && noteDuration >= 2) {
+                                            notePaint = HalfNotePaint.create();
+                                            notePath = HalfNotePaint.createPath();
+                                        } else if (noteDuration < 2 && noteDuration >= 1) {
+                                            notePaint = QuarterNotePaint.create();
+                                            notePath = QuarterNotePaint.createPath();
+                                        } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                                            notePaint = EighthNotePaint.create();
+                                            notePath = EighthNotePaint.createPath();
+                                        } else {
+                                            notePaint = SixteenthNotePaint.create();
+                                            notePath = SixteenthNotePaint.createPath();
+                                        }
+                                    }
+                                }
+
 
                                 // Change note color and alpha if xPosition <= CHECK_LINE_X
                                 Paint currentNotePaint = new Paint(notePaint);
@@ -179,12 +219,13 @@ public class NotesAndMeasuresDrawer {
 
                                 canvas.restore();
 
-                                drawLedgerLines(canvas, xPosition, chordNote.getNotePitch(), chordNote.getNoteOctave(), xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
+                                drawLedgerLines(canvas, xPosition, chordNote.getNotePitch(), chordNote.getNoteOctave(),measure.getClef() , xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
                             }
                         } else {
                             drawRest(canvas, xPosition, noteDuration, currentTime);
                         }
                     }
+
                     currentX += GlobalVariables.MEASURE_WIDTH;
                 }
             }
@@ -214,18 +255,29 @@ public class NotesAndMeasuresDrawer {
         }
     }
 
-    private void drawLedgerLines(Canvas canvas, float xPosition, String pitch, int octave, Paint linePaint, float noteXPosition) {
+    private void drawLedgerLines(Canvas canvas, float xPosition, String pitch, int octave,int clef, Paint linePaint, float noteXPosition) {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float lineSpacing = staffHeight / 8;
         float topLineY = staffHeight / 2;
         float bottomLineY = topLineY + 4 * lineSpacing;
 
-        int ledgerLineCount = MusicUtils.calculateLedgerLines(pitch, octave);
+        int ledgerLineCount = (clef==0)
+                ?MusicUtils.calculateLedgerLinesGClef(pitch, octave)
+                :MusicUtils.calculateLedgerLinesFClef(pitch, octave);
 
         for (int i = 0; i < ledgerLineCount; i++) {
-            float y = (octave < 4 || (octave == 4 && ("C4".equals(pitch) || "B4".equals(pitch) || "A4".equals(pitch))))
-                    ? bottomLineY + (i + 1) * lineSpacing
-                    : topLineY - (i + 1) * lineSpacing;
+            float y;
+            if(clef==0){
+                y = (octave < 4 || (octave == 4 && ("C4".equals(pitch) || "B4".equals(pitch) || "A4".equals(pitch))))
+                        ? bottomLineY + (i + 1) * lineSpacing
+                        : topLineY - (i + 1) * lineSpacing;
+            }
+            else{
+                y = (octave < 2 || (octave == 2 && ("E2".equals(pitch) || "D2".equals(pitch) || "C2".equals(pitch))))
+                        ? bottomLineY + (i + 1) * lineSpacing
+                        : topLineY - (i + 1) * lineSpacing;
+            }
+
 
             Paint paintToUse = new Paint(linePaint);
             if (noteXPosition < GlobalVariables.CHECK_LINE_X - 160) {
@@ -278,10 +330,10 @@ public class NotesAndMeasuresDrawer {
         }
     }
 
-    private float convertPitchToY(int noteId) {
+    private float convertPitchToY(int noteId, int clef) {
         float baseHeight = GlobalVariables.C4_CURRENT_NOTE; // D4
-        int c4Id = 22;
-        int spacingValue = noteId - c4Id;
+        int baseId = (clef==0)?22:10;
+        int spacingValue = noteId - baseId;
         float noteSpacing = (float) GlobalVariables.FIXED_HEIGHT / 16;
         return baseHeight - spacingValue * noteSpacing;
     }

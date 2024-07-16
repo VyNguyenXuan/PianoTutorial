@@ -42,7 +42,7 @@ public class MusicUtils {
         return noteId % 2 == 0;
     }
 
-    public static int calculateLedgerLines(String pitch, int octave) {
+    public static int calculateLedgerLinesGClef(String pitch, int octave) {
         pitch=getFirstCharacter(pitch);
         int ledgerLines = 0;
         if (octave < 4 || (octave == 4 && "C".equals(pitch))) {
@@ -80,6 +80,53 @@ public class MusicUtils {
                     ledgerLines = 3;
                     break;
                 case "G":
+                    ledgerLines = 4;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return ledgerLines;
+    }
+
+    public static int calculateLedgerLinesFClef(String pitch, int octave) {
+        pitch = getFirstCharacter(pitch);
+        int ledgerLines = 0;
+        if (octave < 2 || (octave == 2 && ("E".equals(pitch)||"D".equals(pitch)||"C".equals(pitch)))) {
+            switch (pitch) {
+                case "E":
+                case "D":
+                    ledgerLines = 1;
+                    break;
+                case "C":
+                case "B":
+                    ledgerLines = 2;
+                    break;
+                case "A":
+                case "G":
+                    ledgerLines = 3;
+                    break;
+                case "F":
+                    ledgerLines = 4;
+                    break;
+                default:
+                    break;
+            }
+        } else if (octave > 3) {
+            switch (pitch) {
+                case "C":
+                case "D":
+                    ledgerLines = 1;
+                    break;
+                case "E":
+                case "F":
+                    ledgerLines = 2;
+                    break;
+                case "G":
+                case "A":
+                    ledgerLines = 3;
+                    break;
+                case "B":
                     ledgerLines = 4;
                     break;
                 default:
