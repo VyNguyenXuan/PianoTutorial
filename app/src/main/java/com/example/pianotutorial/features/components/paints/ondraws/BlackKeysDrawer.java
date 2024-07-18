@@ -5,13 +5,19 @@ import android.graphics.drawable.Drawable;
 
 import com.example.pianotutorial.constants.GlobalVariables;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class BlackKeysDrawer {
     private final Drawable blackKeyDrawable;
+    private final Drawable activeBlackKeyDrawable;
+    private Set<Integer> activeKeyIndices = new HashSet<>();
     private static final int[] BLACK_KEYS_POSITIONS = {0, 1, 3, 4, 5};
 
-
-    public BlackKeysDrawer(Drawable blackKeyDrawable) {
+    public BlackKeysDrawer(Drawable blackKeyDrawable, Drawable activeBlackKeyDrawable) {
         this.blackKeyDrawable = blackKeyDrawable;
+        this.activeBlackKeyDrawable = activeBlackKeyDrawable;
     }
 
     public void draw(Canvas canvas, int width, int height) {
@@ -26,9 +32,16 @@ public class BlackKeysDrawer {
                 float right = left + blackKeyWidth;
                 float bottom = top + blackKeyHeight;
 
+                boolean isActive = activeKeyIndices.contains(i);
+
                 // Set the bounds for the Drawable
-                blackKeyDrawable.setBounds((int) left, (int) top, (int) right, (int) bottom);
-                blackKeyDrawable.draw(canvas);
+                if (isActive) {
+                    activeBlackKeyDrawable.setBounds((int) left, (int) top, (int) right, (int) bottom);
+                    activeBlackKeyDrawable.draw(canvas);
+                } else {
+                    blackKeyDrawable.setBounds((int) left, (int) top, (int) right, (int) bottom);
+                    blackKeyDrawable.draw(canvas);
+                }
             }
         }
     }
@@ -45,4 +58,18 @@ public class BlackKeysDrawer {
         return false;
     }
 
+    public void setActiveKeyIndices(List<Integer> indices) {
+        activeKeyIndices.clear();
+        if (indices != null) {
+            activeKeyIndices.addAll(indices);
+        }
+    }
+
+    public void setActiveKeyIndex(int index, boolean isActive) {
+        if (isActive) {
+            activeKeyIndices.add(index);
+        } else {
+            activeKeyIndices.remove(index);
+        }
+    }
 }

@@ -14,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.example.pianotutorial.R;
+import com.example.pianotutorial.features.components.helpers.MidiAware;
+import com.example.pianotutorial.features.components.helpers.MidiHandler;
 
 public class MidiStatusFragment extends Fragment implements View.OnClickListener {
 

@@ -13,7 +13,8 @@ import androidx.core.content.ContextCompat;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
-import com.example.pianotutorial.features.components.helpers.MusicUtils;
+import com.example.pianotutorial.features.components.helpers.Note;
+import com.example.pianotutorial.features.components.helpers.NoteActionListener;
 import com.example.pianotutorial.features.components.paints.ondraws.AccoladeDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.BlackKeysDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.FClefDrawer;
@@ -22,12 +23,12 @@ import com.example.pianotutorial.features.components.paints.ondraws.LeftLineDraw
 import com.example.pianotutorial.features.components.paints.ondraws.NotesAndMeasuresDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.StaffDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.WhiteKeysDrawer;
-import com.example.pianotutorial.models.Chord;
-import com.example.pianotutorial.models.ChordNote;
 import com.example.pianotutorial.models.Measure;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MusicView extends View {
     private Paint staffPaint;
@@ -48,10 +49,15 @@ public class MusicView extends View {
     private LeftLineDrawer leftLineDrawer;
     private GClefDrawer gClefDrawer;
     private FClefDrawer fClefDrawer;
-
     private AccoladeDrawer accoladeDrawer;
 
     private boolean isPaused;
+
+    // Note name to index mapping
+    private final Map<String, Integer> noteToIndexMapWhiteKey = createNoteToIndexMapWhiteKey();
+    private final Map<String, Integer> noteToIndexMapBlackKey = createNoteToIndexMapBlackKey();
+
+    private NoteActionListener noteActionListener;
 
     public MusicView(Context context) {
         super(context);
@@ -89,41 +95,67 @@ public class MusicView extends View {
         Drawable whiteKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_white_button);
         Drawable activeWhiteKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_white_button_active);
         Drawable blackKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_black_button);
+        Drawable activeBlackKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_black_button_active);
+
 
         measures = new ArrayList<>();
         measuresLeftHand = new ArrayList<>();
 
-        staffDrawer = new StaffDrawer(staffPaint,context);
-        staffDrawerLeftHand = new StaffDrawer(staffPaint,context);
+        staffDrawer = new StaffDrawer(staffPaint, context);
+        staffDrawerLeftHand = new StaffDrawer(staffPaint, context);
 
         notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaint, this);
         notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaint, this);
 
         whiteKeysDrawer = new WhiteKeysDrawer(whiteKeyDrawable, activeWhiteKeyDrawable);
-        blackKeysDrawer = new BlackKeysDrawer(blackKeyDrawable);
+        blackKeysDrawer = new BlackKeysDrawer(blackKeyDrawable, activeBlackKeyDrawable);
 
         leftLineDrawer = new LeftLineDrawer();
         accoladeDrawer = new AccoladeDrawer(context);
         gClefDrawer = new GClefDrawer(context);
         fClefDrawer = new FClefDrawer(context);
 
+        if (context instanceof NoteActionListener) {
+            noteActionListener = (NoteActionListener) context;
+        } else {
+            throw new ClassCastException("Activity must implement NoteActionListener");
+        }
+    }
+
+    private static Map<String, Integer> createNoteToIndexMapWhiteKey() {
+        Map<String, Integer> map = new HashMap<>();
+        String[] notes = {"C", "D", "E", "F", "G", "A", "B"};
+        int index = 0;
+        for (int octave = 2; octave <= 6; octave++) {
+            for (String note : notes) {
+                map.put(note + octave, index++);
+            }
+        }
+        return map;
+    }
+
+    private static Map<String, Integer> createNoteToIndexMapBlackKey() {
+        Map<String, Integer> map = new HashMap<>();
+        String[] notes = {"#C", "#D", "#F", "#G", "#A"};
+        int[] positions ={0,1,3,4,5};
+        for (int octave = 2; octave <= 6; octave++) {
+            for (int i=0;i<5;i++) {
+                String note = notes[i];
+                int index = positions[i];
+                map.put(note + octave, index+7*(octave-2));
+            }
+        }
+        return map;
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        // Draw the left line using LeftLineDrawer
-        float leftLineX = GlobalVariables.CHECK_LINE_X;
-        float topY = 100;
-        float bottomY = 800;
-        leftLineDrawer.draw(canvas, leftLineX, topY, bottomY);
-
-        // Draw the G-clef using GlefDrawer
+        // Draw the G-clef using GClefDrawer
         accoladeDrawer.draw(canvas);
         gClefDrawer.draw(canvas);
         fClefDrawer.draw(canvas);
-
 
         // Draw the staff for the right hand
         staffDrawer.draw(canvas, getWidth());
@@ -143,6 +175,12 @@ public class MusicView extends View {
             notesAndMeasuresDrawerLeftHand.draw(canvas, getWidth(), pauseTime);
         }
         canvas.restore();
+
+        // Draw the left line using LeftLineDrawer
+        float leftLineX = GlobalVariables.CHECK_LINE_X;
+        float topY = 100;
+        float bottomY = 800;
+        leftLineDrawer.draw(canvas, leftLineX-80, topY, bottomY,160,8);
 
         whiteKeysDrawer.draw(canvas, getWidth(), getHeight());
         blackKeysDrawer.draw(canvas, getWidth(), getHeight());
@@ -185,17 +223,17 @@ public class MusicView extends View {
         invalidate();
     }
 
-    public void saveNoteValue(Chord chord) {
-        List<Integer> noteIndices = new ArrayList<>();
-        if (chord.getChordNotes() != null) {
-            for (ChordNote note : chord.getChordNotes()) {
-                int notePitchIndex = MusicUtils.pitchValue(note.getNotePitch());
-                if (notePitchIndex != -1) {
-                    int noteIndex = (note.getNoteOctave() - 2) * 7 + notePitchIndex;
-                    noteIndices.add(noteIndex);
-                }
-            }
-            whiteKeysDrawer.setActiveKeyIndices(noteIndices);
+    public void updateWhiteKeyIndices(Note note, boolean isActive) {
+        Integer noteIndex = noteToIndexMapWhiteKey.get(note.toString());
+        if (noteIndex != null) {
+            whiteKeysDrawer.setActiveKeyIndex(noteIndex, isActive);
+            invalidate();
+        }
+    }
+    public void updateBlackKeyIndices(Note note, boolean isActive) {
+        Integer noteIndex = noteToIndexMapBlackKey.get(note.toString());
+        if (noteIndex != null) {
+            blackKeysDrawer.setActiveKeyIndex(noteIndex, isActive);
             invalidate();
         }
     }

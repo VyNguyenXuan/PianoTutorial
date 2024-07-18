@@ -1,4 +1,4 @@
-package com.example.pianotutorial.features;
+package com.example.pianotutorial.features.components.helpers;
 
 import android.media.midi.MidiOutputPort;
 

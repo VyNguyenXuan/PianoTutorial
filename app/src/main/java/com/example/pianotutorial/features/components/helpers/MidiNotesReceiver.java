@@ -1,13 +1,15 @@
-package com.example.pianotutorial.features;
+package com.example.pianotutorial.features.components.helpers;
 
 import android.media.midi.MidiReceiver;
 import android.util.Log;
 
+import com.example.pianotutorial.features.playscreen.activities.PlayScreenActivity;
+
 public class MidiNotesReceiver extends MidiReceiver {
     private static final String TAG = "MidiNotesReceiver";
-    private final MidiActivity activity;
+    private final PlayScreenActivity activity;
 
-    public MidiNotesReceiver(MidiActivity activity) {
+    public MidiNotesReceiver(PlayScreenActivity activity) {
         this.activity = activity;
     }
 
@@ -25,7 +27,9 @@ public class MidiNotesReceiver extends MidiReceiver {
                 Log.d(TAG, "Note On: " + format(data[offset]));
                 Log.d(TAG, "Note Value: " + data[offset + 1]);
                 Log.d(TAG, "Velocity: " + data[offset + 2]);
-                activity.guessNote(new Note(data[offset + 1]), false);
+                Note note = new Note(data[offset + 1]);
+                note.setNoteId(data[2]);
+                activity.guessNoteAction(note, false);
                 break;
             }
 
@@ -33,7 +37,9 @@ public class MidiNotesReceiver extends MidiReceiver {
                 Log.d(TAG, "Note Off: " + format(data[offset]));
                 Log.d(TAG, "Note Value: " + data[offset + 1]);
                 Log.d(TAG, "Velocity: " + data[offset + 2]);
-                activity.stopGuessNote(new Note(data[offset + 1]));
+                Note note = new Note(data[offset + 1]);
+                note.setNoteId(data[2]);
+                activity.stopGuessNoteAction(note);
                 break;
             }
             ++offset;

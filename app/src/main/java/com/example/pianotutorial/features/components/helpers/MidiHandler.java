@@ -1,4 +1,4 @@
-package com.example.pianotutorial.features;
+package com.example.pianotutorial.features.components.helpers;
 
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
@@ -23,22 +23,22 @@ public class MidiHandler {
     private MidiDevice parentDevice;
     private final MidiAware midiAware;
     private final MidiManager midiManager;
-    private View view;
+    private final View view;
 
     private final TextView deviceStatus;
     private final TextView deviceInfos;
 
-    private ImageView statusImageDisconnected;
-    private ImageView statusImageConnected;
+    private final ImageView statusImageDisconnected;
+    private final ImageView statusImageConnected;
 
     public MidiHandler(final MidiAware midiAware, MidiManager midiManager, View view) {
         this.midiAware = midiAware;
         this.midiManager = midiManager;
         this.view = view;
-        this.deviceStatus = (TextView) view.findViewById(R.id.status);
-        this.deviceInfos = (TextView) view.findViewById(R.id.device_infos);
-        this.statusImageDisconnected = (ImageView) view.findViewById(R.id.status_image_disconnected);
-        this.statusImageConnected = (ImageView) view.findViewById(R.id.status_image_connected);
+        this.deviceStatus = view.findViewById(R.id.status);
+        this.deviceInfos = view.findViewById(R.id.device_infos);
+        this.statusImageDisconnected = view.findViewById(R.id.status_image_disconnected);
+        this.statusImageConnected = view.findViewById(R.id.status_image_connected);
 
         String deviceInfos = getDefaultDeviceInfos(view);
 
@@ -104,8 +104,8 @@ public class MidiHandler {
     }
 
     private void openDevice(MidiDeviceInfo deviceInfo, final MidiManager midiManager) {
-        final TextView statusText = (TextView) view.findViewById(R.id.status);
-        final TextView deviceInfos = (TextView) view.findViewById(R.id.device_infos);
+        final TextView statusText = view.findViewById(R.id.status);
+        final TextView deviceInfos = view.findViewById(R.id.device_infos);
 
         Log.d(TAG, "Opening device: ");
 
@@ -114,45 +114,41 @@ public class MidiHandler {
 
         Log.d(TAG, "Device: " + deviceId + " " + deviceManufacturer);
 
-        midiManager.openDevice(deviceInfo, new MidiManager.OnDeviceOpenedListener() {
+        midiManager.openDevice(deviceInfo, device -> {
+            if (device == null) {
+                statusText.setText(R.string.midi_device_status_error);
+            } else {
+                parentDevice = device;
+                statusText.setText(R.string.midi_device_status_connected);
 
-                    @Override
-                    public void onDeviceOpened(MidiDevice device) {
-                        if (device == null) {
-                            statusText.setText(R.string.midi_device_status_error);
-                        } else {
-                            parentDevice = device;
-                            statusText.setText(R.string.midi_device_status_connected);
-
-                            MidiDeviceInfo.PortInfo[] portInfos = device.getInfo().getPorts();
+                MidiDeviceInfo.PortInfo[] portInfos = device.getInfo().getPorts();
 
 
-                            for (MidiDeviceInfo.PortInfo portInfo : portInfos) {
-                                Log.d(TAG, "Cycling port " + portInfo.getPortNumber());
-                                if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
-                                    Log.d(TAG, "Found OUTPUT port");
+                for (MidiDeviceInfo.PortInfo portInfo : portInfos) {
+                    Log.d(TAG, "Cycling port " + portInfo.getPortNumber());
+                    if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
+                        Log.d(TAG, "Found OUTPUT port");
 
-                                    deviceInfos.setText(view.getContext().getString(
-                                            R.string.midi_device_infos,
-                                            deviceId,
-                                            deviceManufacturer,
-                                            portInfo.getType(),
-                                            portInfo.getPortNumber()
-                                    ));
+                        deviceInfos.setText(view.getContext().getString(
+                                R.string.midi_device_infos,
+                                deviceId,
+                                deviceManufacturer,
+                                portInfo.getType(),
+                                portInfo.getPortNumber()
+                        ));
 
-                                    final MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
-                                    statusImageConnected.setVisibility(View.VISIBLE);
-                                    statusImageDisconnected.setVisibility(View.GONE);
+                        final MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
+                        statusImageConnected.setVisibility(View.VISIBLE);
+                        statusImageDisconnected.setVisibility(View.GONE);
 
-                                    if (midiAware != null) {
-                                        midiAware.onDeviceOpened(outputPort);
-                                    }
-                                    break;
-                                }
-                            }
+                        if (midiAware != null) {
+                            midiAware.onDeviceOpened(outputPort);
                         }
+                        break;
                     }
-                }, new Handler(Looper.getMainLooper())
+                }
+            }
+        }, new Handler(Looper.getMainLooper())
         );
     }
 }

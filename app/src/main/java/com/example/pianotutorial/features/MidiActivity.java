@@ -10,21 +10,32 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.media.MediaPlayer;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pianotutorial.R;
+import com.example.pianotutorial.features.components.helpers.MidiAware;
+import com.example.pianotutorial.features.components.helpers.MidiHandler;
+import com.example.pianotutorial.features.components.helpers.Note;
 
-public class MidiActivity extends AppCompatActivity implements MidiAware {
+import org.billthefarmer.mididriver.MidiDriver;
+import org.billthefarmer.mididriver.MidiConstants;
+import org.billthefarmer.mididriver.GeneralMidiConstants;
+import org.billthefarmer.mididriver.ReverbConstants;
+
+public class MidiActivity extends AppCompatActivity implements MidiAware, CompoundButton.OnCheckedChangeListener, MidiDriver.OnMidiStartListener {
 
     private static final String TAG = "MidiActivity";
-
     private MidiManager midiManager;
     private TextView checkTextView;
     private Handler mainHandler;
     private MidiHandler midiHandler;
+    protected MidiDriver midi;
+    protected MediaPlayer player;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +69,72 @@ public class MidiActivity extends AppCompatActivity implements MidiAware {
         // Initialize MidiHandler
         midiHandler = new MidiHandler(this, midiManager, findViewById(R.id.midi_status_fragment));
         midiHandler.registerMidiHandler();
+
+        // Initialize the MIDI driver
+        midi = MidiDriver.getInstance(this);
+
+        // Set on midi start listener
+        if (midi != null)
+            midi.setOnMidiStartListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Start midi
+        if (midi != null)
+            midi.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Stop midi
+        if (midi != null)
+            midi.stop();
+
+        // Stop player
+        if (player != null)
+            player.stop();
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked)
+            midi.setReverb(ReverbConstants.CHAMBER);
+        else
+            midi.setReverb(ReverbConstants.OFF);
+    }
+
+    @Override
+    public void onMidiStart() {
+        // Program change - piano
+        sendMidi(MidiConstants.PROGRAM_CHANGE, GeneralMidiConstants.ACOUSTIC_GRAND_PIANO);
+
+        // Get the config
+        int config[] = midi.config();
+
+    }
+
+    protected void sendMidi(int m, int n) {
+        byte msg[] = new byte[2];
+
+        msg[0] = (byte) m;
+        msg[1] = (byte) n;
+
+        midi.write(msg);
+    }
+
+    protected void sendMidi(int m, int n, int v) {
+        byte msg[] = new byte[3];
+
+        msg[0] = (byte) m;
+        msg[1] = (byte) n;
+        msg[2] = (byte) v;
+
+        midi.write(msg);
     }
 
     @Override
@@ -114,16 +191,17 @@ public class MidiActivity extends AppCompatActivity implements MidiAware {
         MidiOutputPort midiOutputPort = midiDevice.openOutputPort(0);
         if (midiOutputPort != null) {
             // Connect MidiNotesReceiver
-            midiOutputPort.connect(new MidiNotesReceiver(this));
+            //midiOutputPort.connect(new MidiNotesReceiver(this));
         }
     }
 
     public void stopGuessNote(Note note) {
-        // Handle when a note is turned off
-    }
+        sendMidi(MidiConstants.NOTE_OFF, note.getNoteId(), 0);    }
 
     public void guessNote(final Note note, boolean forceRightGuess) {
-        checkTextView.setText(note.getNotePitch().getLabel());
+        Log.d(TAG, "Note pressed: " + note.toString());
+        sendMidi(MidiConstants.NOTE_ON, note.getNoteId(), 63);
+
     }
 
     @Override

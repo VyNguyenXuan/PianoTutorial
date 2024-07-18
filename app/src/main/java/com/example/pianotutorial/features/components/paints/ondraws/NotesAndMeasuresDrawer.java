@@ -75,7 +75,7 @@ public class NotesAndMeasuresDrawer {
 
                         // Change note color and alpha if xPosition <= CHECK_LINE_X
                         if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
-                            musicView.saveNoteValue(chord); // Notify MusicView to save the note value
+                            //musicView.saveNoteValue(chord); // Notify MusicView to save the note value
                         }
 
                         if (!chord.getChordNotes().isEmpty()) {

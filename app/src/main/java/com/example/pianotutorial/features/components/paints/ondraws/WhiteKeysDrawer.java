@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable;
 
 import com.example.pianotutorial.constants.GlobalVariables;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class WhiteKeysDrawer {
     private final Drawable whiteKeyDrawable;
     private final Drawable activeWhiteKeyDrawable;
-    private List<Integer> activeKeyIndices;
+    private Set<Integer> activeKeyIndices = new HashSet<>();
 
     public WhiteKeysDrawer(Drawable whiteKeyDrawable, Drawable activeWhiteKeyDrawable) {
         this.whiteKeyDrawable = whiteKeyDrawable;
@@ -27,7 +29,7 @@ public class WhiteKeysDrawer {
             float right = left + keyWidth;
             float bottom = height - 10;
 
-            boolean isActive = activeKeyIndices != null && activeKeyIndices.contains(i);
+            boolean isActive = activeKeyIndices.contains(i);
 
             // Set the bounds for the Drawable
             if (isActive) {
@@ -41,6 +43,17 @@ public class WhiteKeysDrawer {
     }
 
     public void setActiveKeyIndices(List<Integer> indices) {
-        this.activeKeyIndices = indices;
+        activeKeyIndices.clear();
+        if (indices != null) {
+            activeKeyIndices.addAll(indices);
+        }
+    }
+
+    public void setActiveKeyIndex(int index, boolean isActive) {
+        if (isActive) {
+            activeKeyIndices.add(index);
+        } else {
+            activeKeyIndices.remove(index);
+        }
     }
 }

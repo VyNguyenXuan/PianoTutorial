@@ -25,6 +25,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -53,6 +54,8 @@ dependencies {
     implementation(libs.exoplayer)
     implementation(libs.exoplayer.dash)
     implementation(libs.media3.ui)
+    implementation(libs.mididriver)
+
 
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

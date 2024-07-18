@@ -1,4 +1,4 @@
-package com.example.pianotutorial.features;
+package com.example.pianotutorial.features.components.helpers;
 import androidx.annotation.NonNull;
 
 import java.util.Objects;
@@ -6,6 +6,7 @@ import java.util.Objects;
 public class Note implements Comparable<Note> {
     private NotePitch notePitch;
     private int octave;
+    private int noteId;
 
     public Note(int absolutePitch) {
         int relativePitch = absolutePitch % 12;
@@ -43,6 +44,14 @@ public class Note implements Comparable<Note> {
     @Override
     public String toString() {
         return this.notePitch.getLabel() + this.getOctave();
+    }
+
+    public int getNoteId() {
+        return noteId;
+    }
+
+    public void setNoteId(int noteId) {
+        this.noteId = noteId;
     }
 
     /**
