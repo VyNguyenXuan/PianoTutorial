@@ -12,10 +12,6 @@ import androidx.media3.exoplayer.ExoPlayer;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.components.paints.MusicView;
-import com.example.pianotutorial.models.Measure;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
