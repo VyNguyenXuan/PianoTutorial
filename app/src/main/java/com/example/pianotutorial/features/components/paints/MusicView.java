@@ -136,7 +136,7 @@ public class MusicView extends View {
 
     private static Map<String, Integer> createNoteToIndexMapBlackKey() {
         Map<String, Integer> map = new HashMap<>();
-        String[] notes = {"#C", "#D", "#F", "#G", "#A"};
+        String[] notes = {"C#", "D#", "F#", "G#", "A#"};
         int[] positions ={0,1,3,4,5};
         for (int octave = 2; octave <= 6; octave++) {
             for (int i=0;i<5;i++) {

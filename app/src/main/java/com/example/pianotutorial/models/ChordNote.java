@@ -23,9 +23,6 @@ public class ChordNote {
 
     @SerializedName("noteOctave")
     private int noteOctave;
-
-    @SerializedName("chromatic")
-    private int chromatic;
     public ChordNote() {
         id = 0;
         noteId = 0;
@@ -34,10 +31,9 @@ public class ChordNote {
         noteName = "";
         notePitch = "";
         noteOctave = 0;
-        chromatic = 0;
     }
 
-    public ChordNote(int id, int noteId, int chordId, int chordPosition, String noteName, String notePitch, int noteOctave, int chromatic) {
+    public ChordNote(int id, int noteId, int chordId, int chordPosition, String noteName, String notePitch, int noteOctave) {
         this.id = id;
         this.noteId = noteId;
         this.chordId = chordId;
@@ -45,7 +41,6 @@ public class ChordNote {
         this.noteName = noteName;
         this.notePitch = notePitch;
         this.noteOctave = noteOctave;
-        this.chromatic = chromatic;
     }
 
     public int getId() {
@@ -102,13 +97,5 @@ public class ChordNote {
 
     public void setNoteOctave(int noteOctave) {
         this.noteOctave = noteOctave;
-    }
-
-    public int getChromatic() {
-        return chromatic;
-    }
-
-    public void setChromatic(int chromatic) {
-        this.chromatic = chromatic;
     }
 }

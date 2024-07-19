@@ -80,8 +80,11 @@ public class NotesAndMeasuresDrawer {
 
                         if (!chord.getChordNotes().isEmpty()) {
                             for (ChordNote chordNote : chord.getChordNotes()) {
+                                int currentNote=chordNote.getNoteId();
+                                if(currentNote>112) currentNote-=112;
+                                else if(currentNote>56) currentNote-=56;
                                 canvas.save();
-                                float noteY = convertPitchToY(chordNote.getNoteId(),measure.getClef());
+                                float noteY = MusicUtils.convertPitchToY(currentNote,measure.getClef());
                                 canvas.translate(xPosition, noteY);
 
                                 float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight;
@@ -91,7 +94,7 @@ public class NotesAndMeasuresDrawer {
                                 Path notePath;
 
                                 if(measure.getClef()==0){
-                                    if (chordNote.getNoteOctave() > 4 && (!chordNote.getNotePitch().equals("5A"))) {
+                                    if (currentNote>27) {
                                         if (noteDuration < 8 && noteDuration >= 4) {
                                             notePaint = WholeNotePaint.create();
                                             notePath = WholeNotePaint.createPath();
@@ -128,7 +131,7 @@ public class NotesAndMeasuresDrawer {
                                     }
                                 }
                                 else {
-                                    if (chordNote.getNoteOctave() > 2 && (!chordNote.getNotePitch().equals("C3"))) {
+                                    if (currentNote>15) {
                                         if (noteDuration < 8 && noteDuration >= 4) {
                                             notePaint = WholeNotePaint.create();
                                             notePath = WholeNotePaint.createPath();
@@ -165,7 +168,6 @@ public class NotesAndMeasuresDrawer {
                                     }
                                 }
 
-
                                 // Change note color and alpha if xPosition <= CHECK_LINE_X
                                 Paint currentNotePaint = new Paint(notePaint);
                                 if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
@@ -189,7 +191,7 @@ public class NotesAndMeasuresDrawer {
                                 }
 
                                 // Draw chromatic signs (flat or sharp)
-                                if (chordNote.getChromatic() == 0) { // Flat sign
+                                if (chordNote.getNoteId()>65 && chordNote.getNoteId()<113) { // Flat sign
                                     Paint flatSignPaint = new Paint(FlatSignPaint.create());
                                     if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
                                         flatSignPaint.setColor(changedColorPaint.getColor());
@@ -198,8 +200,8 @@ public class NotesAndMeasuresDrawer {
                                         flatSignPaint.setAlpha(0);
                                     }
                                     Path flatSignPath = FlatSignPaint.createPath();
-                                    drawChromaticSign(canvas, flatSignPaint, flatSignPath, noteHeadOriginalHeight);
-                                } else if (chordNote.getChromatic() == 2) { // Sharp sign
+                                    MusicUtils.drawChromaticSign(canvas, flatSignPaint, flatSignPath, noteHeadOriginalHeight);
+                                } else if (chordNote.getNoteId()>112) { // Sharp sign
                                     Paint sharpSignPaint = new Paint(SharpSignPaint.create());
                                     if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
                                         sharpSignPaint.setColor(changedColorPaint.getColor());
@@ -208,21 +210,21 @@ public class NotesAndMeasuresDrawer {
                                         sharpSignPaint.setAlpha(0);
                                     }
                                     Path sharpSignPath = SharpSignPaint.createPath();
-                                    drawChromaticSign(canvas, sharpSignPaint, sharpSignPath, noteHeadOriginalHeight);
+                                    MusicUtils.drawChromaticSign(canvas, sharpSignPaint, sharpSignPath, noteHeadOriginalHeight);
                                 }
 
                                 // Draw dotted notes
                                 int dottedNoteCount = MusicUtils.countDottedNotes(noteDuration);
                                 if (dottedNoteCount > 0) {
-                                    drawDottedNotes(canvas, currentNotePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNoteId());
+                                    MusicUtils.drawDottedNotes(canvas, currentNotePaint, dottedNoteCount, noteHeadOriginalHeight, chordNote.getNoteId());
                                 }
 
                                 canvas.restore();
 
-                                drawLedgerLines(canvas, xPosition, chordNote.getNotePitch(), chordNote.getNoteOctave(),measure.getClef() , xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
+                                MusicUtils.drawLedgerLines(canvas, xPosition, chordNote.getNoteId(),measure.getClef() , xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
                             }
                         } else {
-                            drawRest(canvas, xPosition, noteDuration, currentTime);
+                            MusicUtils.drawRest(canvas, xPosition, noteDuration, currentTime,musicView);
                         }
                     }
 
@@ -230,111 +232,5 @@ public class NotesAndMeasuresDrawer {
                 }
             }
         }
-    }
-
-    private void drawChromaticSign(Canvas canvas, Paint chromaticPaint, Path chromaticPath, float noteHeadOriginalHeight) {
-        float chromaticX = -noteHeadOriginalHeight * 1.5f + 36; // Adjust the x-position as needed
-        float chromaticY = 54f;
-        canvas.save();
-        canvas.translate(chromaticX, chromaticY);
-        float scaleFactor = noteHeadOriginalHeight / 24f; // Adjust the scale as needed
-        canvas.scale(scaleFactor, scaleFactor);
-        canvas.drawPath(chromaticPath, chromaticPaint);
-        canvas.restore();
-    }
-
-    private void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, int noteId) {
-        float dotRadius = noteHeadOriginalHeight / 4;
-        float dotX = noteHeadOriginalHeight + noteHeadOriginalHeight;
-        float dotY = noteHeadOriginalHeight * 4;
-        if (MusicUtils.isNoteOnLine(noteId)) {
-            dotY -= (float) GlobalVariables.FIXED_HEIGHT / 32; // If isNoteOnLine move up a note
-        }
-        for (int i = 0; i < dottedNoteCount; i++) {
-            canvas.drawCircle(dotX + (i * noteHeadOriginalHeight) + 30, dotY, dotRadius, notePaint);
-        }
-    }
-
-    private void drawLedgerLines(Canvas canvas, float xPosition, String pitch, int octave,int clef, Paint linePaint, float noteXPosition) {
-        float staffHeight = GlobalVariables.FIXED_HEIGHT;
-        float lineSpacing = staffHeight / 8;
-        float topLineY = staffHeight / 2;
-        float bottomLineY = topLineY + 4 * lineSpacing;
-
-        int ledgerLineCount = (clef==0)
-                ?MusicUtils.calculateLedgerLinesGClef(pitch, octave)
-                :MusicUtils.calculateLedgerLinesFClef(pitch, octave);
-
-        for (int i = 0; i < ledgerLineCount; i++) {
-            float y;
-            if(clef==0){
-                y = (octave < 4 || (octave == 4 && ("C4".equals(pitch) || "B4".equals(pitch) || "A4".equals(pitch))))
-                        ? bottomLineY + (i + 1) * lineSpacing
-                        : topLineY - (i + 1) * lineSpacing;
-            }
-            else{
-                y = (octave < 2 || (octave == 2 && ("E2".equals(pitch) || "D2".equals(pitch) || "C2".equals(pitch))))
-                        ? bottomLineY + (i + 1) * lineSpacing
-                        : topLineY - (i + 1) * lineSpacing;
-            }
-
-
-            Paint paintToUse = new Paint(linePaint);
-            if (noteXPosition < GlobalVariables.CHECK_LINE_X - 160) {
-                paintToUse.setAlpha(0);
-            }
-            canvas.drawLine(xPosition + 28, y, xPosition +106, y, paintToUse);
-        }
-    }
-
-    private void drawRest(Canvas canvas, float xPosition, float duration, long currentTime) {
-        Drawable restDrawable;
-        float yPosition;
-        float additionalOffset = 0;
-
-        // Select the appropriate drawable and y-position based on the duration
-        if (duration == 4) {
-            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_whole_rest, null);
-            yPosition = 234; // Set appropriate y-position
-            additionalOffset = 600; // Add additional left offset
-        } else if (duration == 2) {
-            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_whole_rest, null);
-            yPosition = 260; // Set appropriate y-position
-            additionalOffset = 300; // Add additional left offset
-        } else if (duration == 1) {
-            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_quarter_rest, null);
-            yPosition = 280; // Set appropriate y-position
-        } else if (duration == 0.5) {
-            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_eighth_rest, null);
-            yPosition = 282; // Set appropriate y-position
-        } else if (duration == 0.25) {
-            restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_sixteenth_rest, null);
-            yPosition = 290; // Set appropriate y-position
-        } else {
-            return; // Invalid duration for rest
-        }
-
-        int intrinsicWidth = restDrawable != null ? restDrawable.getIntrinsicWidth() : 0;
-        int intrinsicHeight = restDrawable != null ? restDrawable.getIntrinsicHeight() : 0;
-
-        float top = yPosition - (float) intrinsicHeight / 2;
-        float right = xPosition + intrinsicWidth + additionalOffset;
-        float bottom = top + intrinsicHeight;
-
-        if (restDrawable != null) {
-            restDrawable.setBounds((int) (xPosition + additionalOffset), (int) top, (int) right, (int) bottom);
-        }
-
-        if (restDrawable != null) {
-            restDrawable.draw(canvas);
-        }
-    }
-
-    private float convertPitchToY(int noteId, int clef) {
-        float baseHeight = GlobalVariables.C4_CURRENT_NOTE; // D4
-        int baseId = (clef==0)?22:10;
-        int spacingValue = noteId - baseId;
-        float noteSpacing = (float) GlobalVariables.FIXED_HEIGHT / 16;
-        return baseHeight - spacingValue * noteSpacing;
     }
 }
