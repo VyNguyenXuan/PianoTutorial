@@ -223,23 +223,24 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         }
     }
 
+    @Override
     public void guessNoteAction(Note note, boolean forceRightGuess) {
         Log.d(TAG, "Note pressed: " + note.toString());
         sendMidi(MidiConstants.NOTE_ON, note.getNoteId(), 63);
-        activityPlayscreenBinding.musicView.updateWhiteKeyIndices(note, true); // Update key indices to highlight the key
-        activityPlayscreenBinding.musicView.updateBlackKeyIndices(note, true); // Update key indices to highlight the key
-
-
+        activityPlayscreenBinding.musicView.updateWhiteKeyIndices(note, true);
+        activityPlayscreenBinding.musicView.updateBlackKeyIndices(note, true);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawer().setCorrectNoteAction(note);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawerLeftHand().setCorrectNoteAction(note);
 
     }
 
     @Override
     public void stopGuessNoteAction(Note note) {
         sendMidi(MidiConstants.NOTE_OFF, note.getNoteId(), 0);
-        activityPlayscreenBinding.musicView.updateWhiteKeyIndices(note, false); // Update key indices to highlight the key
-        activityPlayscreenBinding.musicView.updateBlackKeyIndices(note, false); // Update key indices to highlight the key
-
-
+        activityPlayscreenBinding.musicView.updateWhiteKeyIndices(note, false);
+        activityPlayscreenBinding.musicView.updateBlackKeyIndices(note, false);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawer().setCorrectNoteAction(null);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawerLeftHand().setCorrectNoteAction(null);
     }
 
     private void startCountdown() {

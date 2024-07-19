@@ -43,7 +43,24 @@ public class Note implements Comparable<Note> {
 
     @Override
     public String toString() {
-        return this.notePitch.getLabel() + this.getOctave();
+        if (Objects.equals(this.notePitch.getLabel(), "C#")){
+            return "C"+this.getOctave()+"#";
+        }
+        else if (Objects.equals(this.notePitch.getLabel(), "D#")){
+            return "D"+this.getOctave()+"#";
+        }
+        else if (Objects.equals(this.notePitch.getLabel(), "F#")){
+            return "F"+this.getOctave()+"#";
+        }else if (Objects.equals(this.notePitch.getLabel(), "G#")){
+            return "G"+this.getOctave()+"#";
+        }
+        else if (Objects.equals(this.notePitch.getLabel(), "A#")){
+            return "A"+this.getOctave()+"#";
+        }
+        else{
+            return this.notePitch.getLabel() + this.getOctave();
+
+        }
     }
 
     public int getNoteId() {

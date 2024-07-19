@@ -33,7 +33,8 @@ import java.util.Map;
 public class MusicView extends View {
     private Paint staffPaint;
     private Paint measurePaint;
-    private Paint changedColorPaint;
+    private Paint changedColorPaintPass;
+    private Paint changedColorPaintMiss;
     private List<Measure> measures;
     private List<Measure> measuresLeftHand;
     private long startTime;
@@ -45,7 +46,6 @@ public class MusicView extends View {
     private NotesAndMeasuresDrawer notesAndMeasuresDrawerLeftHand;
     private WhiteKeysDrawer whiteKeysDrawer;
     private BlackKeysDrawer blackKeysDrawer;
-
     private LeftLineDrawer leftLineDrawer;
     private GClefDrawer gClefDrawer;
     private FClefDrawer fClefDrawer;
@@ -83,9 +83,13 @@ public class MusicView extends View {
         measurePaint.setColor(Color.BLACK);
         measurePaint.setStrokeWidth(2); // Adjusted for thinner lines
 
-        changedColorPaint = new Paint();
-        changedColorPaint.setColor(Color.BLUE);
-        changedColorPaint.setStrokeWidth(2); // Adjusted for thinner lines
+        changedColorPaintPass = new Paint();
+        changedColorPaintPass.setColor(Color.GREEN);
+        changedColorPaintPass.setStrokeWidth(2); // Adjusted for thinner lines
+
+        changedColorPaintMiss = new Paint();
+        changedColorPaintMiss.setColor(Color.RED);
+        changedColorPaintMiss.setStrokeWidth(2); // Adjusted for thinner lines
 
         Paint textPaint = new Paint();
         textPaint.setColor(Color.RED);
@@ -104,8 +108,8 @@ public class MusicView extends View {
         staffDrawer = new StaffDrawer(staffPaint, context);
         staffDrawerLeftHand = new StaffDrawer(staffPaint, context);
 
-        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaint, this);
-        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaint, this);
+        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
+        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
 
         whiteKeysDrawer = new WhiteKeysDrawer(whiteKeyDrawable, activeWhiteKeyDrawable);
         blackKeysDrawer = new BlackKeysDrawer(blackKeyDrawable, activeBlackKeyDrawable);
@@ -137,16 +141,17 @@ public class MusicView extends View {
     private static Map<String, Integer> createNoteToIndexMapBlackKey() {
         Map<String, Integer> map = new HashMap<>();
         String[] notes = {"C#", "D#", "F#", "G#", "A#"};
-        int[] positions ={0,1,3,4,5};
+        int[] positions = {0, 1, 3, 4, 5};
         for (int octave = 2; octave <= 6; octave++) {
-            for (int i=0;i<5;i++) {
+            for (int i = 0; i < notes.length; i++) {
                 String note = notes[i];
                 int index = positions[i];
-                map.put(note + octave, index+7*(octave-2));
+                map.put(note.charAt(0) + String.valueOf(octave) + note.charAt(1), index + 7 * (octave - 2));
             }
         }
         return map;
     }
+
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
@@ -180,7 +185,7 @@ public class MusicView extends View {
         float leftLineX = GlobalVariables.CHECK_LINE_X;
         float topY = 100;
         float bottomY = 800;
-        leftLineDrawer.draw(canvas, leftLineX-80, topY, bottomY,160,8);
+        leftLineDrawer.draw(canvas, leftLineX - 80, topY, bottomY, 160, 8);
 
         whiteKeysDrawer.draw(canvas, getWidth(), getHeight());
         blackKeysDrawer.draw(canvas, getWidth(), getHeight());
@@ -191,11 +196,11 @@ public class MusicView extends View {
     public void setMeasures(List<Measure> measures, List<Measure> measuresLeftHand) {
         if (measures != null) {
             this.measures = measures;
-            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaint, this);
+            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
         }
         if (measuresLeftHand != null) {
             this.measuresLeftHand = measuresLeftHand;
-            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaint, this);
+            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
         }
     }
 
@@ -230,11 +235,18 @@ public class MusicView extends View {
             invalidate();
         }
     }
+
     public void updateBlackKeyIndices(Note note, boolean isActive) {
         Integer noteIndex = noteToIndexMapBlackKey.get(note.toString());
         if (noteIndex != null) {
             blackKeysDrawer.setActiveKeyIndex(noteIndex, isActive);
             invalidate();
         }
+    }
+    public NotesAndMeasuresDrawer getNotesAndMeasuresDrawer() {
+        return notesAndMeasuresDrawer;
+    }
+    public NotesAndMeasuresDrawer getNotesAndMeasuresDrawerLeftHand() {
+        return notesAndMeasuresDrawerLeftHand;
     }
 }

@@ -10,6 +10,8 @@ import androidx.core.content.res.ResourcesCompat;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.components.paints.MusicView;
+import com.example.pianotutorial.features.components.paints.notepaints.FlatSignPaint;
+import com.example.pianotutorial.models.ChordNote;
 
 public class MusicUtils {
 
@@ -124,39 +126,45 @@ public class MusicUtils {
         }
     }
 
-    public static void drawLedgerLines(Canvas canvas, float xPosition,int noteId ,int clef, Paint linePaint, float noteXPosition) {
+    public static void drawLedgerLines(Canvas canvas, float xPosition, ChordNote chordNote, int clef, Paint linePaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, float checkLineX, boolean isPassed, boolean isCorrect) {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float lineSpacing = staffHeight / 8;
         float topLineY = staffHeight / 2;
         float bottomLineY = topLineY + 4 * lineSpacing;
+        int noteId = chordNote.getNoteId();
         while (noteId > 56) {
             noteId -= 56;
         }
 
-        int ledgerLineCount = (clef==0)
-                ?MusicUtils.calculateLedgerLinesGClef(noteId)
-                :MusicUtils.calculateLedgerLinesFClef(noteId);
+        int ledgerLineCount = (clef == 0)
+                ? MusicUtils.calculateLedgerLinesGClef(noteId)
+                : MusicUtils.calculateLedgerLinesFClef(noteId);
 
         for (int i = 0; i < ledgerLineCount; i++) {
             float y;
-            if(clef==0){
-                y = (noteId<23)
+            if (clef == 0) {
+                y = (noteId < 23)
                         ? bottomLineY + (i + 1) * lineSpacing
                         : topLineY - (i + 1) * lineSpacing;
-            }
-            else{
-                y = (noteId<11)
+            } else {
+                y = (noteId < 11)
                         ? bottomLineY + (i + 1) * lineSpacing
                         : topLineY - (i + 1) * lineSpacing;
             }
 
 
             Paint paintToUse = new Paint(linePaint);
-            paintToUse.setStrokeWidth(3);
-            if (noteXPosition < GlobalVariables.CHECK_LINE_X - 160) {
+            if (isPassed) {
+                if (isCorrect) {
+                    paintToUse.setColor(changedColorPaintPass.getColor());
+                } else {
+                    paintToUse.setColor(changedColorPaintMiss.getColor());
+                }
+            }
+            if (xPosition < checkLineX - 160) {
                 paintToUse.setAlpha(0);
             }
-            canvas.drawLine(xPosition + 24, y, xPosition +110, y, paintToUse);
+            canvas.drawLine(xPosition + 24, y, xPosition + 110, y, paintToUse);
         }
     }
 
@@ -205,7 +213,7 @@ public class MusicUtils {
 
     public static float convertPitchToY(int noteId, int clef) {
         float baseHeight = GlobalVariables.C4_CURRENT_NOTE; // D4
-        int baseId = (clef==0)?22:10;
+        int baseId = (clef == 0) ? 22 : 10;
         int spacingValue = noteId - baseId;
         float noteSpacing = (float) GlobalVariables.FIXED_HEIGHT / 16;
         return baseHeight - spacingValue * noteSpacing;

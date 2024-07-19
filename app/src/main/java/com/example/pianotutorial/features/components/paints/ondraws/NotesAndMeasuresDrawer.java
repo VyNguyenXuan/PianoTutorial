@@ -3,13 +3,10 @@ package com.example.pianotutorial.features.components.paints.ondraws;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.drawable.Drawable;
 
-import androidx.core.content.res.ResourcesCompat;
-
-import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.components.helpers.MusicUtils;
+import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.paints.MusicView;
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaintReverse;
@@ -28,23 +25,43 @@ import com.example.pianotutorial.models.Chord;
 import com.example.pianotutorial.models.ChordNote;
 import com.example.pianotutorial.models.Measure;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NotesAndMeasuresDrawer {
     private final Paint measurePaint;
     private final Paint staffPaint;
-    private final Paint changedColorPaint;
+    private final Paint changedColorPaintPass;
+    private final Paint changedColorPaintMiss;
     private final List<Measure> measures;
     private final MusicView musicView;
+    private Note correctNote;
 
-    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaint, MusicView musicView) {
+    // Lưu trạng thái của các nốt nhạc đã được kiểm tra
+    private final Map<ChordNote, NoteStatus> noteStatuses;
+
+    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView) {
         this.measurePaint = measurePaint;
         this.staffPaint = staffPaint;
         staffPaint.setStrokeWidth(4);
-        this.changedColorPaint = changedColorPaint;
-        changedColorPaint.setStrokeWidth(4);
+        this.changedColorPaintPass = changedColorPaintPass;
+        changedColorPaintPass.setStrokeWidth(4);
+        this.changedColorPaintMiss = changedColorPaintMiss;
+        changedColorPaintMiss.setStrokeWidth(4);
         this.measures = measures;
         this.musicView = musicView;
+        this.noteStatuses = new HashMap<>();
+    }
+
+    public void setCorrectNoteAction(Note note) {
+        this.correctNote = note;
+    }
+
+    // Lớp nội bộ để lưu trạng thái của nốt nhạc
+    private static class NoteStatus {
+        boolean isPassed;
+        boolean isCorrect;
     }
 
     public void draw(Canvas canvas, int width, long startTime) {
@@ -52,7 +69,7 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX = 750 - (currentTime * 0.6f * GlobalVariables.SPEED);
+        float currentX = GlobalVariables.CHECK_LINE_X - (currentTime * 0.6f * GlobalVariables.SPEED);
 
         if (measures != null) {
             for (Measure measure : measures) {
@@ -73,18 +90,13 @@ public class NotesAndMeasuresDrawer {
 
                         chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
 
-                        // Change note color and alpha if xPosition <= CHECK_LINE_X
-                        if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
-                            //musicView.saveNoteValue(chord); // Notify MusicView to save the note value
-                        }
-
                         if (!chord.getChordNotes().isEmpty()) {
                             for (ChordNote chordNote : chord.getChordNotes()) {
-                                int currentNote=chordNote.getNoteId();
-                                if(currentNote>112) currentNote-=112;
-                                else if(currentNote>56) currentNote-=56;
+                                int currentNote = chordNote.getNoteId();
+                                if (currentNote > 112) currentNote -= 112;
+                                else if (currentNote > 56) currentNote -= 56;
                                 canvas.save();
-                                float noteY = MusicUtils.convertPitchToY(currentNote,measure.getClef());
+                                float noteY = MusicUtils.convertPitchToY(currentNote, measure.getClef());
                                 canvas.translate(xPosition, noteY);
 
                                 float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight;
@@ -93,8 +105,8 @@ public class NotesAndMeasuresDrawer {
                                 Paint notePaint;
                                 Path notePath;
 
-                                if(measure.getClef()==0){
-                                    if (currentNote>27) {
+                                if (measure.getClef() == 0) {
+                                    if (currentNote > 27) {
                                         if (noteDuration < 8 && noteDuration >= 4) {
                                             notePaint = WholeNotePaint.create();
                                             notePath = WholeNotePaint.createPath();
@@ -129,9 +141,8 @@ public class NotesAndMeasuresDrawer {
                                             notePath = SixteenthNotePaint.createPath();
                                         }
                                     }
-                                }
-                                else {
-                                    if (currentNote>15) {
+                                } else {
+                                    if (currentNote > 15) {
                                         if (noteDuration < 8 && noteDuration >= 4) {
                                             notePaint = WholeNotePaint.create();
                                             notePath = WholeNotePaint.createPath();
@@ -168,12 +179,46 @@ public class NotesAndMeasuresDrawer {
                                     }
                                 }
 
-                                // Change note color and alpha if xPosition <= CHECK_LINE_X
-                                Paint currentNotePaint = new Paint(notePaint);
-                                if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
-                                    currentNotePaint.setColor(changedColorPaint.getColor());
+                                // Kiểm tra và cập nhật trạng thái của nốt nhạc
+                                if (!noteStatuses.containsKey(chordNote)) {
+                                    noteStatuses.put(chordNote, new NoteStatus());
                                 }
-                                if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+
+                                NoteStatus noteStatus = noteStatuses.get(chordNote);
+                                Paint currentNotePaint = new Paint(notePaint);
+
+                                // Determine if the note is chromatic
+                                boolean isChromatic = chordNote.getNoteId() > 65 && chordNote.getNoteId() < 169 || chordNote.getNoteId() > 112;
+
+                                float checkLineX = GlobalVariables.CHECK_LINE_X-40;
+                                if (isChromatic) {
+                                    checkLineX = GlobalVariables.CHECK_LINE_X-64;
+                                }else{
+                                    if(measure.getClef()==0){
+                                        if(MusicUtils.calculateLedgerLinesGClef(currentNote)>0){
+                                            checkLineX=GlobalVariables.CHECK_LINE_X-64;
+                                        }
+                                    }else{
+                                        if(MusicUtils.calculateLedgerLinesFClef(currentNote)>0){
+                                            checkLineX=GlobalVariables.CHECK_LINE_X-64;
+                                        }
+                                    }
+                                }
+
+                                if (xPosition <= checkLineX && !noteStatus.isPassed) {
+                                    noteStatus.isPassed = true;
+                                    noteStatus.isCorrect = correctNote != null && chordNote.getNotePitch().equals(correctNote.toString());
+                                }
+
+                                if (noteStatus.isPassed) {
+                                    if (noteStatus.isCorrect) {
+                                        currentNotePaint.setColor(changedColorPaintPass.getColor());
+                                    } else {
+                                        currentNotePaint.setColor(changedColorPaintMiss.getColor());
+                                    }
+                                }
+
+                                if (xPosition < checkLineX - 160) {
                                     currentNotePaint.setAlpha(0);
                                 }
 
@@ -191,22 +236,30 @@ public class NotesAndMeasuresDrawer {
                                 }
 
                                 // Draw chromatic signs (flat or sharp)
-                                if (chordNote.getNoteId()>65 && chordNote.getNoteId()<113) { // Flat sign
+                                if (chordNote.getNoteId() > 65 && chordNote.getNoteId() < 113) { // Flat sign
                                     Paint flatSignPaint = new Paint(FlatSignPaint.create());
-                                    if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
-                                        flatSignPaint.setColor(changedColorPaint.getColor());
+                                    if (noteStatus.isPassed) {
+                                        if (noteStatus.isCorrect) {
+                                            flatSignPaint.setColor(changedColorPaintPass.getColor());
+                                        } else {
+                                            flatSignPaint.setColor(changedColorPaintMiss.getColor());
+                                        }
                                     }
-                                    if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+                                    if (xPosition < checkLineX - 160) {
                                         flatSignPaint.setAlpha(0);
                                     }
                                     Path flatSignPath = FlatSignPaint.createPath();
                                     MusicUtils.drawChromaticSign(canvas, flatSignPaint, flatSignPath, noteHeadOriginalHeight);
-                                } else if (chordNote.getNoteId()>112) { // Sharp sign
+                                } else if (chordNote.getNoteId() > 112) { // Sharp sign
                                     Paint sharpSignPaint = new Paint(SharpSignPaint.create());
-                                    if (xPosition <= GlobalVariables.CHECK_LINE_X - 20) {
-                                        sharpSignPaint.setColor(changedColorPaint.getColor());
+                                    if (noteStatus.isPassed) {
+                                        if (noteStatus.isCorrect) {
+                                            sharpSignPaint.setColor(changedColorPaintPass.getColor());
+                                        } else {
+                                            sharpSignPaint.setColor(changedColorPaintMiss.getColor());
+                                        }
                                     }
-                                    if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+                                    if (xPosition < checkLineX - 160) {
                                         sharpSignPaint.setAlpha(0);
                                     }
                                     Path sharpSignPath = SharpSignPaint.createPath();
@@ -221,10 +274,11 @@ public class NotesAndMeasuresDrawer {
 
                                 canvas.restore();
 
-                                MusicUtils.drawLedgerLines(canvas, xPosition, chordNote.getNoteId(),measure.getClef() , xPosition <= 580 ? changedColorPaint : staffPaint, xPosition);
+                                MusicUtils.drawLedgerLines(canvas, xPosition, chordNote, measure.getClef(), staffPaint, changedColorPaintPass, changedColorPaintMiss
+                                        , checkLineX, noteStatus.isPassed,noteStatus.isCorrect);
                             }
                         } else {
-                            MusicUtils.drawRest(canvas, xPosition, noteDuration, currentTime,musicView);
+                            MusicUtils.drawRest(canvas, xPosition, noteDuration, currentTime, musicView);
                         }
                     }
 
