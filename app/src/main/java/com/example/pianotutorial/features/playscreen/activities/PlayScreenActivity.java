@@ -1,5 +1,6 @@
 package com.example.pianotutorial.features.playscreen.activities;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
@@ -17,13 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.media3.exoplayer.ExoPlayer;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.databinding.ActivityPlayscreenBinding;
 import com.example.pianotutorial.features.components.helpers.MidiAware;
-import com.example.pianotutorial.features.components.helpers.MidiHandler;
 import com.example.pianotutorial.features.components.helpers.MidiNotesReceiver;
 import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.helpers.NoteActionListener;
@@ -46,10 +45,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     private ActivityPlayscreenBinding activityPlayscreenBinding;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView countdownTextView;
-
     private MidiManager midiManager;
-    private MidiHandler midiHandler;
-
     protected MidiDriver midi;
     protected MediaPlayer player;
 
@@ -67,7 +63,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         countdownTextView = activityPlayscreenBinding.getRoot().findViewById(R.id.countdownText);
 
-        playScreenViewModel.preparePlayer(R.raw.fur_elise_easy_ver, getPackageName());
         setupObservers();
         initializeMIDI();
 
@@ -89,7 +84,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                 if (!isPlayed) {
                     handlePause();
                 } else {
-                    startCountdown();
+                    startCountdown(this);
                 }
             }
         });
@@ -101,7 +96,9 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.opacityView.setVisibility(View.VISIBLE);
         activityPlayscreenBinding.playImage.setBackgroundResource(R.drawable.vector_play_circle);
         GlobalVariables.SPEED = 0;
-        playScreenViewModel.pausePlayer();
+        if(player != null){
+            player.pause();
+        }
     }
 
     private void updateSpeed(float speed) {
@@ -128,6 +125,9 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             speed3TextColor = R.color.black;
         }
 
+        if (player != null) player.stop();
+        player = MediaPlayer.create(this, audioResourceId);
+
         activityPlayscreenBinding.speed1Layout.setBackgroundResource(speed1Res);
         activityPlayscreenBinding.speed2Layout.setBackgroundResource(speed2Res);
         activityPlayscreenBinding.speed3Layout.setBackgroundResource(speed3Res);
@@ -135,8 +135,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.speed1Text.setTextColor(ContextCompat.getColor(this, speed1TextColor));
         activityPlayscreenBinding.speed2Text.setTextColor(ContextCompat.getColor(this, speed2TextColor));
         activityPlayscreenBinding.speed3Text.setTextColor(ContextCompat.getColor(this, speed3TextColor));
-
-        playScreenViewModel.preparePlayer(audioResourceId, getPackageName());
     }
 
     private void initializeMIDI() {
@@ -182,7 +180,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     protected void onDestroy() {
         super.onDestroy();
         midiManager.unregisterDeviceCallback(deviceCallback);
-        midiHandler.removeDevice();
     }
 
     private void checkForMidiDevices() {
@@ -243,13 +240,12 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawerLeftHand().setCorrectNoteAction(note, false);
     }
 
-    private void startCountdown() {
+    private void startCountdown(Context context) {
         countdownTextView.setVisibility(View.VISIBLE);
         GlobalVariables.SPEED = 0;
 
         handler.post(new Runnable() {
             int countdown = 3;
-
             @Override
             public void run() {
                 if (countdown > 0) {
@@ -263,12 +259,11 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                     GlobalVariables.SPEED = Objects.requireNonNull(playScreenViewModel.getSpeed().getValue());
                     startUpdatingStaff();
                     playScreenEventHandler.onInitial();
-                    ExoPlayer player = playScreenViewModel.getPlayer();
-                    if (player.getPlaybackState() == ExoPlayer.STATE_ENDED) {
-                        playScreenViewModel.setPlaybackPosition(0);
-                        player.seekTo(playScreenViewModel.getPlaybackPosition());
+                    if(player==null){
+                        player = MediaPlayer.create(context, R.raw.fur_elise);
+
                     }
-                    player.play();
+                    player.start();
                 }
             }
         });

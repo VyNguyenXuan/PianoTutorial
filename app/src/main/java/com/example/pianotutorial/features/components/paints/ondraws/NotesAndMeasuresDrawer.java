@@ -66,7 +66,7 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX = GlobalVariables.CHECK_LINE_X - (currentTime * 0.6f * GlobalVariables.SPEED);
+        float currentX = GlobalVariables.CHECK_LINE_X -40 - (currentTime * 0.6f * GlobalVariables.SPEED);
 
         if (measures != null) {
             for (Measure measure : measures) {
