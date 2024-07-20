@@ -2,6 +2,7 @@ package com.example.pianotutorial.features.playscreen.activities;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
@@ -97,7 +98,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.playImage.setBackgroundResource(R.drawable.vector_play_circle);
         GlobalVariables.SPEED = 0;
         if(player != null){
-            player.pause();
+            player.stop();
         }
     }
 
@@ -110,23 +111,22 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         int speed2TextColor = R.color.white;
         int speed3TextColor = R.color.white;
 
-        int audioResourceId = R.raw.fur_elise_easy_ver;
-
         if (speed == 0.6f) {
             speed1Res = R.color.white;
             speed1TextColor = R.color.black;
-            audioResourceId = R.raw.fur_elise_easy_ver_06;
         } else if (speed == 0.8f) {
             speed2Res = R.color.white;
             speed2TextColor = R.color.black;
-            audioResourceId = R.raw.fur_elise_easy_ver_08;
         } else if (speed == 1f) {
             speed3Res = R.color.white;
             speed3TextColor = R.color.black;
         }
 
-        if (player != null) player.stop();
+        int audioResourceId = R.raw.fur_elise;
+        if(player!=null) player.stop();
         player = MediaPlayer.create(this, audioResourceId);
+        setPlayerPlaybackSpeed(player,speed);
+        player.pause();
 
         activityPlayscreenBinding.speed1Layout.setBackgroundResource(speed1Res);
         activityPlayscreenBinding.speed2Layout.setBackgroundResource(speed2Res);
@@ -135,6 +135,11 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.speed1Text.setTextColor(ContextCompat.getColor(this, speed1TextColor));
         activityPlayscreenBinding.speed2Text.setTextColor(ContextCompat.getColor(this, speed2TextColor));
         activityPlayscreenBinding.speed3Text.setTextColor(ContextCompat.getColor(this, speed3TextColor));
+    }
+    private void setPlayerPlaybackSpeed(MediaPlayer player, float speed) {
+        PlaybackParams params = new PlaybackParams();
+        params.setSpeed(speed);
+        player.setPlaybackParams(params);
     }
 
     private void initializeMIDI() {

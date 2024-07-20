@@ -16,8 +16,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".features.MainActivity">
+        android:orientation="vertical">
 
         <com.example.pianotutorial.features.components.paints.MusicView
             android:id="@+id/music_view"
