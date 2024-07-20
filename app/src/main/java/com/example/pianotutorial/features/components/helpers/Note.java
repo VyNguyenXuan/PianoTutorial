@@ -41,6 +41,7 @@ public class Note implements Comparable<Note> {
         this.octave = octave;
     }
 
+    @NonNull
     @Override
     public String toString() {
         if (Objects.equals(this.notePitch.getLabel(), "C#")){

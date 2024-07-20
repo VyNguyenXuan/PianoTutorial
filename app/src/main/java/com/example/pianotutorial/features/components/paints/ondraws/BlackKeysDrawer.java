@@ -12,7 +12,7 @@ import java.util.Set;
 public class BlackKeysDrawer {
     private final Drawable blackKeyDrawable;
     private final Drawable activeBlackKeyDrawable;
-    private Set<Integer> activeKeyIndices = new HashSet<>();
+    private final Set<Integer> activeKeyIndices = new HashSet<>();
     private static final int[] BLACK_KEYS_POSITIONS = {0, 1, 3, 4, 5};
 
     public BlackKeysDrawer(Drawable blackKeyDrawable, Drawable activeBlackKeyDrawable) {

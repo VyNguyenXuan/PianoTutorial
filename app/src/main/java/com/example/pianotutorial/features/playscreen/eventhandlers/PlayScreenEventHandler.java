@@ -36,7 +36,7 @@ public class PlayScreenEventHandler {
     }
 
     public void onSpeed1Click(View view) {
-        playScreenViewModel.getSpeed().setValue(0.2f);
+        playScreenViewModel.getSpeed().setValue(0.6f);
     }
     public void onSpeed2Click(View view) {
         playScreenViewModel.getSpeed().setValue(0.8f);

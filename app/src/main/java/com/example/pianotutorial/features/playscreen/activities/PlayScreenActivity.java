@@ -229,8 +229,8 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         sendMidi(MidiConstants.NOTE_ON, note.getNoteId(), 63);
         activityPlayscreenBinding.musicView.updateWhiteKeyIndices(note, true);
         activityPlayscreenBinding.musicView.updateBlackKeyIndices(note, true);
-        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawer().setCorrectNoteAction(note);
-        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawerLeftHand().setCorrectNoteAction(note);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawer().setCorrectNoteAction(note, true);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawerLeftHand().setCorrectNoteAction(note, true);
 
     }
 
@@ -239,8 +239,8 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         sendMidi(MidiConstants.NOTE_OFF, note.getNoteId(), 0);
         activityPlayscreenBinding.musicView.updateWhiteKeyIndices(note, false);
         activityPlayscreenBinding.musicView.updateBlackKeyIndices(note, false);
-        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawer().setCorrectNoteAction(null);
-        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawerLeftHand().setCorrectNoteAction(null);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawer().setCorrectNoteAction(note, false);
+        activityPlayscreenBinding.musicView.getNotesAndMeasuresDrawerLeftHand().setCorrectNoteAction(note, false);
     }
 
     private void startCountdown() {

@@ -12,7 +12,7 @@ import java.util.Set;
 public class WhiteKeysDrawer {
     private final Drawable whiteKeyDrawable;
     private final Drawable activeWhiteKeyDrawable;
-    private Set<Integer> activeKeyIndices = new HashSet<>();
+    private final Set<Integer> activeKeyIndices = new HashSet<>();
 
     public WhiteKeysDrawer(Drawable whiteKeyDrawable, Drawable activeWhiteKeyDrawable) {
         this.whiteKeyDrawable = whiteKeyDrawable;

@@ -10,8 +10,17 @@ import androidx.core.content.res.ResourcesCompat;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.components.paints.MusicView;
-import com.example.pianotutorial.features.components.paints.notepaints.FlatSignPaint;
+import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaintReverse;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaintReverse;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaintReverse;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverse;
+import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaint;
 import com.example.pianotutorial.models.ChordNote;
+import com.example.pianotutorial.models.Measure;
 
 public class MusicUtils {
 
@@ -161,7 +170,7 @@ public class MusicUtils {
                     paintToUse.setColor(changedColorPaintMiss.getColor());
                 }
             }
-            if (xPosition < checkLineX - 160) {
+            if (xPosition < checkLineX - 160+24) {
                 paintToUse.setAlpha(0);
             }
             canvas.drawLine(xPosition + 24, y, xPosition + 110, y, paintToUse);
@@ -202,12 +211,104 @@ public class MusicUtils {
         float right = xPosition + intrinsicWidth + additionalOffset;
         float bottom = top + intrinsicHeight;
 
-        if (restDrawable != null) {
-            restDrawable.setBounds((int) (xPosition + additionalOffset), (int) top, (int) right, (int) bottom);
+        // Check if the xPosition is less than the threshold, if so, make it disappear
+        if(additionalOffset==600){
+            if (xPosition < GlobalVariables.CHECK_LINE_X - 760) {
+                return; // Do not draw the rest
+            }
+        }
+        else if(additionalOffset==300){
+            if (xPosition < GlobalVariables.CHECK_LINE_X - 460) {
+                return; // Do not draw the rest
+            }
+        }
+        else{
+            if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
+                return; // Do not draw the rest
+            }
         }
 
+
         if (restDrawable != null) {
+            restDrawable.setBounds((int) (xPosition + additionalOffset), (int) top, (int) right, (int) bottom);
             restDrawable.draw(canvas);
+        }
+    }
+
+
+    public static Paint getNotePaint(Measure measure, int currentNote, float noteDuration) {
+        if (measure.getClef() == 0) {
+            return getGKeyNotePaint(currentNote, noteDuration);
+        } else {
+            return getFKeyNotePaint(currentNote, noteDuration);
+        }
+    }
+
+    public static Paint getGKeyNotePaint(int currentNote, float noteDuration) {
+        if (currentNote > 27) {
+            return getNotePaintByDuration(noteDuration, true);
+        } else {
+            return getNotePaintByDuration(noteDuration, false);
+        }
+    }
+
+    public static Paint getFKeyNotePaint(int currentNote, float noteDuration) {
+        if (currentNote > 15) {
+            return getNotePaintByDuration(noteDuration, true);
+        } else {
+            return getNotePaintByDuration(noteDuration, false);
+        }
+    }
+
+    public static Paint getNotePaintByDuration(float noteDuration, boolean reverse) {
+        if (noteDuration < 8 && noteDuration >= 4) {
+            return WholeNotePaint.create();
+        } else if (noteDuration < 4 && noteDuration >= 2) {
+            return reverse ? HalfNotePaintReverse.create() : HalfNotePaint.create();
+        } else if (noteDuration < 2 && noteDuration >= 1) {
+            return reverse ? QuarterNotePaintReverse.create() : QuarterNotePaint.create();
+        } else if (noteDuration < 1 && noteDuration >= 0.5) {
+            return reverse ? EighthNotePaintReverse.create() : EighthNotePaint.create();
+        } else {
+            return reverse ? SixteenthNotePaintReverse.create() : SixteenthNotePaint.create();
+        }
+    }
+
+    public static Path getNotePath(Measure measure, int currentNote, float noteDuration) {
+        if (measure.getClef() == 0) {
+            return getGKeyNotePath(currentNote, noteDuration);
+        } else {
+            return getFKeyNotePath(currentNote, noteDuration);
+        }
+    }
+
+    public static Path getGKeyNotePath(int currentNote, float noteDuration) {
+        if (currentNote > 27) {
+            return getNotePathByDuration(noteDuration, true);
+        } else {
+            return getNotePathByDuration(noteDuration, false);
+        }
+    }
+
+    public static Path getFKeyNotePath(int currentNote, float noteDuration) {
+        if (currentNote > 15) {
+            return getNotePathByDuration(noteDuration, true);
+        } else {
+            return getNotePathByDuration(noteDuration, false);
+        }
+    }
+
+    public static Path getNotePathByDuration(float noteDuration, boolean reverse) {
+        if (noteDuration < 8 && noteDuration >= 4) {
+            return WholeNotePaint.createPath();
+        } else if (noteDuration < 4 && noteDuration >= 2) {
+            return reverse ? HalfNotePaintReverse.createPath() : HalfNotePaint.createPath();
+        } else if (noteDuration < 2 && noteDuration >= 1) {
+            return reverse ? QuarterNotePaintReverse.createPath() : QuarterNotePaint.createPath();
+        } else if (noteDuration < 1 && noteDuration >= 0.5) {
+            return reverse ? EighthNotePaintReverse.createPath() : EighthNotePaint.createPath();
+        } else {
+            return reverse ? SixteenthNotePaintReverse.createPath() : SixteenthNotePaint.createPath();
         }
     }
 
@@ -218,5 +319,7 @@ public class MusicUtils {
         float noteSpacing = (float) GlobalVariables.FIXED_HEIGHT / 16;
         return baseHeight - spacingValue * noteSpacing;
     }
+
+
 }
 
