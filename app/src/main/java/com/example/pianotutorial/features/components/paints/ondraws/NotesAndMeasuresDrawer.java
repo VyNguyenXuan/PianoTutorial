@@ -47,10 +47,9 @@ public class NotesAndMeasuresDrawer {
 
     public void setCorrectNoteAction(Note note, boolean isPress) {
         if (note != null) {
-            if(isPress){
+            if (isPress) {
                 this.correctNotes.add(note.toString()); // Add the single note to the list
-            }
-            else {
+            } else {
                 this.correctNotes.remove(note.toString()); // Remove the single note from the list
             }
         }
@@ -66,7 +65,7 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX = GlobalVariables.CHECK_LINE_X -40 - (currentTime * 0.6f * GlobalVariables.SPEED);
+        float currentX = GlobalVariables.CHECK_LINE_X - 40 - (currentTime * 0.6f * GlobalVariables.SPEED);
 
         if (measures != null) {
             for (Measure measure : measures) {
@@ -127,8 +126,8 @@ public class NotesAndMeasuresDrawer {
         float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight;
         canvas.scale(scaleFactor, scaleFactor);
 
-        Paint notePaint = MusicUtils.getNotePaint(measure, currentNote, noteDuration);
-        Path notePath = MusicUtils.getNotePath(measure, currentNote, noteDuration);
+        Paint notePaint = MusicUtils.getNotePaint(measure, chord, currentNote, chordNote);
+        Path notePath = MusicUtils.getNotePath(measure, chord, currentNote, chordNote);
 
         NoteStatus noteStatus = noteStatuses.computeIfAbsent(chordNote, k -> new NoteStatus());
         Paint currentNotePaint = new Paint(notePaint);

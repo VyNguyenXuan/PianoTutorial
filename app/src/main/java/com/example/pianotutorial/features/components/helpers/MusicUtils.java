@@ -19,6 +19,7 @@ import com.example.pianotutorial.features.components.paints.notepaints.QuarterNo
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaint;
+import com.example.pianotutorial.models.Chord;
 import com.example.pianotutorial.models.ChordNote;
 import com.example.pianotutorial.models.Measure;
 
@@ -170,7 +171,7 @@ public class MusicUtils {
                     paintToUse.setColor(changedColorPaintMiss.getColor());
                 }
             }
-            if (xPosition < checkLineX - 160+24) {
+            if (xPosition < checkLineX - 160 + 24) {
                 paintToUse.setAlpha(0);
             }
             canvas.drawLine(xPosition + 24, y, xPosition + 110, y, paintToUse);
@@ -212,17 +213,15 @@ public class MusicUtils {
         float bottom = top + intrinsicHeight;
 
         // Check if the xPosition is less than the threshold, if so, make it disappear
-        if(additionalOffset==600){
+        if (additionalOffset == 600) {
             if (xPosition < GlobalVariables.CHECK_LINE_X - 760) {
                 return; // Do not draw the rest
             }
-        }
-        else if(additionalOffset==300){
+        } else if (additionalOffset == 300) {
             if (xPosition < GlobalVariables.CHECK_LINE_X - 460) {
                 return; // Do not draw the rest
             }
-        }
-        else{
+        } else {
             if (xPosition < GlobalVariables.CHECK_LINE_X - 160) {
                 return; // Do not draw the rest
             }
@@ -236,79 +235,179 @@ public class MusicUtils {
     }
 
 
-    public static Paint getNotePaint(Measure measure, int currentNote, float noteDuration) {
+    public static Paint getNotePaint(Measure measure, Chord chord, int currentNote, ChordNote chordNote) {
         if (measure.getClef() == 0) {
-            return getGKeyNotePaint(currentNote, noteDuration);
+            return getGKeyNotePaint(currentNote, measure.getClef(), chordNote, chord);
         } else {
-            return getFKeyNotePaint(currentNote, noteDuration);
+            return getFKeyNotePaint(currentNote, measure.getClef(), chordNote, chord);
         }
     }
 
-    public static Paint getGKeyNotePaint(int currentNote, float noteDuration) {
+    public static Paint getGKeyNotePaint(int currentNote, int clef, ChordNote chordNote, Chord chord) {
         if (currentNote > 27) {
-            return getNotePaintByDuration(noteDuration, true);
+            return getNotePaintByDuration(chord, clef, chordNote, true);
         } else {
-            return getNotePaintByDuration(noteDuration, false);
+            return getNotePaintByDuration(chord, clef, chordNote, false);
         }
     }
 
-    public static Paint getFKeyNotePaint(int currentNote, float noteDuration) {
+    public static Paint getFKeyNotePaint(int currentNote, int clef, ChordNote chordNote, Chord chord) {
         if (currentNote > 15) {
-            return getNotePaintByDuration(noteDuration, true);
+            return getNotePaintByDuration(chord, clef, chordNote, true);
         } else {
-            return getNotePaintByDuration(noteDuration, false);
+            return getNotePaintByDuration(chord, clef, chordNote, false);
         }
     }
 
-    public static Paint getNotePaintByDuration(float noteDuration, boolean reverse) {
-        if (noteDuration < 8 && noteDuration >= 4) {
-            return WholeNotePaint.create();
-        } else if (noteDuration < 4 && noteDuration >= 2) {
-            return reverse ? HalfNotePaintReverse.create() : HalfNotePaint.create();
-        } else if (noteDuration < 2 && noteDuration >= 1) {
-            return reverse ? QuarterNotePaintReverse.create() : QuarterNotePaint.create();
-        } else if (noteDuration < 1 && noteDuration >= 0.5) {
-            return reverse ? EighthNotePaintReverse.create() : EighthNotePaint.create();
+    public static Paint getNotePaintByDuration(Chord chord, int clef, ChordNote chordNote, boolean reverse) {
+        float noteDuration = chord.getDuration();
+        if (!chord.hasMultipleNotes()) {
+            if (noteDuration < 8 && noteDuration >= 4) {
+                return WholeNotePaint.create();
+            } else if (noteDuration < 4 && noteDuration >= 2) {
+                return reverse ? HalfNotePaintReverse.create() : HalfNotePaint.create();
+            } else if (noteDuration < 2 && noteDuration >= 1) {
+                return reverse ? QuarterNotePaintReverse.create() : QuarterNotePaint.create();
+            } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                return reverse ? EighthNotePaintReverse.create() : EighthNotePaint.create();
+            } else {
+                return reverse ? SixteenthNotePaintReverse.create() : SixteenthNotePaint.create();
+            }
         } else {
-            return reverse ? SixteenthNotePaintReverse.create() : SixteenthNotePaint.create();
+            if (chord.isStemUp(clef)) {
+                //Handle lowest note
+                if (chord.findHighestNoteId() == chordNote.getNoteId()) {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.create();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaint.create();
+                    } else if (noteDuration < 2 && noteDuration >= 1) {
+                        return QuarterNotePaint.create();
+                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                        return EighthNotePaint.create();
+                    } else {
+                        return SixteenthNotePaint.create();
+                    }
+                } else {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.create();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaint.create();
+                    } else {
+                        return QuarterNotePaint.create();
+                    }
+                }
+            }
+            else{
+                if (chord.findLowestNoteId() == chordNote.getNoteId()) {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.create();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaintReverse.create();
+                    } else if (noteDuration < 2 && noteDuration >= 1) {
+                        return QuarterNotePaintReverse.create();
+                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                        return EighthNotePaintReverse.create();
+                    } else {
+                        return SixteenthNotePaintReverse.create();
+                    }
+                } else {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.create();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaintReverse.create();
+                    } else {
+                        return QuarterNotePaintReverse.create();
+                    }
+                }
+            }
         }
     }
 
-    public static Path getNotePath(Measure measure, int currentNote, float noteDuration) {
+    public static Path getNotePath(Measure measure, Chord chord, int currentNote, ChordNote chordNote) {
         if (measure.getClef() == 0) {
-            return getGKeyNotePath(currentNote, noteDuration);
+            return getGKeyNotePath(currentNote, measure.getClef(), chordNote, chord);
         } else {
-            return getFKeyNotePath(currentNote, noteDuration);
+            return getFKeyNotePath(currentNote, measure.getClef(), chordNote, chord);
         }
     }
 
-    public static Path getGKeyNotePath(int currentNote, float noteDuration) {
+    public static Path getGKeyNotePath(int currentNote, int clef, ChordNote chordNote, Chord chord) {
         if (currentNote > 27) {
-            return getNotePathByDuration(noteDuration, true);
+            return getNotePathByDuration(chord, clef, chordNote, true);
         } else {
-            return getNotePathByDuration(noteDuration, false);
+            return getNotePathByDuration(chord, clef, chordNote, false);
         }
     }
 
-    public static Path getFKeyNotePath(int currentNote, float noteDuration) {
+    public static Path getFKeyNotePath(int currentNote, int clef, ChordNote chordNote, Chord chord) {
         if (currentNote > 15) {
-            return getNotePathByDuration(noteDuration, true);
+            return getNotePathByDuration(chord, clef, chordNote, true);
         } else {
-            return getNotePathByDuration(noteDuration, false);
+            return getNotePathByDuration(chord, clef, chordNote, false);
         }
     }
 
-    public static Path getNotePathByDuration(float noteDuration, boolean reverse) {
-        if (noteDuration < 8 && noteDuration >= 4) {
-            return WholeNotePaint.createPath();
-        } else if (noteDuration < 4 && noteDuration >= 2) {
-            return reverse ? HalfNotePaintReverse.createPath() : HalfNotePaint.createPath();
-        } else if (noteDuration < 2 && noteDuration >= 1) {
-            return reverse ? QuarterNotePaintReverse.createPath() : QuarterNotePaint.createPath();
-        } else if (noteDuration < 1 && noteDuration >= 0.5) {
-            return reverse ? EighthNotePaintReverse.createPath() : EighthNotePaint.createPath();
+    public static Path getNotePathByDuration(Chord chord, int clef, ChordNote chordNote, boolean reverse) {
+        float noteDuration = chord.getDuration();
+        if (!chord.hasMultipleNotes()) {
+            if (noteDuration < 8 && noteDuration >= 4) {
+                return WholeNotePaint.createPath();
+            } else if (noteDuration < 4 && noteDuration >= 2) {
+                return reverse ? HalfNotePaintReverse.createPath() : HalfNotePaint.createPath();
+            } else if (noteDuration < 2 && noteDuration >= 1) {
+                return reverse ? QuarterNotePaintReverse.createPath() : QuarterNotePaint.createPath();
+            } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                return reverse ? EighthNotePaintReverse.createPath() : EighthNotePaint.createPath();
+            } else {
+                return reverse ? SixteenthNotePaintReverse.createPath() : SixteenthNotePaint.createPath();
+            }
         } else {
-            return reverse ? SixteenthNotePaintReverse.createPath() : SixteenthNotePaint.createPath();
+            if (chord.isStemUp(clef)) {
+                if (chord.findHighestNoteId() == chordNote.getNoteId()) {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.createPath();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaint.createPath();
+                    } else if (noteDuration < 2 && noteDuration >= 1) {
+                        return QuarterNotePaint.createPath();
+                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                        return EighthNotePaint.createPath();
+                    } else {
+                        return SixteenthNotePaint.createPath();
+                    }
+                } else {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.createPath();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaint.createPath();
+                    } else {
+                        return QuarterNotePaint.createPath();
+                    }
+                }
+            } else {
+                if (chord.findLowestNoteId() == chordNote.getNoteId()) {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.createPath();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaintReverse.createPath();
+                    } else if (noteDuration < 2 && noteDuration >= 1) {
+                        return QuarterNotePaintReverse.createPath();
+                    } else if (noteDuration < 1 && noteDuration >= 0.5) {
+                        return EighthNotePaintReverse.createPath();
+                    } else {
+                        return SixteenthNotePaintReverse.createPath();
+                    }
+                } else {
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaint.createPath();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaintReverse.createPath();
+                    } else {
+                        return QuarterNotePaintReverse.createPath();
+                    }
+                }
+            }
         }
     }
 

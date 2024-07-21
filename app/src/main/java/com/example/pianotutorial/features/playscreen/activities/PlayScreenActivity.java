@@ -76,7 +76,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     private void setupObservers() {
         playScreenViewModel.getSheetList().observe(this, currentSheet -> {
             if (currentSheet != null) {
-                activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(0).getMeasures(), currentSheet.get(1).getMeasures());
+                activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(4).getMeasures(), currentSheet.get(1).getMeasures());
                 activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
             }
         });

@@ -20,6 +20,7 @@ public class Chord {
 
     @SerializedName("chordNotes")
     private List<ChordNote> chordNotes;
+
     public Chord() {
         id = 0;
         duration = 0;
@@ -76,15 +77,17 @@ public class Chord {
         this.chordNotes = chordNotes;
     }
 
-    public boolean isStemUp() {
-        int middleLinePitch = 28;
+    public boolean isStemUp(int clefValue) {
+        int middleLinePitch = (clefValue == 0) ? 28 : 16; // 28 : B4 (G clef), 16 : B3 (F clef)
         int belowMiddleLine = 0;
         int aboveMiddleLine = 0;
 
+        // Count belowMiddleLine, aboveMiddleLine
         for (ChordNote note : chordNotes) {
-            if (note.getNoteId() < middleLinePitch) {
+            int adjustedNoteId = adjustedNoteId(note.getNoteId());
+            if (adjustedNoteId < middleLinePitch) {
                 belowMiddleLine++;
-            } else if (note.getNoteId() > middleLinePitch) {
+            } else if (adjustedNoteId > middleLinePitch) {
                 aboveMiddleLine++;
             }
         }
@@ -94,14 +97,57 @@ public class Chord {
         } else if (aboveMiddleLine > belowMiddleLine) {
             return false; // Stem down
         } else {
-            // If equal, check the note farthest from middle line
-            int farthestNotePitch = chordNotes.get(0).getNoteId();
+
+            int farthestNotePitch = adjustedNoteId(chordNotes.get(0).getNoteId());
             for (ChordNote note : chordNotes) {
-                if (Math.abs(note.getNoteId() - middleLinePitch) > Math.abs(farthestNotePitch - middleLinePitch)) {
-                    farthestNotePitch = note.getNoteId();
+                int adjustedNoteId = adjustedNoteId(note.getNoteId());
+                if (Math.abs(adjustedNoteId - middleLinePitch) > Math.abs(farthestNotePitch - middleLinePitch)) {
+                    farthestNotePitch = adjustedNoteId;
                 }
             }
-            return farthestNotePitch < middleLinePitch; // Farthest note below middle line means stem up
+            return farthestNotePitch < middleLinePitch;
         }
+    }
+
+    public int findLowestNoteId() {
+        if (chordNotes.isEmpty()) {
+            return -1; // or throw an exception if you prefer
+        }
+
+        int lowestNoteId = adjustedNoteId(chordNotes.get(0).getNoteId());
+        for (ChordNote note : chordNotes) {
+            int adjustedNoteId = adjustedNoteId(note.getNoteId());
+            if (adjustedNoteId < lowestNoteId) {
+                lowestNoteId = adjustedNoteId;
+            }
+        }
+        return lowestNoteId;
+    }
+
+    // Find the note with the highest noteId
+    public int findHighestNoteId() {
+        if (chordNotes.isEmpty()) {
+            return -1; // or throw an exception if you prefer
+        }
+
+        int highestNoteId = adjustedNoteId(chordNotes.get(0).getNoteId());
+        for (ChordNote note : chordNotes) {
+            int adjustedNoteId = adjustedNoteId(note.getNoteId());
+            if (adjustedNoteId > highestNoteId) {
+                highestNoteId = adjustedNoteId;
+            }
+        }
+        return highestNoteId;
+    }
+
+    public boolean hasMultipleNotes() {
+        return chordNotes.size() > 1;
+    }
+
+    int adjustedNoteId(int noteId) {
+        while (noteId > 56) {
+            noteId -= 56;
+        }
+        return noteId;
     }
 }
