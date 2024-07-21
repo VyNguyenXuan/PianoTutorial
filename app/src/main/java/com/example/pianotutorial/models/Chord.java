@@ -3,6 +3,7 @@ package com.example.pianotutorial.models;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Chord {
@@ -142,6 +143,58 @@ public class Chord {
 
     public boolean hasMultipleNotes() {
         return chordNotes.size() > 1;
+    }
+
+    public List<Integer> getFlipNotes(int clefValue) {
+        List<Integer> flipNotes = new ArrayList<>();
+        if (chordNotes.isEmpty()) {
+            return flipNotes; // Return empty list if no chord notes
+        }
+
+        boolean stemUp = isStemUp(clefValue); // Assuming clefValue is passed as 0
+        List<Integer> noteIds = new ArrayList<>();
+        for (ChordNote note : chordNotes) {
+            noteIds.add(adjustedNoteId(note.getNoteId()));
+        }
+
+        if (stemUp) {
+            Collections.sort(noteIds);
+        } else {
+            Collections.sort(noteIds, Collections.reverseOrder());
+        }
+
+        int previousNoteId = noteIds.get(0);
+        for (int i = 1; i < noteIds.size(); i++) {
+            int currentNoteId = noteIds.get(i);
+            if (Math.abs(currentNoteId - previousNoteId) == 1) {
+                flipNotes.add(currentNoteId);
+            }
+            previousNoteId = currentNoteId;
+        }
+
+        return flipNotes;
+    }
+
+    public int findLowestNoteIdWithoutFlip(int clefValue) {
+        List<Integer> flipNotes = getFlipNotes(clefValue);
+        int lowestNoteId = findLowestNoteId();
+
+        // If the lowestNoteId is in flipNotes and has a preceding note
+        if (flipNotes.contains(lowestNoteId) && flipNotes.indexOf(lowestNoteId) > 0) {
+            return lowestNoteId + 1;
+        }
+        return lowestNoteId; // Otherwise, return the original lowestNoteId
+    }
+
+    public int findHighestNoteIdWithoutFlip(int clefValue) {
+        List<Integer> flipNotes = getFlipNotes(clefValue);
+        int highestNoteId = findHighestNoteId();
+
+        // If the highestNoteId is in flipNotes and has a preceding note
+        if (flipNotes.contains(highestNoteId) && flipNotes.indexOf(highestNoteId) > 0) {
+            return highestNoteId - 1;
+        }
+        return highestNoteId; // Otherwise, return the original highestNoteId
     }
 
     int adjustedNoteId(int noteId) {

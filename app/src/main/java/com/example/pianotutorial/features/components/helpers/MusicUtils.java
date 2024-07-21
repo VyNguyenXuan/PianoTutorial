@@ -13,12 +13,18 @@ import com.example.pianotutorial.features.components.paints.MusicView;
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.EighthNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaintFlip;
+import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaintFlipReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.HalfNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaintFlip;
+import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaintFlipReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.QuarterNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaint;
 import com.example.pianotutorial.features.components.paints.notepaints.SixteenthNotePaintReverse;
 import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaint;
+import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaintFlip;
+import com.example.pianotutorial.features.components.paints.notepaints.WholeNotePaintFlipReverse;
 import com.example.pianotutorial.models.Chord;
 import com.example.pianotutorial.models.ChordNote;
 import com.example.pianotutorial.models.Measure;
@@ -364,7 +370,7 @@ public class MusicUtils {
             }
         } else {
             if (chord.isStemUp(clef)) {
-                if (chord.findHighestNoteId() == chordNote.getNoteId()) {
+                if (chord.findHighestNoteIdWithoutFlip(clef) == chordNote.getNoteId()) {
                     if (noteDuration < 8 && noteDuration >= 4) {
                         return WholeNotePaint.createPath();
                     } else if (noteDuration < 4 && noteDuration >= 2) {
@@ -376,7 +382,17 @@ public class MusicUtils {
                     } else {
                         return SixteenthNotePaint.createPath();
                     }
-                } else {
+                }
+                else if(chord.getFlipNotes(clef).contains(chordNote.getNoteId())){
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaintFlip.createPath();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaintFlip.createPath();
+                    } else {
+                        return QuarterNotePaintFlip.createPath();
+                    }
+                }
+                else {
                     if (noteDuration < 8 && noteDuration >= 4) {
                         return WholeNotePaint.createPath();
                     } else if (noteDuration < 4 && noteDuration >= 2) {
@@ -386,7 +402,7 @@ public class MusicUtils {
                     }
                 }
             } else {
-                if (chord.findLowestNoteId() == chordNote.getNoteId()) {
+                if (chord.findLowestNoteIdWithoutFlip(clef) == chordNote.getNoteId()) {
                     if (noteDuration < 8 && noteDuration >= 4) {
                         return WholeNotePaint.createPath();
                     } else if (noteDuration < 4 && noteDuration >= 2) {
@@ -398,7 +414,17 @@ public class MusicUtils {
                     } else {
                         return SixteenthNotePaintReverse.createPath();
                     }
-                } else {
+                }
+                else if(chord.getFlipNotes(clef).contains(chordNote.getNoteId())){
+                    if (noteDuration < 8 && noteDuration >= 4) {
+                        return WholeNotePaintFlipReverse.createPath();
+                    } else if (noteDuration < 4 && noteDuration >= 2) {
+                        return HalfNotePaintFlipReverse.createPath();
+                    } else {
+                        return QuarterNotePaintFlipReverse.createPath();
+                    }
+                }
+                else {
                     if (noteDuration < 8 && noteDuration >= 4) {
                         return WholeNotePaint.createPath();
                     } else if (noteDuration < 4 && noteDuration >= 2) {
