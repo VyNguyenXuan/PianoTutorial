@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -23,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.databinding.ActivityPlayscreenBinding;
+import com.example.pianotutorial.features.components.helpers.DownloadTask;
 import com.example.pianotutorial.features.components.helpers.MidiAware;
 import com.example.pianotutorial.features.components.helpers.MidiNotesReceiver;
 import com.example.pianotutorial.features.components.helpers.Note;
@@ -42,7 +44,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     private static final String TAG = "PlayScreenActivity";
     private PlayScreenEventHandler playScreenEventHandler;
     private PlayScreenViewModel playScreenViewModel;
-
     private ActivityPlayscreenBinding activityPlayscreenBinding;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private TextView countdownTextView;
@@ -75,7 +76,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     private void setupObservers() {
         playScreenViewModel.getSheetList().observe(this, currentSheet -> {
             if (currentSheet != null) {
-                activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(4).getMeasures(), currentSheet.get(5).getMeasures());
+                activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(0).getMeasures(), currentSheet.get(1).getMeasures());
                 activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
             }
         });
@@ -103,6 +104,8 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void updateSpeed(float speed) {
+        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff1d4cb7b-9e3b-445e-a3e7-f97fc78e5434_Sao_Sang.mid?alt=media&token=fb758635-1027-43cc-bbff-1a0db24177bb";
+
         int speed1Res = R.drawable.white_border;
         int speed2Res = R.drawable.white_border;
         int speed3Res = R.drawable.white_border;
@@ -122,9 +125,8 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             speed3TextColor = R.color.black;
         }
 
-        int audioResourceId = R.raw.fur_elise;
         if(player!=null) player.stop();
-        player = MediaPlayer.create(this, audioResourceId);
+        playAudio(fileURL);
         setPlayerPlaybackSpeed(player,speed);
         player.pause();
 
@@ -135,6 +137,11 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.speed1Text.setTextColor(ContextCompat.getColor(this, speed1TextColor));
         activityPlayscreenBinding.speed2Text.setTextColor(ContextCompat.getColor(this, speed2TextColor));
         activityPlayscreenBinding.speed3Text.setTextColor(ContextCompat.getColor(this, speed3TextColor));
+
+
+        // Start the download task
+        DownloadTask downloadTask = new DownloadTask(this);
+        downloadTask.execute(fileURL);
     }
     private void setPlayerPlaybackSpeed(MediaPlayer player, float speed) {
         PlaybackParams params = new PlaybackParams();
@@ -274,6 +281,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         });
     }
 
+
     private void startUpdatingStaff() {
         handler.post(new Runnable() {
             @Override
@@ -282,6 +290,22 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                 handler.postDelayed(this, 8);
             }
         });
+    }
+
+    private void playAudio(String filePath) {
+        if (player != null) {
+            player.release();
+        }
+
+        player = new MediaPlayer();
+
+        try {
+            player.setDataSource(filePath);
+            player.prepare();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Could not play audio file", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
