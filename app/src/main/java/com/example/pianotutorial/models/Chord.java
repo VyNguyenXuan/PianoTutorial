@@ -115,7 +115,7 @@ public class Chord {
         }
     }
 
-    public int findLowestNoteId() {
+    public int findLowestNote() {
         if (chordNotes.isEmpty()) {
             return -1; // or throw an exception if you prefer
         }
@@ -131,7 +131,7 @@ public class Chord {
     }
 
     // Find the note with the highest noteId
-    public int findHighestNoteId() {
+    public int findHighestNote() {
         if (chordNotes.isEmpty()) {
             return -1; // or throw an exception if you prefer
         }
@@ -188,7 +188,7 @@ public class Chord {
 
     public int findLowestNoteIdWithoutFlip(int clefValue) {
         List<Integer> flipNotes = getFlipNotes(clefValue);
-        int lowestNoteId = findLowestNoteId();
+        int lowestNoteId = findLowestNote();
 
         // If the lowestNoteId is in flipNotes and has a preceding note
         if (flipNotes.contains(lowestNoteId) && flipNotes.indexOf(lowestNoteId) > 0) {
@@ -199,7 +199,7 @@ public class Chord {
 
     public int findHighestNoteIdWithoutFlip(int clefValue) {
         List<Integer> flipNotes = getFlipNotes(clefValue);
-        int highestNoteId = findHighestNoteId();
+        int highestNoteId = findHighestNote();
 
         // If the highestNoteId is in flipNotes and has a preceding note
         if (flipNotes.contains(highestNoteId) && flipNotes.indexOf(highestNoteId) > 0) {

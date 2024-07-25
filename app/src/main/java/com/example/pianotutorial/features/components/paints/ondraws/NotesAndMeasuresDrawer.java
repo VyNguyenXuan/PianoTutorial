@@ -86,17 +86,16 @@ public class NotesAndMeasuresDrawer {
         currentChordNotes = measure.currentChordNotes();
         List<BeamValue> chordsToBeam = measure.groupChordsIntoBeams();
         if (measure.getChords() != null) {
+            // Draw any remaining beamed notes
+            if (chordsToBeam.size() > 0) {
+                drawBeamedNotes(canvas, chordsToBeam, measure, measureStartX, staffHeight, noteHeadOriginalHeight);
+            }
             for (Chord chord : measure.getChords()) {
                 float noteDuration = chord.getDuration();
                 float xPosition = measureStartX + chordPositionWithinMeasure;
                 chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
 
                 drawChord(canvas, chord, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, chordsToBeam);
-            }
-
-            // Draw any remaining beamed notes
-            if (chordsToBeam.size() > 0) {
-                drawBeamedNotes(canvas, chordsToBeam, measure, measureStartX, staffHeight, noteHeadOriginalHeight);
             }
         }
     }
@@ -120,20 +119,28 @@ public class NotesAndMeasuresDrawer {
             if (beamValue.isBeamedNoteStemUp(measure.getClef())) {
                 int highestNoteId = beamValue.findHighestBeamNoteId(measure.getClef());
                 yPosition = MusicUtils.convertPitchToY(highestNoteId, 0);
-                beamPath.moveTo(firstXPosition - 55, yPosition);
-                beamPath.lineTo(lastXPosition - 55, yPosition);
+                beamPath.moveTo(firstXPosition - 55, yPosition+8);
+                beamPath.lineTo(lastXPosition - 55, yPosition+8);
             } else {
                 int lowestNoteId = beamValue.findLowestBeamNoteId(measure.getClef());
                 yPosition = MusicUtils.convertPitchToY(lowestNoteId - 13, 0);
-                beamPath.moveTo(firstXPosition - 104, yPosition);
-                beamPath.lineTo(lastXPosition - 104, yPosition);
+                beamPath.moveTo(firstXPosition - 104, yPosition-8);
+                beamPath.lineTo(lastXPosition - 104, yPosition-8);
             }
 
 
             // Nếu có nhiều hơn một điểm, vẽ đoạn nối từ điểm cuối đến điểm đầu
-            if (chordsToBeam.size() > 1) {
-                beamPath.lineTo(firstXPosition, yPosition);
+            if(beamValue.isBeamedNoteStemUp(measure.getClef())){
+                if (chordsToBeam.size() > 1) {
+                    beamPath.lineTo(firstXPosition, yPosition+8);
+                }
             }
+            else{
+                if (chordsToBeam.size() > 1) {
+                    beamPath.lineTo(firstXPosition, yPosition-9);
+                }
+            }
+
 
             // Vẽ đường beam
             Paint beamPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

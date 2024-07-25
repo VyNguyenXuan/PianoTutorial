@@ -1,5 +1,6 @@
 package com.example.pianotutorial.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BeamValue {
@@ -43,9 +44,47 @@ public class BeamValue {
         return Math.min(lowestStartChord, lowestEndChord);
     }
 
+    public ChordNote findLowestBeamNote(int clef) {
+        for (ChordNote chordNote : startChord.getChordNotes()) {
+            if (chordNote.getNoteId() == findLowestBeamNoteId(clef)) {
+                return chordNote;
+            }
+        }
+        for (ChordNote chordNote : endChord.getChordNotes()) {
+            if (chordNote.getNoteId() == findLowestBeamNoteId(clef)) {
+                return chordNote;
+            }
+        }
+        return null;
+    }
+
     public int findHighestBeamNoteId(int clef) {
         int highestStartChord = startChord.findHighestNoteIdWithoutFlip(clef);
         int highestEndChord = endChord.findHighestNoteIdWithoutFlip(clef);
         return Math.max(highestStartChord, highestEndChord);
     }
+
+    public ChordNote findHighestBeamNote(int clef) {
+        for (ChordNote chordNote : startChord.getChordNotes()) {
+            if (chordNote.getNoteId() == findHighestBeamNoteId(clef)) {
+                return chordNote;
+            }
+        }
+        for (ChordNote chordNote : endChord.getChordNotes()) {
+            if (chordNote.getNoteId() == findHighestBeamNoteId(clef)) {
+                return chordNote;
+            }
+        }
+        return null;
+    }
+
+    public List<Chord> getBeamNotes(Chord currentChord) {
+        List<Chord> chordList = new ArrayList<>();
+        if (startChord == currentChord || endChord == currentChord) {
+            chordList.add(startChord);
+            chordList.add(endChord);
+        }
+        return chordList;
+    }
+
 }
