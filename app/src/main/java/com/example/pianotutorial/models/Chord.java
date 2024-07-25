@@ -84,29 +84,34 @@ public class Chord {
         int aboveMiddleLine = 0;
 
         // Count belowMiddleLine, aboveMiddleLine
-        for (ChordNote note : chordNotes) {
-            int adjustedNoteId = adjustedNoteId(note.getNoteId());
-            if (adjustedNoteId < middleLinePitch) {
-                belowMiddleLine++;
-            } else if (adjustedNoteId > middleLinePitch) {
-                aboveMiddleLine++;
-            }
+        if(chordNotes.isEmpty()){
+            return false;
         }
-
-        if (belowMiddleLine > aboveMiddleLine) {
-            return true; // Stem up
-        } else if (aboveMiddleLine > belowMiddleLine) {
-            return false; // Stem down
-        } else {
-
-            int farthestNotePitch = adjustedNoteId(chordNotes.get(0).getNoteId());
+        else{
             for (ChordNote note : chordNotes) {
                 int adjustedNoteId = adjustedNoteId(note.getNoteId());
-                if (Math.abs(adjustedNoteId - middleLinePitch) > Math.abs(farthestNotePitch - middleLinePitch)) {
-                    farthestNotePitch = adjustedNoteId;
+                if (adjustedNoteId < middleLinePitch) {
+                    belowMiddleLine++;
+                } else if (adjustedNoteId > middleLinePitch) {
+                    aboveMiddleLine++;
                 }
             }
-            return farthestNotePitch < middleLinePitch;
+
+            if (belowMiddleLine > aboveMiddleLine) {
+                return true; // Stem up
+            } else if (aboveMiddleLine > belowMiddleLine) {
+                return false; // Stem down
+            } else {
+
+                int farthestNotePitch = adjustedNoteId(chordNotes.get(0).getNoteId());
+                for (ChordNote note : chordNotes) {
+                    int adjustedNoteId = adjustedNoteId(note.getNoteId());
+                    if (Math.abs(adjustedNoteId - middleLinePitch) > Math.abs(farthestNotePitch - middleLinePitch)) {
+                        farthestNotePitch = adjustedNoteId;
+                    }
+                }
+                return farthestNotePitch < middleLinePitch;
+            }
         }
     }
 
@@ -164,16 +169,22 @@ public class Chord {
         }
 
         int previousNoteId = noteIds.get(0);
+        boolean previousFlipped = false;
+
         for (int i = 1; i < noteIds.size(); i++) {
             int currentNoteId = noteIds.get(i);
-            if (Math.abs(currentNoteId - previousNoteId) == 1) {
+            if (Math.abs(currentNoteId - previousNoteId) == 1 && !previousFlipped) {
                 flipNotes.add(currentNoteId);
+                previousFlipped = true;
+            } else {
+                previousFlipped = false;
             }
             previousNoteId = currentNoteId;
         }
 
         return flipNotes;
     }
+
 
     public int findLowestNoteIdWithoutFlip(int clefValue) {
         List<Integer> flipNotes = getFlipNotes(clefValue);
@@ -197,10 +208,11 @@ public class Chord {
         return highestNoteId; // Otherwise, return the original highestNoteId
     }
 
-    int adjustedNoteId(int noteId) {
+    public int adjustedNoteId(int noteId) {
         while (noteId > 56) {
             noteId -= 56;
         }
         return noteId;
     }
+
 }

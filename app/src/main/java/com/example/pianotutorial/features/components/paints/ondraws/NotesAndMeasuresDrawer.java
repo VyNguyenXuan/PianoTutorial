@@ -1,6 +1,7 @@
 package com.example.pianotutorial.features.components.paints.ondraws;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -9,6 +10,7 @@ import com.example.pianotutorial.features.components.helpers.MusicUtils;
 import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.paints.MusicView;
 import com.example.pianotutorial.features.components.paints.notepaints.*;
+import com.example.pianotutorial.models.BeamValue;
 import com.example.pianotutorial.models.Chord;
 import com.example.pianotutorial.models.ChordNote;
 import com.example.pianotutorial.models.Measure;
@@ -80,16 +82,70 @@ public class NotesAndMeasuresDrawer {
         drawMeasureLine(canvas, measureEndX, staffHeight, measureStartX);
 
         float chordPositionWithinMeasure = 0;
+        List<ChordNote> currentChordNotes = new ArrayList<>();
+        currentChordNotes = measure.currentChordNotes();
+        List<BeamValue> chordsToBeam = measure.groupChordsIntoBeams();
         if (measure.getChords() != null) {
             for (Chord chord : measure.getChords()) {
                 float noteDuration = chord.getDuration();
                 float xPosition = measureStartX + chordPositionWithinMeasure;
-
                 chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
-                drawChord(canvas, chord, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration);
+
+                drawChord(canvas, chord, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, chordsToBeam);
+            }
+
+            // Draw any remaining beamed notes
+            if (chordsToBeam.size() > 0) {
+                drawBeamedNotes(canvas, chordsToBeam, measure, measureStartX, staffHeight, noteHeadOriginalHeight);
             }
         }
     }
+
+    private void drawBeamedNotes(Canvas canvas, List<BeamValue> chordsToBeam, Measure measure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
+        if (chordsToBeam.isEmpty()) return;
+
+        float yPosition = 0;
+
+        // Tạo đường beam
+        Path beamPath = new Path();
+
+        for (BeamValue beamValue : chordsToBeam) {
+            Chord startValue = beamValue.getStartChord();
+            float firstXPosition = measureStartX + (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * measure.currentDuration(startValue);
+
+            Chord endValue = beamValue.getEndChord();
+            float lastXPosition = measureStartX + (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * measure.currentDuration(endValue);
+
+            // Vẽ đường beam từ điểm đầu đến điểm cuối
+            if (beamValue.isBeamedNoteStemUp(measure.getClef())) {
+                int highestNoteId = beamValue.findHighestBeamNoteId(measure.getClef());
+                yPosition = MusicUtils.convertPitchToY(highestNoteId, 0);
+                beamPath.moveTo(firstXPosition - 55, yPosition);
+                beamPath.lineTo(lastXPosition - 55, yPosition);
+            } else {
+                int lowestNoteId = beamValue.findLowestBeamNoteId(measure.getClef());
+                yPosition = MusicUtils.convertPitchToY(lowestNoteId - 13, 0);
+                beamPath.moveTo(firstXPosition - 104, yPosition);
+                beamPath.lineTo(lastXPosition - 104, yPosition);
+            }
+
+
+            // Nếu có nhiều hơn một điểm, vẽ đoạn nối từ điểm cuối đến điểm đầu
+            if (chordsToBeam.size() > 1) {
+                beamPath.lineTo(firstXPosition, yPosition);
+            }
+
+            // Vẽ đường beam
+            Paint beamPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            beamPaint.setStyle(Paint.Style.STROKE);
+            beamPaint.setColor(Color.BLACK);  // Chọn màu cho đường beam
+            beamPaint.setStrokeWidth(20);  // Độ dày của đường beam
+
+            canvas.drawPath(beamPath, beamPaint);
+        }
+
+    }
+
 
     private void drawMeasureLine(Canvas canvas, float measureEndX, float staffHeight, float measureStartX) {
         float topY = staffHeight / 2;
@@ -104,17 +160,17 @@ public class NotesAndMeasuresDrawer {
         canvas.drawLine(measureEndX, topY, measureEndX, bottomY, measureLinePaint);
     }
 
-    private void drawChord(Canvas canvas, Chord chord, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration) {
+    private void drawChord(Canvas canvas, Chord chord, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
         if (!chord.getChordNotes().isEmpty()) {
             for (ChordNote chordNote : chord.getChordNotes()) {
-                drawNote(canvas, chord, chordNote, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration);
+                drawNote(canvas, chord, chordNote, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, beamValues);
             }
         } else {
             MusicUtils.drawRest(canvas, xPosition, noteDuration, System.currentTimeMillis(), musicView);
         }
     }
 
-    private void drawNote(Canvas canvas, Chord chord, ChordNote chordNote, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration) {
+    private void drawNote(Canvas canvas, Chord chord, ChordNote chordNote, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
         int currentNote = chordNote.getNoteId();
         if (currentNote > 112) currentNote -= 112;
         else if (currentNote > 56) currentNote -= 56;
@@ -127,7 +183,7 @@ public class NotesAndMeasuresDrawer {
         canvas.scale(scaleFactor, scaleFactor);
 
         Paint notePaint = MusicUtils.getNotePaint(measure, chord, currentNote, chordNote);
-        Path notePath = MusicUtils.getNotePath(measure, chord, currentNote, chordNote);
+        Path notePath = MusicUtils.getNotePath(measure, chord, currentNote, chordNote, beamValues);
 
         NoteStatus noteStatus = noteStatuses.computeIfAbsent(chordNote, k -> new NoteStatus());
         Paint currentNotePaint = new Paint(notePaint);

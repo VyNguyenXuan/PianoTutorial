@@ -76,7 +76,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     private void setupObservers() {
         playScreenViewModel.getSheetList().observe(this, currentSheet -> {
             if (currentSheet != null) {
-                activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(5).getMeasures(), currentSheet.get(1).getMeasures());
+                activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(4).getMeasures(), currentSheet.get(5).getMeasures());
                 activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
             }
         });
@@ -85,6 +85,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             if (isPlayed != null) {
                 if (!isPlayed) {
                     handlePause();
+                    startUpdatingStaff();
                 } else {
                     startCountdown(this);
                 }
@@ -104,7 +105,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void updateSpeed(float speed) {
-        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff1d4cb7b-9e3b-445e-a3e7-f97fc78e5434_Sao_Sang.mid?alt=media&token=fb758635-1027-43cc-bbff-1a0db24177bb";
+        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff184e0c2-8baf-46f0-b61e-1baad78dda91_fur_elise.mid?alt=media&token=875f7898-be35-4122-a051-6e0858033bda";
 
         int speed1Res = R.drawable.white_border;
         int speed2Res = R.drawable.white_border;
@@ -142,6 +143,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         // Start the download task
         DownloadTask downloadTask = new DownloadTask(this);
         downloadTask.execute(fileURL);
+        startUpdatingStaff();
     }
     private void setPlayerPlaybackSpeed(MediaPlayer player, float speed) {
         PlaybackParams params = new PlaybackParams();
@@ -272,7 +274,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                     startUpdatingStaff();
                     playScreenEventHandler.onInitial();
                     if(player==null){
-                        player = MediaPlayer.create(context, R.raw.fur_elise);
+                        playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff184e0c2-8baf-46f0-b61e-1baad78dda91_fur_elise.mid?alt=media&token=875f7898-be35-4122-a051-6e0858033bda");
 
                     }
                     player.start();
