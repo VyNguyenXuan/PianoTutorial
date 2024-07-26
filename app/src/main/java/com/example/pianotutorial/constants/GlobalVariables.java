@@ -9,7 +9,6 @@ public class GlobalVariables {
 
     public static float SPEED = 1f;
     public static float CURRENT_X = 0;
-    public static int beamIndex=0;
     public static float MEASURE_WIDTH = 300 * TOP_SIGNATURE;
     public static float CHECK_LINE_X = 600;
     public static int FIXED_HEIGHT = 360;

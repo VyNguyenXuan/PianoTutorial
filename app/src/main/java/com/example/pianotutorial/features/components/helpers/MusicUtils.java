@@ -35,7 +35,6 @@ import com.example.pianotutorial.models.Measure;
 import java.util.List;
 
 public class MusicUtils {
-    public final int beamIndex = 0;
 
     public static int countDottedNotes(float duration) {
         int count = 0;
@@ -370,11 +369,12 @@ public class MusicUtils {
                     return QuarterNotePaintFlip.createPath();
                 } else {
                     List<Chord> chords = getBeamNotes(beamValues, chord);
+                    assert chords != null;
                     if (!chords.isEmpty()) {
                         float diff = Math.abs(chords.get(0).findLowestNoteIdWithoutFlip(clef) - chords.get(1).findLowestNoteIdWithoutFlip(clef));
                         if (chords.get(0).findLowestNoteIdWithoutFlip(clef) < chords.get(1).findLowestNoteIdWithoutFlip(clef)) {
                             if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(clef)) {
-                                return CustomQuarterNotePaint.createPath(-14f * diff);
+                                return CustomQuarterNotePaint.createPath(-14f * (diff-1));
                             } else {
                                 return QuarterNotePaint.createPath();
                             }
@@ -382,7 +382,7 @@ public class MusicUtils {
                             if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(clef)) {
                                 return QuarterNotePaint.createPath();
                             } else {
-                                return CustomQuarterNotePaint.createPath(-14f * diff);
+                                return CustomQuarterNotePaint.createPath(-14f * (diff-1));
                             }
                         }
                     } else {
@@ -394,11 +394,12 @@ public class MusicUtils {
                     return QuarterNotePaintFlipReverse.createPath();
                 } else {
                     List<Chord> chords = getBeamNotes(beamValues, chord);
+                    assert chords != null;
                     if (!chords.isEmpty()) {
                         float diff = Math.abs(chords.get(0).findHighestNoteIdWithoutFlip(clef) - chords.get(1).findHighestNoteIdWithoutFlip(clef));
                         if (chords.get(0).findHighestNoteIdWithoutFlip(clef) > chords.get(1).findHighestNoteIdWithoutFlip(clef)) {
                             if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(clef)) {
-                                return CustomQuarterNotePaintReverse.createPath(14f * diff);
+                                return CustomQuarterNotePaintReverse.createPath(14f * (diff-1));//To draw beam
                             } else {
                                 return QuarterNotePaintReverse.createPath();
                             }
@@ -406,7 +407,7 @@ public class MusicUtils {
                             if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(clef)) {
                                 return QuarterNotePaintReverse.createPath();
                             } else {
-                                return CustomQuarterNotePaintReverse.createPath(14f * diff);
+                                return CustomQuarterNotePaintReverse.createPath(14f * (diff-1));
                             }
                         }
                     } else {
@@ -525,17 +526,6 @@ public class MusicUtils {
             }
         }
         return -1;
-    }
-
-    public static boolean isHighestBeamNote(List<BeamValue> beamValueList, ChordNote chordNote, int clef) {
-        if (!beamValueList.isEmpty()) {
-            for (BeamValue beamValue : beamValueList) {
-                if (beamValue.findHighestBeamNote(clef) == chordNote) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public static List<Chord> getBeamNotes(List<BeamValue> beamValueList, Chord chord) {
