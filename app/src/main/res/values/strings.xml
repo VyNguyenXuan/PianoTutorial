@@ -11,8 +11,8 @@
     <string name="next_note">Next ♪</string>
     <string name="next_line">Next ♪♪</string>
 
-    <string name="midi_device_status_connected">Device connected</string>
-    <string name="midi_device_status_disconnected">Device disconnected</string>
+    <string name="midi_device_status_connected">Đã kết nối với thiết bị đàn MIDI</string>
+    <string name="midi_device_status_disconnected">Vui lòng kết nối với thiết bị đàn MIDI</string>
     <string name="midi_device_status_error">Communication Error</string>
 
 

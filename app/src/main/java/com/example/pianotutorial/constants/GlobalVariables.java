@@ -4,7 +4,7 @@ public class GlobalVariables {
 
     public static final String BASE_URL = "https://www.pianoai.somee.com/";
     public static int WHITE_KEYS_COUNT = 35;
-    public static int TOP_SIGNATURE = 3;
+    public static int TOP_SIGNATURE = 4;
     public static int BOTTOM_SIGNATURE = 4;
 
     public static float SPEED = 1f;

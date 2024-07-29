@@ -26,27 +26,17 @@ public class MidiHandler {
     private final View view;
 
     private final TextView deviceStatus;
-    private final TextView deviceInfos;
-
-    private final ImageView statusImageDisconnected;
-    private final ImageView statusImageConnected;
 
     public MidiHandler(final MidiAware midiAware, MidiManager midiManager, View view) {
         this.midiAware = midiAware;
         this.midiManager = midiManager;
         this.view = view;
         this.deviceStatus = view.findViewById(R.id.status);
-        this.deviceInfos = view.findViewById(R.id.device_infos);
-        this.statusImageDisconnected = view.findViewById(R.id.status_image_disconnected);
-        this.statusImageConnected = view.findViewById(R.id.status_image_connected);
 
         String deviceInfos = getDefaultDeviceInfos(view);
 
-        this.deviceInfos.setText(deviceInfos);
         deviceStatus.setText(R.string.midi_device_status_disconnected);
 
-        statusImageConnected.setVisibility(View.GONE);
-        statusImageDisconnected.setVisibility(View.VISIBLE);
     }
 
     @NonNull
@@ -79,19 +69,14 @@ public class MidiHandler {
             @Override
             public void onDeviceAdded(final MidiDeviceInfo device) {
                 openDevice(device, midiManager);
-                statusImageConnected.setVisibility(View.VISIBLE);
-                statusImageDisconnected.setVisibility(View.GONE);
             }
 
             @Override
             public void onDeviceRemoved(MidiDeviceInfo device) {
-                deviceInfos.setText(getDefaultDeviceInfos(view));
                 deviceStatus.setText(R.string.midi_device_status_disconnected);
 
                 removeDevice();
 
-                statusImageConnected.setVisibility(View.GONE);
-                statusImageDisconnected.setVisibility(View.VISIBLE);
             }
         }, handler);
     }
@@ -105,7 +90,6 @@ public class MidiHandler {
 
     private void openDevice(MidiDeviceInfo deviceInfo, final MidiManager midiManager) {
         final TextView statusText = view.findViewById(R.id.status);
-        final TextView deviceInfos = view.findViewById(R.id.device_infos);
 
         Log.d(TAG, "Opening device: ");
 
@@ -115,40 +99,31 @@ public class MidiHandler {
         Log.d(TAG, "Device: " + deviceId + " " + deviceManufacturer);
 
         midiManager.openDevice(deviceInfo, device -> {
-            if (device == null) {
-                statusText.setText(R.string.midi_device_status_error);
-            } else {
-                parentDevice = device;
-                statusText.setText(R.string.midi_device_status_connected);
+                    if (device == null) {
+                        statusText.setText(R.string.midi_device_status_error);
+                    } else {
+                        parentDevice = device;
+                        statusText.setText(R.string.midi_device_status_connected);
 
-                MidiDeviceInfo.PortInfo[] portInfos = device.getInfo().getPorts();
+                        MidiDeviceInfo.PortInfo[] portInfos = device.getInfo().getPorts();
 
 
-                for (MidiDeviceInfo.PortInfo portInfo : portInfos) {
-                    Log.d(TAG, "Cycling port " + portInfo.getPortNumber());
-                    if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
-                        Log.d(TAG, "Found OUTPUT port");
+                        for (MidiDeviceInfo.PortInfo portInfo : portInfos) {
+                            Log.d(TAG, "Cycling port " + portInfo.getPortNumber());
+                            if (portInfo.getType() == MidiDeviceInfo.PortInfo.TYPE_OUTPUT) {
+                                Log.d(TAG, "Found OUTPUT port");
 
-                        deviceInfos.setText(view.getContext().getString(
-                                R.string.midi_device_infos,
-                                deviceId,
-                                deviceManufacturer,
-                                portInfo.getType(),
-                                portInfo.getPortNumber()
-                        ));
 
-                        final MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
-                        statusImageConnected.setVisibility(View.VISIBLE);
-                        statusImageDisconnected.setVisibility(View.GONE);
+                                final MidiOutputPort outputPort = device.openOutputPort(portInfo.getPortNumber());
 
-                        if (midiAware != null) {
-                            midiAware.onDeviceOpened(outputPort);
+                                if (midiAware != null) {
+                                    midiAware.onDeviceOpened(outputPort);
+                                }
+                                break;
+                            }
                         }
-                        break;
                     }
-                }
-            }
-        }, new Handler(Looper.getMainLooper())
+                }, new Handler(Looper.getMainLooper())
         );
     }
 }

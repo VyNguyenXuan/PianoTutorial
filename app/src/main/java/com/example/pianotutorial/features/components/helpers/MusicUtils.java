@@ -434,7 +434,7 @@ public class MusicUtils {
                         if (noteDuration < 8 && noteDuration >= 4) {
                             return WholeNotePaint.createPath();
                         } else if (noteDuration < 4 && noteDuration >= 2) {
-                            return HalfNotePaintReverse.createPath();
+                            return HalfNotePaint.createPath();
                         } else if (noteDuration < 2 && noteDuration >= 1) {
                             return QuarterNotePaint.createPath();
                         } else if (noteDuration < 1 && noteDuration >= 0.5) {
@@ -513,14 +513,10 @@ public class MusicUtils {
                 if (beamValue.isBeamedNoteStemUp(clef)) {
                     if (chord == beamValue.getStartChord() || (chord == beamValue.getEndChord())) {
                         return 1;
-                    } else {
-                        return -1;
                     }
                 } else {
                     if (chord == beamValue.getStartChord() || (chord == beamValue.getEndChord())) {
                         return 0;
-                    } else {
-                        return -1;
                     }
                 }
             }

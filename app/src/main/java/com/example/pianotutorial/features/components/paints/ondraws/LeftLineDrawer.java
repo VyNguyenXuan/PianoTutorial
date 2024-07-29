@@ -16,7 +16,7 @@ public class LeftLineDrawer {
 
         // Initialize paint for the right line
         rightLinePaint = new Paint();
-        rightLinePaint.setColor(0xFF4EFF9E);
+        rightLinePaint.setColor(0xFF87FC83);
         rightLinePaint.setStrokeWidth(16);
 
         // Apply a blur effect to the right line paint
@@ -30,7 +30,7 @@ public class LeftLineDrawer {
         // Draw the rounded rectangle with gradient
         LinearGradient gradient = new LinearGradient(
                 rightX, topY, leftX, topY,
-                0xFF4EFF9E, 0x004EFF9E,
+                0xFF87FC83, 0x0087FC83,
                 Shader.TileMode.CLAMP
         );
         leftLinePaint.setShader(gradient);

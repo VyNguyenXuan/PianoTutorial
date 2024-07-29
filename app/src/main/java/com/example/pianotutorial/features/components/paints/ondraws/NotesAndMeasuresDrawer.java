@@ -31,7 +31,8 @@ public class NotesAndMeasuresDrawer {
     private final MusicView musicView;
     private final List<String> correctNotes;
     private final Map<ChordNote, NoteStatus> noteStatuses;
-    private  MediaPlayer player;
+    private MediaPlayer player;
+    private boolean soundPlayed;
 
 
     public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView, MediaPlayer player) {
@@ -44,6 +45,7 @@ public class NotesAndMeasuresDrawer {
         this.correctNotes = new ArrayList<>(); // Initialize the list here
         this.noteStatuses = new HashMap<>();
         this.player = player;
+        this.soundPlayed = false;
     }
 
     private Paint initializePaint(Paint paint) {
@@ -54,6 +56,7 @@ public class NotesAndMeasuresDrawer {
     public void setMediaPlayer(MediaPlayer player) {
         this.player = player;
     }
+
     public void playSound() {
         if (player != null && !player.isPlaying()) {
             player.start();
@@ -81,7 +84,7 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX = GlobalVariables.CHECK_LINE_X + width  - (currentTime * 0.6f * GlobalVariables.SPEED);
+        float currentX = GlobalVariables.CHECK_LINE_X + width - (currentTime * 0.5f * GlobalVariables.SPEED);
 
         if (measures != null) {
             for (Measure measure : measures) {
@@ -128,7 +131,7 @@ public class NotesAndMeasuresDrawer {
             if (startValue.getDuration() < 1 && startValue.getDuration() >= 0.5f) {
                 if (beamValue.isBeamedNoteStemUp(measure.getClef())) {
                     int highestNoteId = beamValue.findHighestBeamNoteId(measure.getClef());
-                    yPosition = MusicUtils.convertPitchToY(highestNoteId, 0);
+                    yPosition = (measure.getClef() == 0) ? MusicUtils.convertPitchToY(highestNoteId, 0) : MusicUtils.convertPitchToY(highestNoteId, 1);
                     if (startValue.findLowestNoteIdWithoutFlip(measure.getClef()) == endValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
                         beamPath.moveTo(firstXPosition - 60, yPosition + 12);
                         beamPath.lineTo(lastXPosition - 55, yPosition + 12);
@@ -152,7 +155,7 @@ public class NotesAndMeasuresDrawer {
 
                 } else {
                     int lowestNoteId = beamValue.findLowestBeamNoteId(measure.getClef());
-                    yPosition = MusicUtils.convertPitchToY(lowestNoteId - 13, 0);
+                    yPosition = (measure.getClef() == 0) ? MusicUtils.convertPitchToY(lowestNoteId - 13, 0) : MusicUtils.convertPitchToY(lowestNoteId - 13, 1);
                     if (startValue.findLowestNoteIdWithoutFlip(measure.getClef()) == endValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
                         beamPath.moveTo(firstXPosition - 109, yPosition - 12);
                         beamPath.lineTo(lastXPosition - 104, yPosition - 12);
@@ -285,8 +288,9 @@ public class NotesAndMeasuresDrawer {
         float bottomY = staffHeight / 2 + 4 * (staffHeight / 8);
         Paint measureLinePaint = new Paint(measurePaint);
 
-        if (measureStartX < GlobalVariables.CHECK_LINE_X+160) {
+        if (!soundPlayed && measureStartX < GlobalVariables.CHECK_LINE_X + 40) {
             playSound();
+            soundPlayed = true; // Update the flag to true to prevent future plays
         }
 
         // Check if the measure line has crossed the measureEndX

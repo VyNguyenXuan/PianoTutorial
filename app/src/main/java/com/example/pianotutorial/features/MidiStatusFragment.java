@@ -5,11 +5,9 @@ import android.app.Fragment;
 import android.content.Context;
 import android.media.midi.MidiManager;
 import android.os.Bundle;
-import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -17,13 +15,10 @@ import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.components.helpers.MidiAware;
 import com.example.pianotutorial.features.components.helpers.MidiHandler;
 
-public class MidiStatusFragment extends Fragment implements View.OnClickListener {
+public class MidiStatusFragment extends Fragment {
 
     private MidiHandler midiHandler;
     private ViewGroup fragment;
-    private boolean clicked = true;
-
-    private TextView deviceInfos;
 
     @Override
     public void onDestroyView() {
@@ -41,7 +36,6 @@ public class MidiStatusFragment extends Fragment implements View.OnClickListener
 
 
         View view = inflater.inflate(R.layout.midi_status_fragment, container, false);
-        view.setOnClickListener(this);
 
 
         if (activity instanceof MidiAware) {
@@ -59,9 +53,6 @@ public class MidiStatusFragment extends Fragment implements View.OnClickListener
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         fragment = view.findViewById(R.id.midi_status_fragment);
-        deviceInfos = view.findViewById(R.id.device_infos);
-
-        deviceInfos.setVisibility(View.GONE);
 
         super.onViewCreated(view, savedInstanceState);
     }
@@ -72,16 +63,4 @@ public class MidiStatusFragment extends Fragment implements View.OnClickListener
         super.onStart();
     }
 
-    @Override
-    public void onClick(View view) {
-
-        TransitionManager.beginDelayedTransition(fragment);
-        if(clicked) {
-            deviceInfos.setVisibility(View.VISIBLE);
-        } else {
-            deviceInfos.setVisibility(View.GONE);
-        }
-
-        clicked = !clicked;
-    }
 }

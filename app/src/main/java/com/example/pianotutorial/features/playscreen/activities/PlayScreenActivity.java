@@ -8,6 +8,7 @@ import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -97,23 +98,23 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void loadMusicView(List<Sheet> currentSheet) {
-        activityPlayscreenBinding.progressBar.setVisibility(View.VISIBLE);
         activityPlayscreenBinding.musicView.setVisibility(View.GONE);
 
         handler.post(() -> {
             // Perform initialization here
-            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(4).getMeasures(), currentSheet.get(5).getMeasures());
+            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(5).getMeasures(), currentSheet.get(6).getMeasures());
             activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
 
             // Hide the progress bar and show the MusicView
-            activityPlayscreenBinding.progressBar.setVisibility(View.GONE);
             activityPlayscreenBinding.musicView.setVisibility(View.VISIBLE);
         });
     }
 
     private void handlePause() {
+        activityPlayscreenBinding.menuIcon.setVisibility(View.VISIBLE);
+        activityPlayscreenBinding.playCircleVector.setVisibility(View.VISIBLE); // Countdown from 3 to 1
         activityPlayscreenBinding.opacityView.setVisibility(View.VISIBLE);
-        activityPlayscreenBinding.playImage.setBackgroundResource(R.drawable.vector_play_circle);
+        activityPlayscreenBinding.playIcon.setVisibility(View.GONE);
         GlobalVariables.SPEED = 0;
         if(player != null){
             player.stop();
@@ -121,7 +122,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void updateSpeed(float speed) {
-        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff184e0c2-8baf-46f0-b61e-1baad78dda91_fur_elise.mid?alt=media&token=875f7898-be35-4122-a051-6e0858033bda";
+        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d";
 
         int speed1Res = R.drawable.white_border;
         int speed2Res = R.drawable.white_border;
@@ -271,17 +272,34 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void startCountdown(Context context) {
-        countdownTextView.setVisibility(View.GONE);
-        activityPlayscreenBinding.opacityView.setVisibility(View.GONE);
-        activityPlayscreenBinding.playImage.setBackgroundResource(R.drawable.vector_pause_circle);
         GlobalVariables.SPEED = Objects.requireNonNull(playScreenViewModel.getSpeed().getValue());
         startUpdatingStaff();
         playScreenEventHandler.onInitial();
-        if(player==null){
-            playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff184e0c2-8baf-46f0-b61e-1baad78dda91_fur_elise.mid?alt=media&token=875f7898-be35-4122-a051-6e0858033bda");
-
+        activityPlayscreenBinding.playCircleVector.setVisibility(View.GONE); // Countdown from 3 to 1
+        if(player == null) {
+            playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d");
         }
+
+        new CountDownTimer(3000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int secondsRemaining = (int) (millisUntilFinished / 1000);
+                countdownTextView.setVisibility(View.VISIBLE); // Countdown from 3 to 1
+                countdownTextView.setText(String.valueOf(secondsRemaining + 1)); // Countdown from 3 to 1
+
+            }
+
+            @Override
+            public void onFinish() {
+                countdownTextView.setVisibility(View.GONE);
+                activityPlayscreenBinding.opacityView.setVisibility(View.GONE);
+                activityPlayscreenBinding.playIcon.setVisibility(View.VISIBLE);
+                activityPlayscreenBinding.menuIcon.setVisibility(View.GONE);
+
+            }
+        }.start();
     }
+
 
 
     private void startUpdatingStaff() {
@@ -296,7 +314,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
     private void playAudio(String filePath) {
         if (player != null) {
-            player.release();
+            //player.release();
         }
 
         player = new MediaPlayer();

@@ -30,7 +30,7 @@ public class Sheet {
     @SerializedName("sheetFile")
     private String sheetFile;
 
-    @SerializedName("measures")
+    @SerializedName("rightMeasures")
     private List<Measure> measures;
 
     @SerializedName("leftHandSheetId")
