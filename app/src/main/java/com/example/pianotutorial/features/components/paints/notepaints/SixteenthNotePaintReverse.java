@@ -15,24 +15,17 @@ public class SixteenthNotePaintReverse {
 
     public static Path createPath() {
         Path notePath = new Path();
+        float value=16;
 
-        // First path
-        notePath.moveTo(28f, 180f);
-        notePath.lineTo(26f, 180f);
-        notePath.lineTo(26f, 92f);
+        notePath.moveTo(26f, 180f-value);
+        notePath.lineTo(28f, 180f-value);
+        notePath.cubicTo(33.03f, 171.27f-value, 38.85f, 164.91f-value, 43.88f, 159.41f-value);
+        notePath.cubicTo(54.89f, 147.37f-value, 62.09f, 139.5f-value, 48.83f, 120f-value);
+        notePath.cubicTo(58.12f, 144.45f-value, 49.7f, 149.29f-value, 32.73f, 159.05f-value);
+        notePath.cubicTo(31.22f, 159.92f-value, 29.64f, 160.83f-value, 28f, 161.79f-value);
         notePath.lineTo(28f, 92f);
-        notePath.lineTo(28f, 145.79f);
-        notePath.cubicTo(29.64f, 144.83f, 31.22f, 143.92f, 32.73f, 143.05f);
-        notePath.cubicTo(49.7f, 133.29f, 58.12f, 128.45f, 48.83f, 104f);
-        notePath.cubicTo(58.63f, 118.41f, 57.26f, 126.47f, 51.43f, 134.56f);
-        notePath.cubicTo(54.06f, 149.18f, 47.15f, 156.09f, 39.94f, 163.3f);
-        notePath.cubicTo(35.24f, 168f, 30.41f, 172.83f, 28f, 180f);
-
-        notePath.moveTo(50.12f, 136.29f);
-        notePath.cubicTo(50.1f, 136.44f, 50.09f, 136.6f, 50.07f, 136.76f);
-        notePath.cubicTo(49.39f, 143.6f, 48.44f, 153.25f, 28.34f, 163.42f);
-        notePath.cubicTo(33.29f, 154.99f, 38.96f, 148.79f, 43.88f, 143.41f);
-        notePath.cubicTo(46.17f, 140.9f, 48.3f, 138.57f, 50.12f, 136.29f);
+        notePath.lineTo(26f, 92f);
+        notePath.lineTo(26f, 180f);
 
         // Second path
         notePath.moveTo(27.32f, 97.39f);
@@ -42,6 +35,17 @@ public class SixteenthNotePaintReverse {
         notePath.cubicTo(40.3f, 103.51f, 30.85f, 102.64f, 27.32f, 97.39f);
         notePath.close();
 
+        notePath.moveTo(26f, 180f);
+        notePath.lineTo(28f, 180f);
+        notePath.cubicTo(33.03f, 171.27f, 38.85f, 164.91f, 43.88f, 159.41f);
+        notePath.cubicTo(54.89f, 147.37f, 62.09f, 139.5f, 48.83f, 120f);
+        notePath.cubicTo(58.12f, 144.45f, 49.7f, 149.29f, 32.73f, 159.05f);
+        notePath.cubicTo(31.22f, 159.92f, 29.64f, 160.83f, 28f, 161.79f);
+        notePath.lineTo(28f, 92f);
+        notePath.lineTo(26f, 92f);
+        notePath.lineTo(26f, 180f);
+
         return notePath;
     }
+
 }

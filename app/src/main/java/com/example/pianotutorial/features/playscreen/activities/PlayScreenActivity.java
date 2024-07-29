@@ -31,12 +31,14 @@ import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.helpers.NoteActionListener;
 import com.example.pianotutorial.features.playscreen.eventhandlers.PlayScreenEventHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
+import com.example.pianotutorial.models.Sheet;
 
 import org.billthefarmer.mididriver.GeneralMidiConstants;
 import org.billthefarmer.mididriver.MidiConstants;
 import org.billthefarmer.mididriver.MidiDriver;
 import org.billthefarmer.mididriver.ReverbConstants;
 
+import java.util.List;
 import java.util.Objects;
 
 public class PlayScreenActivity extends AppCompatActivity implements MidiAware, CompoundButton.OnCheckedChangeListener, MidiDriver.OnMidiStartListener, NoteActionListener {
@@ -76,8 +78,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     private void setupObservers() {
         playScreenViewModel.getSheetList().observe(this, currentSheet -> {
             if (currentSheet != null) {
-                activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(16).getMeasures(), currentSheet.get(5).getMeasures());
-                activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
+                loadMusicView(currentSheet);
             }
         });
 
@@ -93,6 +94,21 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         });
 
         playScreenViewModel.getSpeed().observe(this, this::updateSpeed);
+    }
+
+    private void loadMusicView(List<Sheet> currentSheet) {
+        activityPlayscreenBinding.progressBar.setVisibility(View.VISIBLE);
+        activityPlayscreenBinding.musicView.setVisibility(View.GONE);
+
+        handler.post(() -> {
+            // Perform initialization here
+            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(4).getMeasures(), currentSheet.get(5).getMeasures());
+            activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
+
+            // Hide the progress bar and show the MusicView
+            activityPlayscreenBinding.progressBar.setVisibility(View.GONE);
+            activityPlayscreenBinding.musicView.setVisibility(View.VISIBLE);
+        });
     }
 
     private void handlePause() {
@@ -255,32 +271,16 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void startCountdown(Context context) {
-        countdownTextView.setVisibility(View.VISIBLE);
-        GlobalVariables.SPEED = 0;
+        countdownTextView.setVisibility(View.GONE);
+        activityPlayscreenBinding.opacityView.setVisibility(View.GONE);
+        activityPlayscreenBinding.playImage.setBackgroundResource(R.drawable.vector_pause_circle);
+        GlobalVariables.SPEED = Objects.requireNonNull(playScreenViewModel.getSpeed().getValue());
+        startUpdatingStaff();
+        playScreenEventHandler.onInitial();
+        if(player==null){
+            playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff184e0c2-8baf-46f0-b61e-1baad78dda91_fur_elise.mid?alt=media&token=875f7898-be35-4122-a051-6e0858033bda");
 
-        handler.post(new Runnable() {
-            int countdown = 3;
-            @Override
-            public void run() {
-                if (countdown > 0) {
-                    countdownTextView.setText(String.valueOf(countdown));
-                    countdown--;
-                    handler.postDelayed(this, 1000);
-                } else {
-                    countdownTextView.setVisibility(View.GONE);
-                    activityPlayscreenBinding.opacityView.setVisibility(View.GONE);
-                    activityPlayscreenBinding.playImage.setBackgroundResource(R.drawable.vector_pause_circle);
-                    GlobalVariables.SPEED = Objects.requireNonNull(playScreenViewModel.getSpeed().getValue());
-                    startUpdatingStaff();
-                    playScreenEventHandler.onInitial();
-                    if(player==null){
-                        playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff184e0c2-8baf-46f0-b61e-1baad78dda91_fur_elise.mid?alt=media&token=875f7898-be35-4122-a051-6e0858033bda");
-
-                    }
-                    player.start();
-                }
-            }
-        });
+        }
     }
 
 
@@ -304,8 +304,8 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         try {
             player.setDataSource(filePath);
             player.prepare();
+            activityPlayscreenBinding.musicView.setMediaPlayer(player);
         } catch (Exception e) {
-            e.printStackTrace();
             Toast.makeText(this, "Could not play audio file", Toast.LENGTH_SHORT).show();
         }
     }

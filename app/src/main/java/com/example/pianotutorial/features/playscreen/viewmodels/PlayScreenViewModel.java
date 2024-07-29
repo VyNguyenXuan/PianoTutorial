@@ -1,10 +1,5 @@
 package com.example.pianotutorial.features.playscreen.viewmodels;
 
-import android.app.Application;
-import android.net.Uri;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -18,6 +13,9 @@ public class PlayScreenViewModel extends ViewModel {
     private final MutableLiveData<Sheet> currentSheet = new MutableLiveData<>();
     private final MutableLiveData<Sheet> currentLeftSheet = new MutableLiveData<>();
     private final MutableLiveData<Float> speed = new MutableLiveData<>(1f);
+    // PlayScreenViewModel.java
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+
     public MutableLiveData<Boolean> getIsPlayed() {
         return isPlayed;
     }
@@ -34,4 +32,7 @@ public class PlayScreenViewModel extends ViewModel {
         return currentLeftSheet;
     }
 
+    public MutableLiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
 }

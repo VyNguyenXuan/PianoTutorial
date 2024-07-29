@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.media.MediaPlayer;
 
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.components.helpers.MusicUtils;
@@ -30,9 +31,10 @@ public class NotesAndMeasuresDrawer {
     private final MusicView musicView;
     private final List<String> correctNotes;
     private final Map<ChordNote, NoteStatus> noteStatuses;
+    private  MediaPlayer player;
 
 
-    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView) {
+    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView, MediaPlayer player) {
         this.measurePaint = measurePaint;
         this.staffPaint = initializePaint(staffPaint);
         this.changedColorPaintPass = initializePaint(changedColorPaintPass);
@@ -41,12 +43,23 @@ public class NotesAndMeasuresDrawer {
         this.musicView = musicView;
         this.correctNotes = new ArrayList<>(); // Initialize the list here
         this.noteStatuses = new HashMap<>();
+        this.player = player;
     }
 
     private Paint initializePaint(Paint paint) {
         paint.setStrokeWidth((float) 4);
         return paint;
     }
+
+    public void setMediaPlayer(MediaPlayer player) {
+        this.player = player;
+    }
+    public void playSound() {
+        if (player != null && !player.isPlaying()) {
+            player.start();
+        }
+    }
+
 
     public void setCorrectNoteAction(Note note, boolean isPress) {
         if (note != null) {
@@ -68,7 +81,7 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX = GlobalVariables.CHECK_LINE_X - 40 - (currentTime * 0.6f * GlobalVariables.SPEED);
+        float currentX = GlobalVariables.CHECK_LINE_X + width  - (currentTime * 0.6f * GlobalVariables.SPEED);
 
         if (measures != null) {
             for (Measure measure : measures) {
@@ -215,7 +228,7 @@ public class NotesAndMeasuresDrawer {
                         beamPath.close();
                     } else {
                         beamPath.moveTo(firstXPosition - 39, yPosition - 16);
-                        beamPath.lineTo(lastXPosition - -34, yPosition - 16);
+                        beamPath.lineTo(lastXPosition - 34, yPosition - 16);
                         beamPath.lineTo(lastXPosition - 27, yPosition + 8);
                         beamPath.lineTo(firstXPosition - 32, yPosition + 8);
                         beamPath.close();
@@ -272,6 +285,10 @@ public class NotesAndMeasuresDrawer {
         float bottomY = staffHeight / 2 + 4 * (staffHeight / 8);
         Paint measureLinePaint = new Paint(measurePaint);
 
+        if (measureStartX < GlobalVariables.CHECK_LINE_X+160) {
+            playSound();
+        }
+
         // Check if the measure line has crossed the measureEndX
         if (measureEndX < GlobalVariables.CHECK_LINE_X - 160) {
             measureLinePaint.setAlpha(0);
@@ -316,10 +333,6 @@ public class NotesAndMeasuresDrawer {
 
         canvas.drawPath(notePath, currentNotePaint);
 
-        if (noteDuration == 0.25) {
-            drawSixteenthNoteWhiteSpace(canvas, chordNote, noteHeadOriginalHeight);
-        }
-
         drawChromaticSign(canvas, chordNote, xPosition, measure, noteStatus, noteHeadOriginalHeight);
         drawDottedNotes(canvas, currentNotePaint, noteDuration, noteHeadOriginalHeight, chordNote.getNoteId());
 
@@ -363,19 +376,6 @@ public class NotesAndMeasuresDrawer {
         }
 
         return checkLineX;
-    }
-
-    private void drawSixteenthNoteWhiteSpace(Canvas canvas, ChordNote chordNote, float noteHeadOriginalHeight) {
-        Paint notePaint;
-        Path notePath;
-        if (chordNote.getNoteOctave() > 4 || (chordNote.getNoteOctave() == 4 && chordNote.getNotePitch().equals("5B"))) {
-            notePaint = SixteenthNotePaintReverseWhiteSpace.create();
-            notePath = SixteenthNotePaintReverseWhiteSpace.createPath();
-        } else {
-            notePaint = SixteenthNotePaintWhiteSpace.create();
-            notePath = SixteenthNotePaintWhiteSpace.createPath();
-        }
-        //canvas.drawPath(notePath, notePaint);
     }
 
     private void drawChromaticSign(Canvas canvas, ChordNote chordNote, float xPosition, Measure measure, NoteStatus noteStatus, float noteHeadOriginalHeight) {

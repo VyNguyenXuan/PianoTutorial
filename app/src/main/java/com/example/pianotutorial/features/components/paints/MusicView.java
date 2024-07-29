@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -50,14 +51,13 @@ public class MusicView extends View {
     private GClefDrawer gClefDrawer;
     private FClefDrawer fClefDrawer;
     private AccoladeDrawer accoladeDrawer;
+    private MediaPlayer player;
 
     private boolean isPaused;
 
     // Note name to index mapping
     private final Map<String, Integer> noteToIndexMapWhiteKey = createNoteToIndexMapWhiteKey();
     private final Map<String, Integer> noteToIndexMapBlackKey = createNoteToIndexMapBlackKey();
-
-    private NoteActionListener noteActionListener;
 
     public MusicView(Context context) {
         super(context);
@@ -108,8 +108,8 @@ public class MusicView extends View {
         staffDrawer = new StaffDrawer(staffPaint, context);
         staffDrawerLeftHand = new StaffDrawer(staffPaint, context);
 
-        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
-        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
+        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
+        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
 
         whiteKeysDrawer = new WhiteKeysDrawer(whiteKeyDrawable, activeWhiteKeyDrawable);
         blackKeysDrawer = new BlackKeysDrawer(blackKeyDrawable, activeBlackKeyDrawable);
@@ -120,7 +120,6 @@ public class MusicView extends View {
         fClefDrawer = new FClefDrawer(context);
 
         if (context instanceof NoteActionListener) {
-            noteActionListener = (NoteActionListener) context;
         } else {
             throw new ClassCastException("Activity must implement NoteActionListener");
         }
@@ -196,11 +195,11 @@ public class MusicView extends View {
     public void setMeasures(List<Measure> measures, List<Measure> measuresLeftHand) {
         if (measures != null) {
             this.measures = measures;
-            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
+            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
         }
         if (measuresLeftHand != null) {
             this.measuresLeftHand = measuresLeftHand;
-            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this);
+            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
         }
     }
 
@@ -243,10 +242,22 @@ public class MusicView extends View {
             invalidate();
         }
     }
+
     public NotesAndMeasuresDrawer getNotesAndMeasuresDrawer() {
         return notesAndMeasuresDrawer;
     }
+
     public NotesAndMeasuresDrawer getNotesAndMeasuresDrawerLeftHand() {
         return notesAndMeasuresDrawerLeftHand;
+    }
+
+    public void setMediaPlayer(MediaPlayer player) {
+        this.player = player;
+        if (notesAndMeasuresDrawer != null) {
+            notesAndMeasuresDrawer.setMediaPlayer(player);
+        }
+        if (notesAndMeasuresDrawerLeftHand != null) {
+            notesAndMeasuresDrawerLeftHand.setMediaPlayer(player);
+        }
     }
 }
