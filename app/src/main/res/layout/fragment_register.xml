@@ -30,7 +30,7 @@
                     android:id="@+id/loginwith"
                     android:layout_width="311dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top|right">
+                    android:layout_gravity="top|end">
 
                     <FrameLayout
                         android:id="@+id/container_fb"
@@ -43,7 +43,7 @@
                             android:id="@+id/img_facebook"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_gravity="top|left"
+                            android:layout_gravity="top|start"
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
                             android:scaleType="centerInside"
@@ -54,8 +54,8 @@
                         android:id="@+id/container_apple"
                         android:layout_width="100dp"
                         android:layout_height="50dp"
-                        android:layout_gravity="right"
-                        android:layout_marginLeft="200dp"
+                        android:layout_gravity="end"
+                        android:layout_marginStart="200dp"
                         android:layout_marginTop="50dp"
                         android:background="@drawable/container_frame3">
 
@@ -63,7 +63,7 @@
                             android:id="@+id/img_apple"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_gravity="top|right"
+                            android:layout_gravity="top|end"
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
                             android:scaleType="centerInside"
@@ -74,8 +74,8 @@
                         android:id="@+id/container_gg"
                         android:layout_width="100dp"
                         android:layout_height="50dp"
-                        android:layout_gravity="top|left"
-                        android:layout_marginLeft="105dp"
+                        android:layout_gravity="top|start"
+                        android:layout_marginStart="105dp"
                         android:layout_marginTop="50dp"
                         android:background="@drawable/container_frame3">
 
@@ -83,7 +83,7 @@
                             android:id="@+id/img_google"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center|left"
+                            android:layout_gravity="center|start"
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
                             android:scaleType="centerInside"
@@ -94,32 +94,32 @@
                         android:id="@+id/container_login_with"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="top|left"
+                        android:layout_gravity="top|start"
                         android:layout_marginTop="20dp">
 
                         <TextView
                             android:id="@+id/txt_login_with"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="59dp"
+                            android:layout_marginStart="59dp"
                             android:layout_marginTop="-0.75dp"
-                            android:layout_marginRight="56dp"
+                            android:layout_marginEnd="56dp"
                             android:layout_marginBottom="-0.75dp"
                             android:fontFamily="@font/inter"
                             android:gravity="center_horizontal|center_vertical"
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:text="Đăng nhập với "
+                            android:text="@string/login_with"
                             android:textColor="#FFFFFFFF"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
                         <View
                             android:layout_height="1dp"
                             android:background="@color/hintTextColor"
                             android:id="@+id/container_line1"
                             android:layout_width="96dp"
-                            android:layout_gravity="left"
+                            android:layout_gravity="start"
                             android:layout_marginTop="10dp"
                             android:scaleType="centerInside"/>
 
@@ -128,7 +128,7 @@
                             android:background="@color/hintTextColor"
                             android:id="@+id/container_line2"
                             android:layout_width="96dp"
-                            android:layout_gravity="right"
+                            android:layout_gravity="end"
                             android:layout_marginTop="10dp"
                             android:scaleType="centerInside"/>
                     </FrameLayout>
@@ -149,7 +149,7 @@
                         android:singleLine="true"
                         android:text="@string/have_account"
                         android:textColor="@color/white"
-                        android:textSize="15dp" />
+                        android:textSize="15sp" />
                 </FrameLayout>
                 <FrameLayout
                     android:id="@+id/container_login_button"
@@ -165,10 +165,10 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:text="Đăng kí"
+                        android:text="@string/lbl_dangky"
                         android:textColor="@color/white"
                         android:fontFamily="@font/inter"
-                        android:textSize="15dp"
+                        android:textSize="15sp"
                         android:background="@drawable/login_button"
                         />
                 </FrameLayout>
@@ -184,7 +184,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="Đăng kí để bắt đầu cùng Viano"
+                android:text="@string/lb_registerinto"
                 android:textColor="@color/black"
                 android:textSize="35sp" />
 
@@ -195,9 +195,9 @@
                 <FrameLayout
                     android:layout_width="335dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="75dp"
-                    android:layout_gravity="top|left"
+                    android:layout_gravity="top|start"
                     android:clipToPadding="false"
                     >
 
@@ -209,23 +209,23 @@
                         android:layout_marginBottom="5dp"
                         android:paddingLeft="13dp"
                         android:paddingRight="13dp"
-                        android:layout_gravity="top|left"
+                        android:layout_gravity="top|start"
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:hint="Tên đăng nhập"
+                        android:hint="@string/username"
                         android:textColorHint="@color/hintTextColor"
                         android:textColor="@color/gray_900_01"
                         android:fontFamily="@font/inter"
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:background="@drawable/nhap_email"/>
                 </FrameLayout>
 
                 <FrameLayout
                     android:layout_width="335dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_gravity="top|left"
+                    android:layout_marginStart="30dp"
+                    android:layout_gravity="top|start"
                     android:clipToPadding="false"
                     >
 
@@ -237,16 +237,16 @@
                         android:layout_marginBottom="5dp"
                         android:paddingLeft="13dp"
                         android:paddingRight="13dp"
-                        android:layout_gravity="top|left"
-                        android:gravity="left|center_vertical"
+                        android:layout_gravity="top|start"
+                        android:gravity="start|center_vertical"
                         android:includeFontPadding="false"
                         android:textColorHint="@color/hintTextColor"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:hint="Nhập email"
+                        android:hint="Email"
                         android:textColor="@color/gray_900_01"
                         android:fontFamily="@font/inter"
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:background="@drawable/nhap_email"/>
                 </FrameLayout>
 
@@ -254,26 +254,26 @@
                     android:id="@+id/container_nhappass"
                     android:layout_width="335dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_gravity="top|left"
+                    android:layout_marginStart="30dp"
+                    android:layout_gravity="top|start"
                     >
 
                     <EditText
                         android:id="@+id/enter_password"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
-                        android:layout_gravity="top|left"
+                        android:layout_gravity="top|start"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
                         android:paddingLeft="13dp"
                         android:paddingRight="13dp"
                         android:fontFamily="@font/inter"
-                        android:gravity="left|center_vertical"
-                        android:hint="Nhập mật khẩu"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/input_pass"
                         android:inputType="textPassword"
                         android:textColorHint="@color/hintTextColor"
                         android:textColor="@color/gray_900_01"
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:background="@drawable/nhap_email"/>
 
                 </FrameLayout>
@@ -282,8 +282,8 @@
                     android:id="@+id/container_verifypass"
                     android:layout_width="335dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_gravity="top|left"
+                    android:layout_marginStart="30dp"
+                    android:layout_gravity="top|start"
                     >
 
                     <EditText
@@ -292,15 +292,15 @@
                         android:layout_height="60dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        android:layout_gravity="top|left"
+                        android:layout_gravity="top|start"
                         android:paddingLeft="13dp"
                         android:paddingRight="13dp"
                         android:fontFamily="@font/inter"
-                        android:gravity="left|center_vertical"
-                        android:hint="Xác nhận mật khẩu"
+                        android:gravity="start|center_vertical"
+                        android:hint="@string/verify_input_pass"
                         android:inputType="textPassword"
                         android:textColor="@color/gray_900_01"
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:textColorHint="@color/hintTextColor"
                         android:background="@drawable/nhap_email"/>
 
@@ -315,9 +315,9 @@
                 android:id="@+id/container_backbtn"
                 android:layout_width="45.5dp"
                 android:layout_height="45.5dp"
-                android:layout_marginLeft="40dp"
+                android:layout_marginStart="40dp"
                 android:layout_marginTop="15dp"
-                android:layout_gravity="top|left">
+                android:layout_gravity="top|start">
 
                 <ImageView
                     android:id="@+id/back_btn"
