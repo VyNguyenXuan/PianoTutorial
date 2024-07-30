@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -17,7 +18,7 @@ public class ForgotPasswordFragment extends Fragment {
     private FragmentForgotpasswordBinding fragmentForgotpasswordBinding;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         fragmentForgotpasswordBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgotpassword, container, false);
 
         return fragmentForgotpasswordBinding.getRoot();

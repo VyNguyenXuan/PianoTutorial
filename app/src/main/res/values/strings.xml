@@ -26,4 +26,5 @@
     <string name="forgot_password"><u>Quên mật khẩu?</u></string>
     <string name="not_have_account">Bạn chưa có tài khoản? <u>Đăng kí ngay</u></string>
     <string name="have_account">Bạn đã có tài khoản? <u>Đăng nhập</u></string>
+    <string name="ho_va_ten">Họ và tên</string>
 </resources>
