@@ -5,11 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 
-import androidx.media3.exoplayer.ExoPlayer;
-
-import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.features.course_detail.activities.CourseDetailActivity;
-import com.example.pianotutorial.features.playscreen.activities.PlayScreenActivity;
 import com.example.pianotutorial.features.playscreen.servicehandlers.PlayScreenServiceHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
 

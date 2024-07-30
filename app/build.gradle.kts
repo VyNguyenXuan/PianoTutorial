@@ -51,9 +51,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
-    implementation(libs.exoplayer)
-    implementation(libs.exoplayer.dash)
-    implementation(libs.media3.ui)
     implementation(libs.mididriver)
 
 
