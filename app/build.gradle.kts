@@ -46,6 +46,9 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.activity)
+    implementation(libs.annotation)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
     testImplementation(libs.junit)
     implementation(libs.retrofit)
     implementation(libs.gson)
@@ -55,7 +58,6 @@ dependencies {
     implementation(libs.exoplayer.dash)
     implementation(libs.media3.ui)
     implementation(libs.mididriver)
-
 
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

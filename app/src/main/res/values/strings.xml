@@ -18,6 +18,12 @@
 
     <string name="midi_device_infos">DeviceId: %1$d\nManufacturer: %2$s\nPorts: %3$d - %4$d</string>
 
-    <string name="settings">Settings</string>
-    <string name="profile">Profile</string>
+
+    <string name="lbl_dangnhap">Đăng nhập</string>
+    <string name="lbl_dangky">"Đăng kí"</string>
+    <string name="lbl_viano">Viano</string>
+    <string name="warning_newpass">Hãy chắc chắn rằng mật khẩu mới khác với mật khẩu trước đây</string>
+    <string name="forgot_password"><u>Quên mật khẩu?</u></string>
+    <string name="not_have_account">Bạn chưa có tài khoản? <u>Đăng kí ngay</u></string>
+    <string name="have_account">Bạn đã có tài khoản? <u>Đăng nhập</u></string>
 </resources>
