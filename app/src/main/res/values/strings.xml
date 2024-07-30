@@ -41,6 +41,8 @@
     <string name="verify_input_pass">Xác nhận mật khẩu</string>
     <string name="username">Tên đăng nhập</string>
     <string name="warning_email">Chúng tôi đã gửi mã xác nhận vào email của bạn, hãy nhập 5 kí tự từ mã xác nhận đã gửi</string>
+    <string name="course_detail_title">Làm quen với nốt Đồ, Rê, Mí</string>
+
 
 
 </resources>

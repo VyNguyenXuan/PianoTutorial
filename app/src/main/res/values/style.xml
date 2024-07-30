@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryDark">@color/blackGrey</item>
@@ -77,7 +78,15 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:fontFamily">@font/inter</item>
         <item name="android:textFontWeight" tools:targetApi="p">600</item>
-        <item name="android:background">@drawable/rectangle_bg_gray_900_01_border_gray_900_01_radius_4</item>
+        <item name="android:background">
+            @drawable/rectangle_bg_gray_900_01_border_gray_900_01_radius_4
+        </item>
+    </style>
+
+    <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabIndicator">@android:color/transparent</item>
+        <item name="tabBackground">@android:color/transparent</item>
     </style>
 
 

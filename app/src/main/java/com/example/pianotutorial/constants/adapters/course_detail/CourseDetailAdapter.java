@@ -1,13 +1,17 @@
 package com.example.pianotutorial.constants.adapters.course_detail;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pianotutorial.databinding.ItemCourseDetailBinding;
+import com.example.pianotutorial.features.playscreen.activities.PlayScreenActivity;
 
 import java.util.List;
 
@@ -31,6 +35,13 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
     @Override
     public void onBindViewHolder(@NonNull CourseDetailViewHolder holder, int position) {
         int value = integerList.get(position);
+        holder.binding.courseButton.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PlayScreenActivity.class);
+            intent.putExtra("ITEM_VALUE", value);
+            context.startActivity(intent);
+        });
+
+        holder.binding.executePendingBindings();
     }
 
     @Override

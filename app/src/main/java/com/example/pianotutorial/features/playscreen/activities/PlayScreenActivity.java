@@ -61,7 +61,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_playscreen);
         playScreenViewModel = new ViewModelProvider(this).get(PlayScreenViewModel.class);
         playScreenEventHandler = new PlayScreenEventHandler(playScreenViewModel, this);
-
         activityPlayscreenBinding.setViewModel(playScreenViewModel);
         activityPlayscreenBinding.setEventHandler(playScreenEventHandler);
         activityPlayscreenBinding.setLifecycleOwner(this);
