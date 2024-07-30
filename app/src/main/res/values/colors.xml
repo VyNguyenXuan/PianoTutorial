@@ -20,4 +20,11 @@
     <color name="lightBlue">#FFDBEEFF</color>
     <color name="pinputColor">#FF545454</color>
     <color name="hintTextColor">#FF72777A</color>
+    <color name="colorAccent">#11CFC5</color>
+    <color name="primaryTextColor">#11CFC5</color>
+    <color name="gray_900">#212121</color>
+    <color name="gray_900_01">#1e232c</color>
+    <color name="green_A700_01">#00ff38</color>
+    <color name="main_background">#4AC776</color>
+    <color name="black_900_3f">#3f000000</color>
 </resources>
