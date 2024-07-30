@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
 
@@ -11,14 +12,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="@color/blackGrey"
         android:orientation="horizontal">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:background="@drawable/gradient_black"
+            android:id="@+id/constraintLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@drawable/gradient_black"
             android:orientation="vertical"
             android:paddingHorizontal="8dp">
 
@@ -31,6 +32,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
                 <ImageView
                     android:layout_width="32dp"
                     android:layout_height="32dp"
@@ -45,17 +47,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/menu_button"
                 app:layout_constraintBottom_toTopOf="@+id/setting_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/menu_button">
 
                 <LinearLayout
-                    android:onClick="@{activityNavigationBarEventHandler::navigateToCourtFragment}"
                     android:id="@+id/course_button"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:background="@drawable/vector_green_radius_8"
+                    android:onClick="@{activityNavigationBarEventHandler::navigateToCourtFragment}"
                     android:orientation="vertical">
 
                     <ImageView
@@ -63,7 +65,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginTop="12dp"/>
+                        android:layout_marginTop="12dp" />
 
                     <TextView
                         android:id="@+id/course_title"
@@ -77,10 +79,10 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:onClick="@{activityNavigationBarEventHandler::navigateToMusicFragment}"
                     android:id="@+id/music_button"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
+                    android:onClick="@{activityNavigationBarEventHandler::navigateToMusicFragment}"
                     android:orientation="vertical">
 
                     <ImageView
@@ -88,7 +90,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_gravity="center"
-                        android:layout_marginTop="12dp"/>
+                        android:layout_marginTop="12dp" />
 
                     <TextView
                         android:id="@+id/music_title"
@@ -113,7 +115,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="12dp"
-                        android:onClick="@{activityNavigationBarEventHandler::navigateToSongFragment}"/>
+                        android:onClick="@{activityNavigationBarEventHandler::navigateToSongFragment}" />
 
                     <TextView
                         android:id="@+id/song_title"
@@ -144,19 +146,21 @@
                     android:layout_weight="1" />
 
                 <ImageView
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginVertical="12dp"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginVertical="12dp"
                     android:layout_marginTop="16dp"
                     android:src="@drawable/vector_settings" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/constraintLayout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
