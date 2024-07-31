@@ -3,10 +3,12 @@ package com.example.pianotutorial.constants.adapters.course_detail;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,10 +40,16 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
     public void onBindViewHolder(@NonNull CourseDetailViewHolder holder, int position) {
         int value = integerList.get(position);
         holder.binding.courseButton.setOnClickListener(v -> {
-            Intent intent = new Intent(context, PlayScreenActivity.class);
-            intent.putExtra("ITEM_VALUE", value);
-            context.startActivity(intent);
-            ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            ProgressBar progressBar = holder.binding.progressBar;
+            progressBar.setVisibility(View.VISIBLE);
+
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                Intent intent = new Intent(context, PlayScreenActivity.class);
+                intent.putExtra("ITEM_VALUE", value);
+                context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+            }, 500);
         });
 
         holder.binding.executePendingBindings();

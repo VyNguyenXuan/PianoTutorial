@@ -20,8 +20,6 @@ public class Measure {
 
     @SerializedName("chords")
     private List<Chord> chords;
-
-    // Thêm thuộc tính beam
     private List<BeamValue> beams;
 
     public Measure() {

@@ -91,4 +91,5 @@ public class CourseFragment extends Fragment {
             outRect.left = horizontalMargin;
         }
     }
+
 }

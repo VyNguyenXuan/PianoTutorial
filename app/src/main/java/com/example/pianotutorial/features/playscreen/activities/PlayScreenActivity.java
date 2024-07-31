@@ -101,7 +101,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         handler.post(() -> {
             // Perform initialization here
-            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(4).getMeasures(), currentSheet.get(4).getMeasures());
+            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(3).getRightMeasures(), currentSheet.get(3).getLeftMeasures());
             activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
 
             // Hide the progress bar and show the MusicView
@@ -279,10 +279,10 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d");
 
 
-        new CountDownTimer(3000, 1000) {
+        new CountDownTimer(3600, 1200) {
             @Override
             public void onTick(long millisUntilFinished) {
-                int secondsRemaining = (int) (millisUntilFinished / 1000);
+                int secondsRemaining = (int) (millisUntilFinished / 1200);
                 countdownTextView.setVisibility(View.VISIBLE); // Countdown from 3 to 1
                 countdownTextView.setText(String.valueOf(secondsRemaining + 1)); // Countdown from 3 to 1
 
@@ -335,5 +335,13 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
         super.onPointerCaptureChanged(hasCapture);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            activityPlayscreenBinding.progressBar.setVisibility(View.GONE);
+        }
     }
 }

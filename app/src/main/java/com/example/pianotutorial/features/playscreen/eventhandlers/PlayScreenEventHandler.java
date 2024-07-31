@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.course_detail.activities.CourseDetailActivity;
+import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
 import com.example.pianotutorial.features.playscreen.servicehandlers.PlayScreenServiceHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
 
@@ -51,10 +54,15 @@ public class PlayScreenEventHandler {
     }
 
     public void navigateToCourseDetail(View view) {
-        Intent intent = new Intent(context, CourseDetailActivity.class);
-        context.startActivity(intent);
-        ((Activity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        ProgressBar progressBar = ((Activity) context).findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Intent intent = new Intent(context, NavigationBarActivity.class);
+            context.startActivity(intent);
+            ((Activity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+            ((Activity) context).finish();
+        }, 1000);
     }
 }
 

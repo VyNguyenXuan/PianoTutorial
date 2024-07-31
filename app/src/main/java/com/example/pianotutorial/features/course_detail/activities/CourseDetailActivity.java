@@ -92,4 +92,11 @@ public class CourseDetailActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            activityCourseDetailBinding.progressBar.setVisibility(View.GONE);
+        }
+    }
 }

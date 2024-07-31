@@ -1,6 +1,8 @@
 package com.example.pianotutorial.features.navigation_bar.activities;
 
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -92,5 +94,12 @@ public class NavigationBarActivity extends AppCompatActivity {
         _activityNavigationBarBinding.songButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.white_fill_border_radius_8));
         _activityNavigationBarBinding.songImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_play_circle_outline_active));
         _activityNavigationBarBinding.songTitle.setTextColor(ContextCompat.getColor(this, R.color.green));
+    }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            _activityNavigationBarBinding.progressBar.setVisibility(View.GONE);
+        }
     }
 }

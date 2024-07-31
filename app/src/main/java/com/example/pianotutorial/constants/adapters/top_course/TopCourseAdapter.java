@@ -3,8 +3,12 @@ package com.example.pianotutorial.constants.adapters.top_course;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.ItemCourseTopBinding;
 import com.example.pianotutorial.features.course_detail.activities.CourseDetailActivity;
-import com.example.pianotutorial.features.playscreen.activities.PlayScreenActivity;
 
 import java.util.List;
 
@@ -38,11 +41,17 @@ public class TopCourseAdapter extends RecyclerView.Adapter<TopCourseAdapter.TopC
     @Override
     public void onBindViewHolder(@NonNull TopCourseViewHolder holder, int position) {
         holder.binding.cardView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, CourseDetailActivity.class);
-            context.startActivity(intent);
-            ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        });
+            ProgressBar progressBar = holder.binding.getRoot().findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.VISIBLE);
 
+            // Sử dụng Handler để giả lập quá trình tải
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                Intent intent = new Intent(context, CourseDetailActivity.class);
+                context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }, 1000);
+            holder.binding.executePendingBindings();
+        });
     }
 
     @Override

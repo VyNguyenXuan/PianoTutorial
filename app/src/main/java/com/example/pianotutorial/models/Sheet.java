@@ -31,14 +31,12 @@ public class Sheet {
     private String sheetFile;
 
     @SerializedName("rightMeasures")
-    private List<Measure> measures;
+    private List<Measure> rightMeasures;
 
-    @SerializedName("leftHandSheetId")
-    private int leftHandSheetId;
-    @SerializedName("leftHandSheet")
-    private Sheet leftHandSheet;
+    @SerializedName("leftMeasures")
+    private List<Measure> leftMeasures;
 
-    public Sheet(int id, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, List<Measure> measures, int leftHandSheetId, Sheet leftHandSheet) {
+    public Sheet(int id, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, List<Measure> rightMeasures, List<Measure> leftMeasures) {
         this.id = id;
         this.songId = songId;
         this.songTitle = songTitle;
@@ -47,23 +45,8 @@ public class Sheet {
         this.instrumentId = instrumentId;
         this.instrumentName = instrumentName;
         this.sheetFile = sheetFile;
-        this.measures = measures;
-        this.leftHandSheetId = leftHandSheetId;
-        this.leftHandSheet = leftHandSheet;
-    }
-
-    public Sheet() {
-        id = 0;
-        songId = 0;
-        songTitle = "";
-        topSignature = 0;
-        bottomSignature = 0;
-        instrumentId = 0;
-        instrumentName = "";
-        sheetFile = "";
-        measures = new ArrayList<>();
-        leftHandSheetId=0;
-        leftHandSheet=null;
+        this.rightMeasures = rightMeasures;
+        this.leftMeasures = leftMeasures;
     }
 
     public int getId() {
@@ -130,27 +113,19 @@ public class Sheet {
         this.sheetFile = sheetFile;
     }
 
-    public List<Measure> getMeasures() {
-        return measures;
+    public List<Measure> getRightMeasures() {
+        return rightMeasures;
     }
 
-    public void setMeasures(List<Measure> measures) {
-        this.measures = measures;
+    public void setRightMeasures(List<Measure> rightMeasures) {
+        this.rightMeasures = rightMeasures;
     }
 
-    public int getLeftHandSheetId() {
-        return leftHandSheetId;
+    public List<Measure> getLeftMeasures() {
+        return leftMeasures;
     }
 
-    public void setLeftHandSheetId(int leftHandSheetId) {
-        this.leftHandSheetId = leftHandSheetId;
-    }
-
-    public Sheet getLeftHandSheet() {
-        return leftHandSheet;
-    }
-
-    public void setLeftHandSheet(Sheet leftHandSheet) {
-        this.leftHandSheet = leftHandSheet;
+    public void setLeftMeasures(List<Measure> leftMeasures) {
+        this.leftMeasures = leftMeasures;
     }
 }
