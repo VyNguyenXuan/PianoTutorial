@@ -44,7 +44,8 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/vector_icon_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{eventHandler::navigateToCourse}">
 
             <View
                 android:id="@+id/toc_image"

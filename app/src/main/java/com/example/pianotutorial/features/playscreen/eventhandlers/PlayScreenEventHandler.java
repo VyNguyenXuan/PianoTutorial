@@ -1,10 +1,12 @@
 package com.example.pianotutorial.features.playscreen.eventhandlers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.view.View;
 
+import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.course_detail.activities.CourseDetailActivity;
 import com.example.pianotutorial.features.playscreen.servicehandlers.PlayScreenServiceHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
@@ -51,6 +53,8 @@ public class PlayScreenEventHandler {
     public void navigateToCourseDetail(View view) {
         Intent intent = new Intent(context, CourseDetailActivity.class);
         context.startActivity(intent);
+        ((Activity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+
     }
 }
 
