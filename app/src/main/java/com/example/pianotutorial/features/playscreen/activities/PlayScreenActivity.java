@@ -102,7 +102,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         handler.post(() -> {
             // Perform initialization here
-            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(5).getMeasures(), currentSheet.get(6).getMeasures());
+            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(4).getMeasures(), currentSheet.get(4).getMeasures());
             activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
 
             // Hide the progress bar and show the MusicView
@@ -118,6 +118,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         GlobalVariables.SPEED = 0;
         if(player != null){
             player.stop();
+            player.reset();
         }
     }
 
@@ -276,9 +277,8 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         startUpdatingStaff();
         playScreenEventHandler.onInitial();
         activityPlayscreenBinding.playCircleVector.setVisibility(View.GONE); // Countdown from 3 to 1
-        if(player == null) {
-            playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d");
-        }
+        playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d");
+
 
         new CountDownTimer(3000, 1000) {
             @Override
@@ -314,7 +314,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
     private void playAudio(String filePath) {
         if (player != null) {
-            //player.release();
+            player.release();
         }
 
         player = new MediaPlayer();
