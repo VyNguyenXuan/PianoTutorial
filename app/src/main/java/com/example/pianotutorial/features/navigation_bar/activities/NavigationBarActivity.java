@@ -53,9 +53,9 @@ public class NavigationBarActivity extends AppCompatActivity {
     }
 
     private void updateUIForCourseFragment() {
-        _activityNavigationBarBinding.courseButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_green_radius_8));
+        _activityNavigationBarBinding.courseButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.white_fill_border_radius_8));
         _activityNavigationBarBinding.courseImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_music_note_active));
-        _activityNavigationBarBinding.courseTitle.setTextColor(ContextCompat.getColor(this, R.color.black));
+        _activityNavigationBarBinding.courseTitle.setTextColor(ContextCompat.getColor(this, R.color.green));
 
         _activityNavigationBarBinding.musicButton.setBackground(null); // Clear previous background
         _activityNavigationBarBinding.musicImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_library_music));
@@ -71,9 +71,9 @@ public class NavigationBarActivity extends AppCompatActivity {
         _activityNavigationBarBinding.courseImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_music_note));
         _activityNavigationBarBinding.courseTitle.setTextColor(ContextCompat.getColor(this, R.color.white));
 
-        _activityNavigationBarBinding.musicButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_green_radius_8));
+        _activityNavigationBarBinding.musicButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.white_fill_border_radius_8));
         _activityNavigationBarBinding.musicImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_library_music_active));
-        _activityNavigationBarBinding.musicTitle.setTextColor(ContextCompat.getColor(this, R.color.black));
+        _activityNavigationBarBinding.musicTitle.setTextColor(ContextCompat.getColor(this, R.color.green));
 
         _activityNavigationBarBinding.songButton.setBackground(null); // Clear previous background
         _activityNavigationBarBinding.songImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_play_circle_outline));
@@ -89,8 +89,8 @@ public class NavigationBarActivity extends AppCompatActivity {
         _activityNavigationBarBinding.musicImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_library_music));
         _activityNavigationBarBinding.musicTitle.setTextColor(ContextCompat.getColor(this, R.color.white));
 
-        _activityNavigationBarBinding.songButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_green_radius_8));
+        _activityNavigationBarBinding.songButton.setBackground(AppCompatResources.getDrawable(this, R.drawable.white_fill_border_radius_8));
         _activityNavigationBarBinding.songImage.setBackground(AppCompatResources.getDrawable(this, R.drawable.vector_play_circle_outline_active));
-        _activityNavigationBarBinding.songTitle.setTextColor(ContextCompat.getColor(this, R.color.black));
+        _activityNavigationBarBinding.songTitle.setTextColor(ContextCompat.getColor(this, R.color.green));
     }
 }
