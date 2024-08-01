@@ -2,6 +2,8 @@ package com.example.pianotutorial.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class ChordNote {
     @SerializedName("id")
     private int id;
@@ -23,6 +25,10 @@ public class ChordNote {
 
     @SerializedName("noteOctave")
     private int noteOctave;
+
+    @SerializedName("slurPosition")
+    private int slurPosition;
+
     public ChordNote() {
         id = 0;
         noteId = 0;
@@ -31,9 +37,10 @@ public class ChordNote {
         noteName = "";
         notePitch = "";
         noteOctave = 0;
+        slurPosition = 0;
     }
 
-    public ChordNote(int id, int noteId, int chordId, int chordPosition, String noteName, String notePitch, int noteOctave) {
+    public ChordNote(int id, int noteId, int chordId, int chordPosition, String noteName, String notePitch, int noteOctave, int slurPosition) {
         this.id = id;
         this.noteId = noteId;
         this.chordId = chordId;
@@ -41,6 +48,7 @@ public class ChordNote {
         this.noteName = noteName;
         this.notePitch = notePitch;
         this.noteOctave = noteOctave;
+        this.slurPosition = slurPosition;
     }
 
     public int getId() {
@@ -98,4 +106,60 @@ public class ChordNote {
     public void setNoteOctave(int noteOctave) {
         this.noteOctave = noteOctave;
     }
+
+    public int getSlurPosition() {
+        return slurPosition;
+    }
+
+    public void setSlurPosition(int slurPosition) {
+        this.slurPosition = slurPosition;
+    }
+
+    public float calculateTotalSlurredDuration(List<Measure> measures, ChordNote startChordNote) {
+        float totalDuration = 0;
+        boolean slurActive = false;
+        int remainingSlurs = startChordNote.slurPosition;
+        if (remainingSlurs <= 0) return totalDuration;
+
+        for (Measure measure : measures) {
+            for (Chord chord : measure.getChords()) {
+                if (chord.getChordNotes().contains(startChordNote)) {
+                    slurActive = true;
+                }
+                if (slurActive) {
+                    totalDuration += chord.getDuration();
+                    remainingSlurs -= chord.getChordNotes().size();
+                }
+                if (remainingSlurs <= 0) return totalDuration;
+            }
+        }
+        return totalDuration;
+    }
+
+    public ChordNote findChordNoteWithTargetSlurPosition(List<Measure> measures, ChordNote startChordNote) {
+        boolean slurActive = false;
+        int remainingSlurs = startChordNote.slurPosition;
+
+        for (Measure measure : measures) {
+            for (Chord chord : measure.getChords()) {
+                for (ChordNote chordNote : chord.getChordNotes()) {
+                    if (slurActive || chordNote.equals(startChordNote)) {
+                        slurActive = true;
+
+                        if (chordNote.equals(startChordNote)) {
+                            remainingSlurs = startChordNote.slurPosition;
+                        } else {
+                            remainingSlurs--;
+                        }
+
+                        if (remainingSlurs == 0) {
+                            return chordNote;
+                        }
+                    }
+                }
+            }
+        }
+        return null; // Return null if the target slurPosition is not found
+    }
+
 }

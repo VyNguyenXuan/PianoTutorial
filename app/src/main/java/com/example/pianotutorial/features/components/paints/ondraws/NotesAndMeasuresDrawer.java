@@ -88,13 +88,13 @@ public class NotesAndMeasuresDrawer {
 
         if (measures != null) {
             for (Measure measure : measures) {
-                drawMeasure(canvas, measure, currentX, staffHeight, noteHeadOriginalHeight);
+                drawMeasure(canvas, measures, measure, currentX, staffHeight, noteHeadOriginalHeight);
                 currentX += GlobalVariables.MEASURE_WIDTH;
             }
         }
     }
 
-    private void drawMeasure(Canvas canvas, Measure measure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
+    private void drawMeasure(Canvas canvas, List<Measure> measures, Measure measure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
         float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH + 12;
         drawMeasureLine(canvas, measureEndX, staffHeight, measureStartX);
         float chordPositionWithinMeasure = 0;
@@ -109,7 +109,7 @@ public class NotesAndMeasuresDrawer {
                 float xPosition = measureStartX + chordPositionWithinMeasure;
                 chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
 
-                drawChord(canvas, chord, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, chordsToBeam);
+                drawChord(canvas, measures, chord, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, chordsToBeam);
             }
         }
     }
@@ -301,17 +301,17 @@ public class NotesAndMeasuresDrawer {
         canvas.drawLine(measureEndX, topY, measureEndX, bottomY, measureLinePaint);
     }
 
-    private void drawChord(Canvas canvas, Chord chord, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
+    private void drawChord(Canvas canvas, List<Measure> measures, Chord chord, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
         if (!chord.getChordNotes().isEmpty()) {
             for (ChordNote chordNote : chord.getChordNotes()) {
-                drawNote(canvas, chord, chordNote, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, beamValues);
+                drawNote(canvas, measures, chord, chordNote, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, beamValues);
             }
         } else {
             MusicUtils.drawRest(canvas, xPosition, noteDuration, System.currentTimeMillis(), musicView);
         }
     }
 
-    private void drawNote(Canvas canvas, Chord chord, ChordNote chordNote, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
+    private void drawNote(Canvas canvas, List<Measure> measures, Chord chord, ChordNote chordNote, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
         int currentNote = chordNote.getNoteId();
         if (currentNote > 112) currentNote -= 112;
         else if (currentNote > 56) currentNote -= 56;
@@ -343,6 +343,21 @@ public class NotesAndMeasuresDrawer {
         canvas.restore();
 
         MusicUtils.drawLedgerLines(canvas, xPosition, chordNote, measure.getClef(), staffPaint, changedColorPaintPass, changedColorPaintMiss, GlobalVariables.CHECK_LINE_X - 40, noteStatus.isPassed, noteStatus.isCorrect);
+
+        float slurDuration = chordNote.calculateTotalSlurredDuration(measures, chordNote);
+        if (slurDuration != 0) {
+            ChordNote targetChordNote = chordNote.findChordNoteWithTargetSlurPosition(measures, chordNote);
+
+            float startX = xPosition + 80;
+            float startY = MusicUtils.convertPitchToY(chordNote.getNoteId(), measure.getClef());
+            float endX = xPosition + (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * slurDuration + 40;
+            float endY = MusicUtils.convertPitchToY(targetChordNote.getNoteId(), measure.getClef());
+            if (MusicUtils.isUpSlur(chordNote.getNoteId(), targetChordNote.getNoteId(), measure.getClef())) {
+                drawSlur(canvas, targetChordNote, startX, startY + 110, endX, endY + 110, true);
+            } else {
+                drawSlur(canvas, targetChordNote, startX, startY + 180, endX, endY + 180, false);
+            }
+        }
     }
 
     private void updateNoteStatus(Chord chord, ChordNote chordNote, float xPosition, Measure measure, int currentNote, NoteStatus noteStatus, Paint currentNotePaint) {
@@ -365,6 +380,85 @@ public class NotesAndMeasuresDrawer {
                 }
             }
         }
+    }
+
+    private void drawSlurUpwards(Canvas canvas, ChordNote chordNote, float startX, float startY, float endX, float endY) {
+        Paint slurPaint = new Paint();
+        slurPaint.setColor(0xFF000000); // Màu đen
+        slurPaint.setStyle(Paint.Style.FILL);
+        slurPaint.setAntiAlias(true);
+
+        Path slurPath = new Path();
+        float length = endX - startX;
+        float curvature = length / 8; // Adjust this factor to control curvature
+
+        float controlX1 = startX + length / 4;
+        float controlY1 = startY - curvature;
+        float controlX2 = startX + 3 * length / 4;
+        float controlY2 = startY - curvature;
+
+        // Draw upper part of the slur
+        slurPath.moveTo(startX, startY);
+        slurPath.cubicTo(controlX1, controlY1, controlX2, controlY2, endX, endY);
+
+        // Adjust thickness for the lower part to create a thinner end
+        float lowerControlY1 = startY - (curvature - 15);
+        float lowerControlY2 = startY - (curvature - 15);
+
+        slurPath.cubicTo(controlX2, lowerControlY2, controlX1, lowerControlY1, startX, startY);
+        slurPath.close();
+
+        NoteStatus noteStatus = noteStatuses.computeIfAbsent(chordNote, k -> new NoteStatus());
+
+        if (noteStatus.isPassed) {
+            slurPaint.setColor(noteStatus.isCorrect ? changedColorPaintPass.getColor() : changedColorPaintMiss.getColor());
+
+        }
+        if (endX < GlobalVariables.CHECK_LINE_X - 160) {
+            slurPaint.setAlpha(0);
+        }
+        canvas.drawPath(slurPath, slurPaint);
+
+    }
+
+    private void drawSlur(Canvas canvas, ChordNote chordNote, float startX, float startY, float endX, float endY, boolean isUpwards) {
+        Paint slurPaint = new Paint();
+        slurPaint.setColor(0xFF000000); // Màu đen
+        slurPaint.setStyle(Paint.Style.FILL);
+        slurPaint.setAntiAlias(true);
+
+        Path slurPath = new Path();
+        float length = endX - startX;
+        float curvature = length / 8; // Adjust this factor to control curvature
+        float controlX1 = startX + length / 4;
+        float controlX2 = startX + 3 * length / 4;
+        float controlY1, controlY2, lowerControlY1, lowerControlY2;
+
+        if (isUpwards) {
+            controlY1 = startY - curvature;
+            controlY2 = startY - curvature;
+            lowerControlY1 = startY - (curvature - 15);
+            lowerControlY2 = startY - (curvature - 15);
+        } else {
+            controlY1 = startY + curvature;
+            controlY2 = startY + curvature;
+            lowerControlY1 = startY + (curvature - 15);
+            lowerControlY2 = startY + (curvature - 15);
+        }
+
+        slurPath.moveTo(startX, startY);
+        slurPath.cubicTo(controlX1, controlY1, controlX2, controlY2, endX, endY);
+        slurPath.cubicTo(controlX2, lowerControlY2, controlX1, lowerControlY1, startX, startY);
+        slurPath.close();
+
+        NoteStatus noteStatus = noteStatuses.computeIfAbsent(chordNote, k -> new NoteStatus());
+        if (noteStatus.isPassed) {
+            slurPaint.setColor(noteStatus.isCorrect ? changedColorPaintPass.getColor() : changedColorPaintMiss.getColor());
+        }
+        if (endX < GlobalVariables.CHECK_LINE_X - 160) {
+            slurPaint.setAlpha(0);
+        }
+        canvas.drawPath(slurPath, slurPaint);
     }
 
     private float getCheckLineX(Measure measure, int currentNote, ChordNote chordNote) {

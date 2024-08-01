@@ -102,4 +102,5 @@ public class NavigationBarActivity extends AppCompatActivity {
             _activityNavigationBarBinding.progressBar.setVisibility(View.GONE);
         }
     }
+
 }

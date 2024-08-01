@@ -374,7 +374,7 @@ public class MusicUtils {
                         float diff = Math.abs(chords.get(0).findLowestNoteIdWithoutFlip(clef) - chords.get(1).findLowestNoteIdWithoutFlip(clef));
                         if (chords.get(0).findLowestNoteIdWithoutFlip(clef) < chords.get(1).findLowestNoteIdWithoutFlip(clef)) {
                             if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(clef)) {
-                                return CustomQuarterNotePaint.createPath(-14f * (diff-1));
+                                return CustomQuarterNotePaint.createPath(-14f * (diff - 1));
                             } else {
                                 return QuarterNotePaint.createPath();
                             }
@@ -382,7 +382,7 @@ public class MusicUtils {
                             if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(clef)) {
                                 return QuarterNotePaint.createPath();
                             } else {
-                                return CustomQuarterNotePaint.createPath(-14f * (diff-1));
+                                return CustomQuarterNotePaint.createPath(-14f * (diff - 1));
                             }
                         }
                     } else {
@@ -399,7 +399,7 @@ public class MusicUtils {
                         float diff = Math.abs(chords.get(0).findHighestNoteIdWithoutFlip(clef) - chords.get(1).findHighestNoteIdWithoutFlip(clef));
                         if (chords.get(0).findHighestNoteIdWithoutFlip(clef) > chords.get(1).findHighestNoteIdWithoutFlip(clef)) {
                             if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(clef)) {
-                                return CustomQuarterNotePaintReverse.createPath(14f * (diff-1));//To draw beam
+                                return CustomQuarterNotePaintReverse.createPath(14f * (diff - 1));//To draw beam
                             } else {
                                 return QuarterNotePaintReverse.createPath();
                             }
@@ -407,7 +407,7 @@ public class MusicUtils {
                             if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(clef)) {
                                 return QuarterNotePaintReverse.createPath();
                             } else {
-                                return CustomQuarterNotePaintReverse.createPath(14f * (diff-1));
+                                return CustomQuarterNotePaintReverse.createPath(14f * (diff - 1));
                             }
                         }
                     } else {
@@ -536,11 +536,32 @@ public class MusicUtils {
     }
 
     public static float convertPitchToY(int noteId, int clef) {
+        noteId = currentNoteId(noteId);
         float baseHeight = GlobalVariables.C4_CURRENT_NOTE; // D4
         int baseId = (clef == 0) ? 22 : 10;
         int spacingValue = noteId - baseId;
         float noteSpacing = (float) GlobalVariables.FIXED_HEIGHT / 16;
         return baseHeight - spacingValue * noteSpacing;
+    }
+
+    public static int currentNoteId(int noteId) {
+        while (noteId > 56) {
+            noteId -= 56;
+        }
+        return noteId;
+    }
+
+    public static boolean isUpSlur(int noteId1, int noteId2, int clef) {
+        noteId1 = currentNoteId(noteId1);
+        noteId2 = currentNoteId(noteId2);
+        int middleLineNoteId = (clef == 0) ? 28 : 16;
+        if (noteId1 <= middleLineNoteId && noteId2 <= middleLineNoteId) {
+            return false;
+        } else if (noteId1 > middleLineNoteId && noteId2 > middleLineNoteId) {
+            return true;
+        } else {
+            return noteId1 >= noteId2; // Return true if noteId1 is lower, otherwise false
+        }
     }
 
 

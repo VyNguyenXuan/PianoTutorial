@@ -39,4 +39,5 @@ public class MusicFragment extends Fragment {
 
         return _fragmentMusicBinding.getRoot();
     }
+
 }
