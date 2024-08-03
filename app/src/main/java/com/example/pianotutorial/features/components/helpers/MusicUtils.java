@@ -124,15 +124,18 @@ public class MusicUtils {
         return ledgerLines;
     }
 
-    public static void drawChromaticSign(Canvas canvas, Paint chromaticPaint, Path chromaticPath, float noteHeadOriginalHeight) {
-        float chromaticX = -noteHeadOriginalHeight * 1.5f + 36; // Adjust the x-position as needed
-        float chromaticY = 54f;
-        canvas.save();
-        canvas.translate(chromaticX, chromaticY);
-        float scaleFactor = noteHeadOriginalHeight / 24f; // Adjust the scale as needed
-        canvas.scale(scaleFactor, scaleFactor);
-        canvas.drawPath(chromaticPath, chromaticPaint);
-        canvas.restore();
+    public static void drawChromaticSign(Canvas canvas, Paint chromaticPaint, Path chromaticPath, float noteHeadOriginalHeight, int chromaticPositon) {
+        if (chromaticPositon > 0) {
+            float chromaticX = -noteHeadOriginalHeight * 1.5f + 36 - (chromaticPositon - 1) * 20; // Adjust the x-position as needed
+            float chromaticY = 58f;
+            canvas.save();
+            canvas.translate(chromaticX, chromaticY);
+            float scaleFactor = noteHeadOriginalHeight / 24f; // Adjust the scale as needed
+            canvas.scale(scaleFactor, scaleFactor);
+            canvas.drawPath(chromaticPath, chromaticPaint);
+            canvas.restore();
+        }
+
     }
 
     public static void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, int noteId) {

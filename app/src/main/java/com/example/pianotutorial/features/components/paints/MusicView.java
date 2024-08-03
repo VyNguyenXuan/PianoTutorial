@@ -18,8 +18,7 @@ import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.helpers.NoteActionListener;
 import com.example.pianotutorial.features.components.paints.ondraws.AccoladeDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.BlackKeysDrawer;
-import com.example.pianotutorial.features.components.paints.ondraws.FClefDrawer;
-import com.example.pianotutorial.features.components.paints.ondraws.GClefDrawer;
+import com.example.pianotutorial.features.components.paints.ondraws.ClefDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.LeftLineDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.NotesAndMeasuresDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.StaffDrawer;
@@ -48,8 +47,8 @@ public class MusicView extends View {
     private WhiteKeysDrawer whiteKeysDrawer;
     private BlackKeysDrawer blackKeysDrawer;
     private LeftLineDrawer leftLineDrawer;
-    private GClefDrawer gClefDrawer;
-    private FClefDrawer fClefDrawer;
+    private ClefDrawer gClefDrawer;
+    private ClefDrawer fClefDrawer;
     private AccoladeDrawer accoladeDrawer;
     private MediaPlayer player;
 
@@ -116,8 +115,8 @@ public class MusicView extends View {
 
         leftLineDrawer = new LeftLineDrawer();
         accoladeDrawer = new AccoladeDrawer(context);
-        gClefDrawer = new GClefDrawer(context);
-        fClefDrawer = new FClefDrawer(context);
+        gClefDrawer = new ClefDrawer(context,0,140);
+        fClefDrawer = new ClefDrawer(context,1,140);
 
         if (context instanceof NoteActionListener) {
         } else {

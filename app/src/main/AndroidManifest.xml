@@ -35,19 +35,17 @@
             android:theme="@style/Theme.PianoTutorial"></activity>
         <activity
             android:name=".features.playscreen.activities.PlayScreenActivity"
+            android:exported="false"
+            android:theme="@style/Theme.PianoTutorial"></activity>
+        <activity
+            android:name=".features.ui.MainMenu"
             android:exported="true"
-            android:theme="@style/Theme.PianoTutorial">
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".features.ui.MainMenu"
-            android:exported="false"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.PianoTutorial">
-
         </activity>
 
     </application>

@@ -101,7 +101,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         handler.post(() -> {
             // Perform initialization here
-            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(6).getRightMeasures(), currentSheet.get(3).getLeftMeasures());
+            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(5).getRightMeasures(), currentSheet.get(5).getLeftMeasures());
             activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
 
             // Hide the progress bar and show the MusicView

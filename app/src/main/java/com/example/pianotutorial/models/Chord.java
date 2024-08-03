@@ -36,6 +36,7 @@ public class Chord {
         this.measureId = measureId;
         this.position = position;
         this.chordNotes = chordNotes;
+        setChromaticPositions();
     }
 
     public int getId() {
@@ -78,16 +79,50 @@ public class Chord {
         this.chordNotes = chordNotes;
     }
 
+    public void setChromaticPositions() {
+        int chromaticCounter = 0;
+
+        for (ChordNote note : chordNotes) {
+            boolean matchFound = false;
+
+            if (note.getNoteId() > 56) {
+                chromaticCounter++;
+                note.setChromaticPosition(chromaticCounter);
+            } else {
+                int adjustedNoteId = note.getNoteId();
+
+                for (ChordNote otherNote : chordNotes) {
+                    if (otherNote.getNoteId() > 56) {
+                        int tempNoteId = otherNote.getNoteId();
+                        while (tempNoteId > 56) {
+                            tempNoteId -= 56;
+                        }
+                        if (adjustedNoteId == tempNoteId) {
+                            chromaticCounter++;
+                            matchFound = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (matchFound) {
+                    note.setChromaticPosition(chromaticCounter);
+                } else {
+                    note.setChromaticPosition(0); // Reset to 0 if no match is found
+                }
+            }
+        }
+    }
+
     public boolean isStemUp(int clefValue) {
         int middleLinePitch = (clefValue == 0) ? 28 : 16; // 28 : B4 (G clef), 16 : B3 (F clef)
         int belowMiddleLine = 0;
         int aboveMiddleLine = 0;
 
         // Count belowMiddleLine, aboveMiddleLine
-        if(chordNotes.isEmpty()){
+        if (chordNotes.isEmpty()) {
             return false;
-        }
-        else{
+        } else {
             for (ChordNote note : chordNotes) {
                 int adjustedNoteId = adjustedNoteId(note.getNoteId());
                 if (adjustedNoteId < middleLinePitch) {

@@ -29,6 +29,8 @@ public class ChordNote {
     @SerializedName("slurPosition")
     private int slurPosition;
 
+    private int chromaticPosition;
+
     public ChordNote() {
         id = 0;
         noteId = 0;
@@ -38,6 +40,7 @@ public class ChordNote {
         notePitch = "";
         noteOctave = 0;
         slurPosition = 0;
+        chromaticPosition = 0;
     }
 
     public ChordNote(int id, int noteId, int chordId, int chordPosition, String noteName, String notePitch, int noteOctave, int slurPosition) {
@@ -49,6 +52,7 @@ public class ChordNote {
         this.notePitch = notePitch;
         this.noteOctave = noteOctave;
         this.slurPosition = slurPosition;
+        this.chromaticPosition = 0;
     }
 
     public int getId() {
@@ -113,6 +117,14 @@ public class ChordNote {
 
     public void setSlurPosition(int slurPosition) {
         this.slurPosition = slurPosition;
+    }
+
+    public int getChromaticPosition() {
+        return chromaticPosition;
+    }
+
+    public void setChromaticPosition(int chromaticPosition) {
+        this.chromaticPosition = chromaticPosition;
     }
 
     public float calculateTotalSlurredDuration(List<Measure> measures, ChordNote startChordNote) {
