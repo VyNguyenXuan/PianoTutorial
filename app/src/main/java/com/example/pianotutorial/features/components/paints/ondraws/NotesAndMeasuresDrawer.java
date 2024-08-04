@@ -86,16 +86,20 @@ public class NotesAndMeasuresDrawer {
 
         float currentX = GlobalVariables.CHECK_LINE_X + width - (currentTime * 0.5f * GlobalVariables.SPEED);
 
+
         if (measures != null) {
             for (Measure measure : measures) {
                 drawMeasure(canvas, measures, measure, currentX, staffHeight, noteHeadOriginalHeight);
                 currentX += GlobalVariables.MEASURE_WIDTH;
             }
         }
+
     }
 
     private void drawMeasure(Canvas canvas, List<Measure> measures, Measure measure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
         float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH + 12;
+
+
         drawMeasureLine(canvas, measureEndX, staffHeight, measureStartX);
         float chordPositionWithinMeasure = 0;
         List<BeamValue> chordsToBeam = measure.groupChordsIntoBeams();
