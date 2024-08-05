@@ -32,6 +32,7 @@ import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.helpers.NoteActionListener;
 import com.example.pianotutorial.features.playscreen.eventhandlers.PlayScreenEventHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
+import com.example.pianotutorial.models.Measure;
 import com.example.pianotutorial.models.Sheet;
 
 import org.billthefarmer.mididriver.GeneralMidiConstants;
@@ -101,7 +102,9 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         handler.post(() -> {
             // Perform initialization here
-            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(5).getRightMeasures(), currentSheet.get(5).getLeftMeasures());
+            List<Measure> rightMeasures = currentSheet.get(4).getRightMeasures();
+            List<Measure> leftMeasures = currentSheet.get(4).getLeftMeasures();
+            activityPlayscreenBinding.musicView.setMeasures(rightMeasures, leftMeasures);
             activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
 
             // Hide the progress bar and show the MusicView
@@ -115,7 +118,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.opacityView.setVisibility(View.VISIBLE);
         activityPlayscreenBinding.playIcon.setVisibility(View.GONE);
         GlobalVariables.SPEED = 0;
-        if(player != null){
+        if (player != null) {
             player.stop();
             player.reset();
         }
@@ -143,9 +146,9 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             speed3TextColor = R.color.black;
         }
 
-        if(player!=null) player.stop();
+        if (player != null) player.stop();
         playAudio(fileURL);
-        setPlayerPlaybackSpeed(player,speed);
+        setPlayerPlaybackSpeed(player, speed);
         player.pause();
 
         activityPlayscreenBinding.speed1Layout.setBackgroundResource(speed1Res);
@@ -162,6 +165,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         downloadTask.execute(fileURL);
         startUpdatingStaff();
     }
+
     private void setPlayerPlaybackSpeed(MediaPlayer player, float speed) {
         PlaybackParams params = new PlaybackParams();
         params.setSpeed(speed);
@@ -298,7 +302,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             }
         }.start();
     }
-
 
 
     private void startUpdatingStaff() {

@@ -86,19 +86,35 @@ public class NotesAndMeasuresDrawer {
 
         float currentX = GlobalVariables.CHECK_LINE_X + width - (currentTime * 0.5f * GlobalVariables.SPEED);
 
-
-        if (measures != null) {
-            for (Measure measure : measures) {
-                drawMeasure(canvas, measures, measure, currentX, staffHeight, noteHeadOriginalHeight);
-                currentX += GlobalVariables.MEASURE_WIDTH;
-            }
+        if(!measures.isEmpty()){
+            musicView.updateRightClefDrawer(measures.get(0).getClef());
         }
 
+        for (int i = 0; i < measures.size(); i++) {
+            Measure previousMeasure = null;
+            if (i > 0) {
+                previousMeasure = measures.get(i - 1);
+            }
+
+            drawMeasure(canvas, measures, measures.get(i), previousMeasure, currentX, staffHeight, noteHeadOriginalHeight);
+            currentX += GlobalVariables.MEASURE_WIDTH;
+        }
     }
 
-    private void drawMeasure(Canvas canvas, List<Measure> measures, Measure measure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
+    private void drawMeasure(Canvas canvas, List<Measure> measures, Measure measure, Measure previousMeasure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
         float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH + 12;
 
+        if (previousMeasure != null && previousMeasure.getClef() != measure.getClef()) {
+            Path pendingClefPath = (measure.getClef() == 0) ? GClefPaint.createPath(measureStartX + 40) : FClefPaint.createPath(measureStartX + 40);
+            Paint pendingClefPaint = (measure.getClef() == 0) ? GClefPaint.create("#4D000000") : FClefPaint.create("#4D000000");
+            if (measureStartX < 130) {
+                pendingClefPaint.setAlpha(0);
+                if (musicView != null) {
+                    musicView.updateRightClefDrawer(measure.getClef());
+                }
+            }
+            canvas.drawPath(pendingClefPath, pendingClefPaint);
+        }
 
         drawMeasureLine(canvas, measureEndX, staffHeight, measureStartX);
         float chordPositionWithinMeasure = 0;
@@ -117,6 +133,7 @@ public class NotesAndMeasuresDrawer {
             }
         }
     }
+
 
     private void drawBeamedNotes(Canvas canvas, List<BeamValue> chordsToBeam, Measure measure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
         if (chordsToBeam.isEmpty()) return;

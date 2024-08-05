@@ -18,6 +18,8 @@ import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.helpers.NoteActionListener;
 import com.example.pianotutorial.features.components.paints.ondraws.AccoladeDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.BlackKeysDrawer;
+import com.example.pianotutorial.features.components.paints.ondraws.LeftClefDrawer;
+import com.example.pianotutorial.features.components.paints.ondraws.RightClefDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.LeftLineDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.NotesAndMeasuresDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.StaffDrawer;
@@ -46,9 +48,11 @@ public class MusicView extends View {
     private WhiteKeysDrawer whiteKeysDrawer;
     private BlackKeysDrawer blackKeysDrawer;
     private LeftLineDrawer leftLineDrawer;
+    private RightClefDrawer rightClefDrawer;
+    private LeftClefDrawer leftClefDrawer;
+
     private AccoladeDrawer accoladeDrawer;
     private MediaPlayer player;
-
     private boolean isPaused;
 
     // Note name to index mapping
@@ -113,6 +117,9 @@ public class MusicView extends View {
         leftLineDrawer = new LeftLineDrawer();
         accoladeDrawer = new AccoladeDrawer(context);
 
+        rightClefDrawer = new RightClefDrawer(context, 0, 140);
+        leftClefDrawer = new LeftClefDrawer(context, 1, 140);
+
         if (context instanceof NoteActionListener) {
         } else {
             throw new ClassCastException("Activity must implement NoteActionListener");
@@ -150,7 +157,10 @@ public class MusicView extends View {
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
+        // Draw the G-clef using GClefDrawer
         accoladeDrawer.draw(canvas);
+        rightClefDrawer.draw(canvas);
+        leftClefDrawer.draw(canvas);
 
         // Draw the staff for the right hand
         staffDrawer.draw(canvas, getWidth());
@@ -251,4 +261,15 @@ public class MusicView extends View {
             notesAndMeasuresDrawerLeftHand.setMediaPlayer(player);
         }
     }
+
+    public void updateRightClefDrawer(int clef) {
+        rightClefDrawer = new RightClefDrawer(getContext(), clef, 140);
+        invalidate(); // Force a redraw to reflect the changes
+    }
+
+    public void updateLeftClefDrawer(int clef) {
+        leftClefDrawer = new LeftClefDrawer(getContext(), clef, 140);
+        invalidate(); // Force a redraw to reflect the changes
+    }
+
 }

@@ -1,18 +1,21 @@
 package com.example.pianotutorial.features.components.paints.notepaints;
 
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 
 public class FClefPaint {
-    public static Paint create() {
+    public static Paint create(String colorHex) {
+        // Parse the color hex string into an integer
+        int color = Color.parseColor(colorHex);
         Paint naturalSignPaint = new Paint();
-        naturalSignPaint.setColor(0xFF000000); // Black color
+        naturalSignPaint.setColor(color);
         naturalSignPaint.setStyle(Paint.Style.FILL);
         naturalSignPaint.setStrokeWidth(3);
-
         return naturalSignPaint;
     }
+
 
     public static Path createPath(float translateX) {
         float translateY = 128f;
