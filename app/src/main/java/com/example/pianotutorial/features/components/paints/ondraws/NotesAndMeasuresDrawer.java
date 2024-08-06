@@ -33,7 +33,7 @@ public class NotesAndMeasuresDrawer {
     private final Map<ChordNote, NoteStatus> noteStatuses;
     private MediaPlayer player;
     private boolean soundPlayed;
-    private boolean isLeftHand;
+    private final boolean isLeftHand;
 
 
     public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView, MediaPlayer player, Boolean isLeftHand) {

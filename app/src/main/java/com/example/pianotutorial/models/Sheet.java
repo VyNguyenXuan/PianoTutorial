@@ -70,8 +70,12 @@ public class Sheet {
         List<Measure> measures = new ArrayList<>();
 
         for (int i = 0; i < measureStrings.length; i++) {
+            boolean isFClef = measureStrings[i].startsWith("F ");
+            int clefValue = isFClef ? 1 : 0;
+            if (isFClef) {
+                measureStrings[i] = measureStrings[i].substring(2);
+            }
             String[] chordStrings = measureStrings[i].split(" ");
-            int clefValue = measureStrings[i].startsWith("F ") ? 1 : 0;
             List<Chord> chords = new ArrayList<>();
 
             for (int j = 0; j < chordStrings.length; j++) {
@@ -297,23 +301,17 @@ public class Sheet {
 
     public int realityNoteId(int noteId, int keySignature, List<Integer> keySignatureList) {
         int currentNoteId = getNoteIdFromFlatToSharp(noteId);
-        if (keySignature < 0) {
-            if (currentNoteId <= 56) {
-                if (keySignatureList.contains(currentNoteId % 7)) {
+        if (keySignatureList.contains(currentNoteId % 7) || (keySignatureList.contains(7) && (currentNoteId % 7) == 0)) {
+            if (keySignature < 0) {
+                if (currentNoteId <= 56) {
                     currentNoteId += 111;
-                }
-            } else if (currentNoteId > 112) {
-                if (keySignatureList.contains(currentNoteId % 7)) {
+                } else if (currentNoteId > 112) {
                     currentNoteId -= 112;
                 }
-            }
-        } else if (keySignature > 0) {
-            if (currentNoteId <= 56) {
-                if (keySignatureList.contains(currentNoteId % 7)) {
+            } else if (keySignature > 0) {
+                if (currentNoteId <= 56) {
                     currentNoteId += 112;
-                }
-            } else if (currentNoteId > 112) {
-                if (keySignatureList.contains(currentNoteId % 7)) {
+                } else if (currentNoteId > 112) {
                     currentNoteId -= 111;
                 }
             }
