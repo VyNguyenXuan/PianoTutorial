@@ -33,9 +33,10 @@ public class NotesAndMeasuresDrawer {
     private final Map<ChordNote, NoteStatus> noteStatuses;
     private MediaPlayer player;
     private boolean soundPlayed;
+    private boolean isLeftHand;
 
 
-    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView, MediaPlayer player) {
+    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView, MediaPlayer player, Boolean isLeftHand) {
         this.measurePaint = measurePaint;
         this.staffPaint = initializePaint(staffPaint);
         this.changedColorPaintPass = initializePaint(changedColorPaintPass);
@@ -46,6 +47,13 @@ public class NotesAndMeasuresDrawer {
         this.noteStatuses = new HashMap<>();
         this.player = player;
         this.soundPlayed = false;
+        this.isLeftHand = isLeftHand;
+
+        if (!measures.isEmpty()) {
+            musicView.updateRightClefDrawer(GlobalVariables.RIGHT_CLEF);
+            musicView.updateLeftClefDrawer(GlobalVariables.LEFT_CLEF);
+
+        }
     }
 
     private Paint initializePaint(Paint paint) {
@@ -86,9 +94,6 @@ public class NotesAndMeasuresDrawer {
 
         float currentX = GlobalVariables.CHECK_LINE_X + width - (currentTime * 0.5f * GlobalVariables.SPEED);
 
-        if(!measures.isEmpty()){
-            musicView.updateRightClefDrawer(measures.get(0).getClef());
-        }
 
         for (int i = 0; i < measures.size(); i++) {
             Measure previousMeasure = null;
@@ -110,7 +115,12 @@ public class NotesAndMeasuresDrawer {
             if (measureStartX < 130) {
                 pendingClefPaint.setAlpha(0);
                 if (musicView != null) {
-                    musicView.updateRightClefDrawer(measure.getClef());
+                    if (isLeftHand) {
+                        musicView.updateLeftClefDrawer(measure.getClef());
+                    } else {
+                        musicView.updateRightClefDrawer(measure.getClef());
+
+                    }
                 }
             }
             canvas.drawPath(pendingClefPath, pendingClefPaint);

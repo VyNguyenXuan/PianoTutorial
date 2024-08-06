@@ -24,7 +24,7 @@ public class LeftClefDrawer {
                 break;
             case 0: // G-clef
                 this.clefDrawable = (VectorDrawable) ContextCompat.getDrawable(context, R.drawable.vector_g_clef);
-                this.top = 483f;
+                this.top = 490f;
                 this.scaleFactor = 0.6f;
                 break;
             default:

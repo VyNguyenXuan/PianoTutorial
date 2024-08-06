@@ -19,7 +19,7 @@ public class RightClefDrawer {
         switch (clefType) {
             case 1: // F-clef
                 this.clefDrawable = (VectorDrawable) ContextCompat.getDrawable(context, R.drawable.vector_f_clef);
-                this.top = 130f;
+                this.top = 123f;
                 this.scaleFactor = 0.6f;
                 break;
             case 0: // G-clef

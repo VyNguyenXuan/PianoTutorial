@@ -13,7 +13,7 @@ public class GlobalVariables {
     public static float CHECK_LINE_X = 600;
     public static int FIXED_HEIGHT = 360;
     public static float C4_CURRENT_NOTE = 257f;
-    public static int CLEF = 0;
-
+    public static int RIGHT_CLEF = 0;
+    public static int LEFT_CLEF = 0;
 
 }

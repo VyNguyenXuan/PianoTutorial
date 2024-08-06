@@ -55,7 +55,6 @@ public class MusicView extends View {
     private RightKeySignatureDrawer rightKeySignatureDrawer;
     private LeftKeySignatureDrawer leftKeySignatureDrawer;
 
-
     private AccoladeDrawer accoladeDrawer;
     private MediaPlayer player;
     private boolean isPaused;
@@ -106,15 +105,14 @@ public class MusicView extends View {
         Drawable blackKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_black_button);
         Drawable activeBlackKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_black_button_active);
 
-
         List<Measure> measures = new ArrayList<>();
         List<Measure> measuresLeftHand = new ArrayList<>();
 
         staffDrawer = new StaffDrawer(staffPaint, context);
         staffDrawerLeftHand = new StaffDrawer(staffPaint, context);
 
-        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
-        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
+        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, false);
+        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, true);
 
         whiteKeysDrawer = new WhiteKeysDrawer(whiteKeyDrawable, activeWhiteKeyDrawable);
         blackKeysDrawer = new BlackKeysDrawer(blackKeyDrawable, activeBlackKeyDrawable);
@@ -128,9 +126,7 @@ public class MusicView extends View {
         rightKeySignatureDrawer = new RightKeySignatureDrawer(context, 0, keySigntureList, 0);
         leftKeySignatureDrawer = new LeftKeySignatureDrawer(context, 1, keySigntureList, 0);
 
-
-        if (context instanceof NoteActionListener) {
-        } else {
+        if (!(context instanceof NoteActionListener)) {
             throw new ClassCastException("Activity must implement NoteActionListener");
         }
     }
@@ -161,12 +157,10 @@ public class MusicView extends View {
         return map;
     }
 
-
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
-        // Draw the G-clef using GClefDrawer
         accoladeDrawer.draw(canvas);
         rightClefDrawer.draw(canvas);
         leftClefDrawer.draw(canvas);
@@ -201,16 +195,16 @@ public class MusicView extends View {
         whiteKeysDrawer.draw(canvas, getWidth(), getHeight());
         blackKeysDrawer.draw(canvas, getWidth(), getHeight());
 
-        invalidate(); // Force a redraw to animate the notes
+        postInvalidate(); // Force a redraw to animate the notes
     }
 
     public void setMeasures(Sheet sheet) {
         this.sheet = sheet;
         if (sheet.getRightHandMeasures() != null) {
-            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(sheet.getRightHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
+            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(sheet.getRightHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, false);
         }
         if (sheet.getLeftHandMeasures() != null) {
-            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(sheet.getLeftHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
+            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(sheet.getLeftHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, true);
         }
     }
 
@@ -273,13 +267,16 @@ public class MusicView extends View {
     }
 
     public void updateRightClefDrawer(int clef) {
+        if (sheet == null) return;
         rightClefDrawer = new RightClefDrawer(getContext(), clef);
+        rightKeySignatureDrawer = new RightKeySignatureDrawer(getContext(), clef, sheet.getKeySignatureList(sheet.getKeySignature()), sheet.getKeySignature());
         invalidate(); // Force a redraw to reflect the changes
     }
 
     public void updateLeftClefDrawer(int clef) {
+        if (sheet == null) return;
         leftClefDrawer = new LeftClefDrawer(getContext(), clef);
+        leftKeySignatureDrawer = new LeftKeySignatureDrawer(getContext(), clef, sheet.getKeySignatureList(sheet.getKeySignature()), sheet.getKeySignature());
         invalidate(); // Force a redraw to reflect the changes
     }
-
 }

@@ -32,7 +32,6 @@ import com.example.pianotutorial.features.components.helpers.Note;
 import com.example.pianotutorial.features.components.helpers.NoteActionListener;
 import com.example.pianotutorial.features.playscreen.eventhandlers.PlayScreenEventHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
-import com.example.pianotutorial.models.Measure;
 import com.example.pianotutorial.models.Sheet;
 
 import org.billthefarmer.mididriver.GeneralMidiConstants;
@@ -101,7 +100,10 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.musicView.setVisibility(View.GONE);
 
         handler.post(() -> {
-            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(6));
+            GlobalVariables.RIGHT_CLEF = currentSheet.get(8).getRightHandMeasures().get(0).getClef();
+            GlobalVariables.LEFT_CLEF = currentSheet.get(8).getLeftHandMeasures().get(0).getClef();
+
+            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(8));
             activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
 
             // Hide the progress bar and show the MusicView
