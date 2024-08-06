@@ -6,19 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Measure {
-    @SerializedName("id")
     private int id;
-
-    @SerializedName("sheetId")
     private int sheetId;
-
-    @SerializedName("position")
     private int position;
-
-    @SerializedName("clef")
     private int clef;
-
-    @SerializedName("chords")
     private List<Chord> chords;
     private List<BeamValue> beams;
 

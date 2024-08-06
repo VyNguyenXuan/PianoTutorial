@@ -19,12 +19,15 @@ import com.example.pianotutorial.features.components.helpers.NoteActionListener;
 import com.example.pianotutorial.features.components.paints.ondraws.AccoladeDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.BlackKeysDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.LeftClefDrawer;
+import com.example.pianotutorial.features.components.paints.ondraws.LeftKeySignatureDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.RightClefDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.LeftLineDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.NotesAndMeasuresDrawer;
+import com.example.pianotutorial.features.components.paints.ondraws.RightKeySignatureDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.StaffDrawer;
 import com.example.pianotutorial.features.components.paints.ondraws.WhiteKeysDrawer;
 import com.example.pianotutorial.models.Measure;
+import com.example.pianotutorial.models.Sheet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +39,7 @@ public class MusicView extends View {
     private Paint measurePaint;
     private Paint changedColorPaintPass;
     private Paint changedColorPaintMiss;
-    private List<Measure> measures;
-    private List<Measure> measuresLeftHand;
+    private Sheet sheet;
     private long startTime;
     private long pauseTime;
 
@@ -50,6 +52,9 @@ public class MusicView extends View {
     private LeftLineDrawer leftLineDrawer;
     private RightClefDrawer rightClefDrawer;
     private LeftClefDrawer leftClefDrawer;
+    private RightKeySignatureDrawer rightKeySignatureDrawer;
+    private LeftKeySignatureDrawer leftKeySignatureDrawer;
+
 
     private AccoladeDrawer accoladeDrawer;
     private MediaPlayer player;
@@ -102,8 +107,8 @@ public class MusicView extends View {
         Drawable activeBlackKeyDrawable = ContextCompat.getDrawable(getContext(), R.drawable.vector_black_button_active);
 
 
-        measures = new ArrayList<>();
-        measuresLeftHand = new ArrayList<>();
+        List<Measure> measures = new ArrayList<>();
+        List<Measure> measuresLeftHand = new ArrayList<>();
 
         staffDrawer = new StaffDrawer(staffPaint, context);
         staffDrawerLeftHand = new StaffDrawer(staffPaint, context);
@@ -117,8 +122,12 @@ public class MusicView extends View {
         leftLineDrawer = new LeftLineDrawer();
         accoladeDrawer = new AccoladeDrawer(context);
 
-        rightClefDrawer = new RightClefDrawer(context, 0, 140);
-        leftClefDrawer = new LeftClefDrawer(context, 1, 140);
+        rightClefDrawer = new RightClefDrawer(context, 0);
+        leftClefDrawer = new LeftClefDrawer(context, 1);
+        List<Integer> keySigntureList = new ArrayList<>();
+        rightKeySignatureDrawer = new RightKeySignatureDrawer(context, 0, keySigntureList, 0);
+        leftKeySignatureDrawer = new LeftKeySignatureDrawer(context, 1, keySigntureList, 0);
+
 
         if (context instanceof NoteActionListener) {
         } else {
@@ -161,6 +170,8 @@ public class MusicView extends View {
         accoladeDrawer.draw(canvas);
         rightClefDrawer.draw(canvas);
         leftClefDrawer.draw(canvas);
+        rightKeySignatureDrawer.draw(canvas);
+        leftKeySignatureDrawer.draw(canvas);
 
         // Draw the staff for the right hand
         staffDrawer.draw(canvas, getWidth());
@@ -193,14 +204,13 @@ public class MusicView extends View {
         invalidate(); // Force a redraw to animate the notes
     }
 
-    public void setMeasures(List<Measure> measures, List<Measure> measuresLeftHand) {
-        if (measures != null) {
-            this.measures = measures;
-            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
+    public void setMeasures(Sheet sheet) {
+        this.sheet = sheet;
+        if (sheet.getRightHandMeasures() != null) {
+            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(sheet.getRightHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
         }
-        if (measuresLeftHand != null) {
-            this.measuresLeftHand = measuresLeftHand;
-            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
+        if (sheet.getLeftHandMeasures() != null) {
+            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(sheet.getLeftHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player);
         }
     }
 
@@ -263,12 +273,12 @@ public class MusicView extends View {
     }
 
     public void updateRightClefDrawer(int clef) {
-        rightClefDrawer = new RightClefDrawer(getContext(), clef, 140);
+        rightClefDrawer = new RightClefDrawer(getContext(), clef);
         invalidate(); // Force a redraw to reflect the changes
     }
 
     public void updateLeftClefDrawer(int clef) {
-        leftClefDrawer = new LeftClefDrawer(getContext(), clef, 140);
+        leftClefDrawer = new LeftClefDrawer(getContext(), clef);
         invalidate(); // Force a redraw to reflect the changes
     }
 

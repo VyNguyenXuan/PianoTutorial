@@ -1,55 +1,40 @@
 package com.example.pianotutorial.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class ChordNote {
-    @SerializedName("id")
     private int id;
-
-    @SerializedName("noteId")
     private int noteId;
-
-    @SerializedName("chordId")
+    private int realityNoteId;
     private int chordId;
-
-    @SerializedName("chordPosition")
     private int chordPosition;
-
-    @SerializedName("noteName")
     private String noteName;
-
-    @SerializedName("notePitch")
-    private String notePitch;
-
-    @SerializedName("noteOctave")
+    private String realityNoteName;
     private int noteOctave;
-
-    @SerializedName("slurPosition")
     private int slurPosition;
-
     private int chromaticPosition;
 
     public ChordNote() {
         id = 0;
         noteId = 0;
+        realityNoteId = 0;
         chordId = 0;
         chordPosition = 0;
         noteName = "";
-        notePitch = "";
+        realityNoteName = "";
         noteOctave = 0;
         slurPosition = 0;
         chromaticPosition = 0;
     }
 
-    public ChordNote(int id, int noteId, int chordId, int chordPosition, String noteName, String notePitch, int noteOctave, int slurPosition) {
+    public ChordNote(int id, int noteId, int realityNoteId, int chordId, int chordPosition, String noteName, String realityNoteName, int noteOctave, int slurPosition) {
         this.id = id;
         this.noteId = noteId;
+        this.realityNoteId = realityNoteId;
         this.chordId = chordId;
         this.chordPosition = chordPosition;
         this.noteName = noteName;
-        this.notePitch = notePitch;
+        this.realityNoteName = realityNoteName;
         this.noteOctave = noteOctave;
         this.slurPosition = slurPosition;
         this.chromaticPosition = 0;
@@ -69,6 +54,14 @@ public class ChordNote {
 
     public void setNoteId(int noteId) {
         this.noteId = noteId;
+    }
+
+    public int getRealityNoteId() {
+        return realityNoteId;
+    }
+
+    public void setRealityNoteId(int realityNoteId) {
+        this.realityNoteId = realityNoteId;
     }
 
     public int getChordId() {
@@ -95,12 +88,12 @@ public class ChordNote {
         this.noteName = noteName;
     }
 
-    public String getNotePitch() {
-        return notePitch;
+    public String getRealityNoteName() {
+        return realityNoteName;
     }
 
-    public void setNotePitch(String notePitch) {
-        this.notePitch = notePitch;
+    public void setRealityNoteName(String realityNoteName) {
+        this.realityNoteName = realityNoteName;
     }
 
     public int getNoteOctave() {

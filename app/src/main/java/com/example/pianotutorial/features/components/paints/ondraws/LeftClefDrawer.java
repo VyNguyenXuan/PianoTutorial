@@ -14,8 +14,8 @@ public class LeftClefDrawer {
     private final float top;
     private final float scaleFactor;
 
-    public LeftClefDrawer(Context context, int clefType, float left) {
-        this.left = left;
+    public LeftClefDrawer(Context context, int clefType) {
+        this.left = 140;
         switch (clefType) {
             case 1: // F-clef
                 this.clefDrawable = (VectorDrawable) ContextCompat.getDrawable(context, R.drawable.vector_f_clef);

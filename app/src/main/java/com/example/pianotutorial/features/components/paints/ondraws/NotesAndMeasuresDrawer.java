@@ -303,7 +303,6 @@ public class NotesAndMeasuresDrawer {
         }
     }
 
-
     private void drawMeasureLine(Canvas canvas, float measureEndX, float staffHeight, float measureStartX) {
         float topY = staffHeight / 2;
         float bottomY = staffHeight / 2 + 4 * (staffHeight / 8);
@@ -387,7 +386,7 @@ public class NotesAndMeasuresDrawer {
 
         if (xPosition <= checkLineX && !noteStatus.isPassed) {
             noteStatus.isPassed = true;
-            noteStatus.isCorrect = correctNotes != null && correctNotes.contains(chordNote.getNotePitch());
+            noteStatus.isCorrect = correctNotes != null && correctNotes.contains(chordNote.getRealityNoteName());
         }
 
         if (noteStatus.isPassed) {
