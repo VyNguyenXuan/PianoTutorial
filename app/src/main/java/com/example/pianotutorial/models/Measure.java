@@ -9,7 +9,6 @@ public class Measure {
     private int id;
     private int sheetId;
     private int position;
-    private int clef;
     private List<Chord> chords;
     private List<BeamValue> beams;
 
@@ -17,16 +16,14 @@ public class Measure {
         id = 0;
         sheetId = 0;
         position = 0;
-        clef = 0;
         chords = new ArrayList<>();
         beams = new ArrayList<>();
     }
 
-    public Measure(int id, int sheetId, int position, int clef, List<Chord> chords) {
+    public Measure(int id, int sheetId, int position, List<Chord> chords) {
         this.id = id;
         this.sheetId = sheetId;
         this.position = position;
-        this.clef = clef;
         this.chords = chords;
         this.beams = new ArrayList<>();
     }
@@ -63,14 +60,6 @@ public class Measure {
         this.chords = chords;
     }
 
-    public int getClef() {
-        return clef;
-    }
-
-    public void setClef(int clef) {
-        this.clef = clef;
-    }
-
     public List<BeamValue> getBeams() {
         return beams;
     }
@@ -87,8 +76,8 @@ public class Measure {
                 if (chord.getChordNotes().size() == 1) {
                     noteId = chord.adjustedNoteId(chord.getChordNotes().get(0).getNoteId());
                 } else {
-                    boolean stemUp = chord.isStemUp(clef);
-                    noteId = stemUp ? chord.findHighestNoteIdWithoutFlip(clef) : chord.findLowestNoteIdWithoutFlip(clef);
+                    boolean stemUp = chord.isStemUp();
+                    noteId = stemUp ? chord.findHighestNoteIdWithoutFlip() : chord.findLowestNoteIdWithoutFlip();
                 }
                 if(!chord.getChordNotes().isEmpty()){
                     for(ChordNote note:chord.getChordNotes()){

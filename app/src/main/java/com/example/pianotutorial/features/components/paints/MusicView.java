@@ -111,8 +111,8 @@ public class MusicView extends View {
         staffDrawer = new StaffDrawer(staffPaint, context);
         staffDrawerLeftHand = new StaffDrawer(staffPaint, context);
 
-        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, false);
-        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, true);
+        notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(measures, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, false, 0);
+        notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(measuresLeftHand, measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, true, 0);
 
         whiteKeysDrawer = new WhiteKeysDrawer(whiteKeyDrawable, activeWhiteKeyDrawable);
         blackKeysDrawer = new BlackKeysDrawer(blackKeyDrawable, activeBlackKeyDrawable);
@@ -200,11 +200,12 @@ public class MusicView extends View {
 
     public void setMeasures(Sheet sheet) {
         this.sheet = sheet;
+        float measureDuration = calculateMeasureDuration(sheet);
         if (sheet.getRightHandMeasures() != null) {
-            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(sheet.getRightHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, false);
+            notesAndMeasuresDrawer = new NotesAndMeasuresDrawer(sheet.getRightHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, false, measureDuration);
         }
         if (sheet.getLeftHandMeasures() != null) {
-            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(sheet.getLeftHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, true);
+            notesAndMeasuresDrawerLeftHand = new NotesAndMeasuresDrawer(sheet.getLeftHandMeasures(), measurePaint, staffPaint, changedColorPaintPass, changedColorPaintMiss, this, player, true, measureDuration);
         }
     }
 
@@ -278,5 +279,9 @@ public class MusicView extends View {
         leftClefDrawer = new LeftClefDrawer(getContext(), clef);
         leftKeySignatureDrawer = new LeftKeySignatureDrawer(getContext(), clef, sheet.getKeySignatureList(sheet.getKeySignature()), sheet.getKeySignature());
         invalidate(); // Force a redraw to reflect the changes
+    }
+
+    public float calculateMeasureDuration(Sheet sheet) {
+        return (float) ((sheet.getTopSignature() / sheet.getBottomSignature()) * 4 * GlobalVariables.MEASURE_WIDTH);
     }
 }

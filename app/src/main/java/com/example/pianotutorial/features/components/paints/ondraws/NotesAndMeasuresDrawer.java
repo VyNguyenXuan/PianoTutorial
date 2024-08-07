@@ -34,9 +34,10 @@ public class NotesAndMeasuresDrawer {
     private MediaPlayer player;
     private boolean soundPlayed;
     private final boolean isLeftHand;
+    private final float measureDuration;
 
 
-    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView, MediaPlayer player, Boolean isLeftHand) {
+    public NotesAndMeasuresDrawer(List<Measure> measures, Paint measurePaint, Paint staffPaint, Paint changedColorPaintPass, Paint changedColorPaintMiss, MusicView musicView, MediaPlayer player, Boolean isLeftHand, float measuareDuration) {
         this.measurePaint = measurePaint;
         this.staffPaint = initializePaint(staffPaint);
         this.changedColorPaintPass = initializePaint(changedColorPaintPass);
@@ -48,6 +49,7 @@ public class NotesAndMeasuresDrawer {
         this.player = player;
         this.soundPlayed = false;
         this.isLeftHand = isLeftHand;
+        this.measureDuration = measuareDuration;
 
         if (!measures.isEmpty()) {
             musicView.updateRightClefDrawer(GlobalVariables.RIGHT_CLEF);
@@ -101,30 +103,13 @@ public class NotesAndMeasuresDrawer {
                 previousMeasure = measures.get(i - 1);
             }
 
-            drawMeasure(canvas, measures, measures.get(i), previousMeasure, currentX, staffHeight, noteHeadOriginalHeight);
-            currentX += GlobalVariables.MEASURE_WIDTH;
+            drawMeasure(canvas, measures, measures.get(i), previousMeasure, currentX, staffHeight, noteHeadOriginalHeight, measureDuration);
+            currentX += measureDuration;
         }
     }
 
-    private void drawMeasure(Canvas canvas, List<Measure> measures, Measure measure, Measure previousMeasure, float measureStartX, float staffHeight, float noteHeadOriginalHeight) {
-        float measureEndX = measureStartX + GlobalVariables.MEASURE_WIDTH + 12;
-
-        if (previousMeasure != null && previousMeasure.getClef() != measure.getClef()) {
-            Path pendingClefPath = (measure.getClef() == 0) ? GClefPaint.createPath(measureStartX + 40) : FClefPaint.createPath(measureStartX + 40);
-            Paint pendingClefPaint = (measure.getClef() == 0) ? GClefPaint.create("#4D000000") : FClefPaint.create("#4D000000");
-            if (measureStartX < 130) {
-                pendingClefPaint.setAlpha(0);
-                if (musicView != null) {
-                    if (isLeftHand) {
-                        musicView.updateLeftClefDrawer(measure.getClef());
-                    } else {
-                        musicView.updateRightClefDrawer(measure.getClef());
-
-                    }
-                }
-            }
-            canvas.drawPath(pendingClefPath, pendingClefPaint);
-        }
+    private void drawMeasure(Canvas canvas, List<Measure> measures, Measure measure, Measure previousMeasure, float measureStartX, float staffHeight, float noteHeadOriginalHeight, float measuareDuration) {
+        float measureEndX = measureStartX + measuareDuration + 12;
 
         drawMeasureLine(canvas, measureEndX, staffHeight, measureStartX);
         float chordPositionWithinMeasure = 0;
@@ -134,12 +119,17 @@ public class NotesAndMeasuresDrawer {
             if (!chordsToBeam.isEmpty()) {
                 drawBeamedNotes(canvas, chordsToBeam, measure, measureStartX, staffHeight, noteHeadOriginalHeight);
             }
-            for (Chord chord : measure.getChords()) {
+            for (int i = 0; i < measure.getChords().size(); i++) {
+                Chord chord = measure.getChords().get(i);
+                Chord previousChord = null;
+                if (i > 0) {
+                    previousChord = measure.getChords().get(i - 1);
+                }
                 float noteDuration = chord.getDuration();
                 float xPosition = measureStartX + chordPositionWithinMeasure;
-                chordPositionWithinMeasure += (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * noteDuration;
+                chordPositionWithinMeasure += GlobalVariables.MEASURE_WIDTH * noteDuration;
 
-                drawChord(canvas, measures, chord, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, chordsToBeam);
+                drawChord(canvas, measures, previousChord, chord, xPosition, measure, staffHeight, noteHeadOriginalHeight, noteDuration, chordsToBeam);
             }
         }
     }
@@ -154,16 +144,16 @@ public class NotesAndMeasuresDrawer {
 
         for (BeamValue beamValue : chordsToBeam) {
             Chord startValue = beamValue.getStartChord();
-            float firstXPosition = measureStartX + (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * measure.currentDuration(startValue);
+            float firstXPosition = measureStartX + GlobalVariables.MEASURE_WIDTH * measure.currentDuration(startValue);
 
             Chord endValue = beamValue.getEndChord();
-            float lastXPosition = measureStartX + (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * measure.currentDuration(endValue);
+            float lastXPosition = measureStartX + GlobalVariables.MEASURE_WIDTH * measure.currentDuration(endValue);
 
             if (startValue.getDuration() < 1 && startValue.getDuration() >= 0.5f) {
-                if (beamValue.isBeamedNoteStemUp(measure.getClef())) {
-                    int highestNoteId = beamValue.findHighestBeamNoteId(measure.getClef());
-                    yPosition = (measure.getClef() == 0) ? MusicUtils.convertPitchToY(highestNoteId, 0) : MusicUtils.convertPitchToY(highestNoteId, 1);
-                    if (startValue.findLowestNoteIdWithoutFlip(measure.getClef()) == endValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
+                if (beamValue.isBeamedNoteStemUp()) {
+                    int highestNoteId = beamValue.findHighestBeamNoteId();
+                    yPosition = (startValue.getClef() == 0) ? MusicUtils.convertPitchToY(highestNoteId, 0) : MusicUtils.convertPitchToY(highestNoteId, 1);
+                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
                         beamPath.moveTo(firstXPosition - 60, yPosition + 12);
                         beamPath.lineTo(lastXPosition - 55, yPosition + 12);
                         beamPath.lineTo(lastXPosition - 55, yPosition - 12);
@@ -177,7 +167,7 @@ public class NotesAndMeasuresDrawer {
                         beamPath.close(); // Đóng path để hoàn thành hình bình hành
                         Matrix matrix = new Matrix();
                         matrix.setRotate(-8, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip(measure.getClef())) {
+                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip()) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, 24);
                         }
@@ -185,9 +175,9 @@ public class NotesAndMeasuresDrawer {
                     }
 
                 } else {
-                    int lowestNoteId = beamValue.findLowestBeamNoteId(measure.getClef());
-                    yPosition = (measure.getClef() == 0) ? MusicUtils.convertPitchToY(lowestNoteId - 13, 0) : MusicUtils.convertPitchToY(lowestNoteId - 13, 1);
-                    if (startValue.findLowestNoteIdWithoutFlip(measure.getClef()) == endValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
+                    int lowestNoteId = beamValue.findLowestBeamNoteId();
+                    yPosition = (startValue.getClef() == 0) ? MusicUtils.convertPitchToY(lowestNoteId - 13, 0) : MusicUtils.convertPitchToY(lowestNoteId - 13, 1);
+                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
                         beamPath.moveTo(firstXPosition - 109, yPosition - 12);
                         beamPath.lineTo(lastXPosition - 104, yPosition - 12);
                         beamPath.lineTo(lastXPosition - 104, yPosition + 12);
@@ -201,7 +191,7 @@ public class NotesAndMeasuresDrawer {
                         beamPath.close();
                         Matrix matrix = new Matrix();
                         matrix.setRotate(8, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
+                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip()) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, -24);
                         }
@@ -209,10 +199,10 @@ public class NotesAndMeasuresDrawer {
                     }
                 }
             } else {
-                if (beamValue.isBeamedNoteStemUp(measure.getClef())) {
-                    int highestNoteId = beamValue.findHighestBeamNoteId(measure.getClef());
+                if (beamValue.isBeamedNoteStemUp()) {
+                    int highestNoteId = beamValue.findHighestBeamNoteId();
                     yPosition = MusicUtils.convertPitchToY(highestNoteId, 0);
-                    if (startValue.findLowestNoteIdWithoutFlip(measure.getClef()) == endValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
+                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
                         beamPath.moveTo(firstXPosition + 16, yPosition + 28);
                         beamPath.lineTo(lastXPosition + 21, yPosition + 28);
                         beamPath.lineTo(lastXPosition + 21, yPosition + 4);
@@ -239,7 +229,7 @@ public class NotesAndMeasuresDrawer {
 
                         Matrix matrix = new Matrix();
                         matrix.setRotate(-16, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip(measure.getClef())) {
+                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip()) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, 60);
                         }
@@ -247,9 +237,9 @@ public class NotesAndMeasuresDrawer {
                     }
 
                 } else {
-                    int lowestNoteId = beamValue.findLowestBeamNoteId(measure.getClef());
+                    int lowestNoteId = beamValue.findLowestBeamNoteId();
                     yPosition = MusicUtils.convertPitchToY(lowestNoteId - 13, 0);
-                    if (startValue.findLowestNoteIdWithoutFlip(measure.getClef()) == endValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
+                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
                         beamPath.moveTo(firstXPosition - 33, yPosition - 16);
                         beamPath.lineTo(lastXPosition - 28, yPosition - 16);
                         beamPath.lineTo(lastXPosition - 28, yPosition + 8);
@@ -273,7 +263,7 @@ public class NotesAndMeasuresDrawer {
                         beamPath.close();
                         Matrix matrix = new Matrix();
                         matrix.setRotate(16, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip(measure.getClef())) {
+                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip()) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, -60);
                         }
@@ -331,7 +321,23 @@ public class NotesAndMeasuresDrawer {
         canvas.drawLine(measureEndX, topY, measureEndX, bottomY, measureLinePaint);
     }
 
-    private void drawChord(Canvas canvas, List<Measure> measures, Chord chord, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
+    private void drawChord(Canvas canvas, List<Measure> measures, Chord previousChord, Chord chord, float xPosition, Measure measure, float staffHeight, float noteHeadOriginalHeight, float noteDuration, List<BeamValue> beamValues) {
+        if (previousChord != null && previousChord.getClef() != chord.getClef()) {
+            Path pendingClefPath = (chord.getClef() == 0) ? GClefPaint.createPath(xPosition + 40) : FClefPaint.createPath(xPosition + 40);
+            Paint pendingClefPaint = (chord.getClef() == 0) ? GClefPaint.create("#4D000000") : FClefPaint.create("#4D000000");
+            if (xPosition < 130) {
+                pendingClefPaint.setAlpha(0);
+                if (musicView != null) {
+                    if (isLeftHand) {
+                        musicView.updateLeftClefDrawer(chord.getClef());
+                    } else {
+                        musicView.updateRightClefDrawer(chord.getClef());
+
+                    }
+                }
+            }
+            canvas.drawPath(pendingClefPath, pendingClefPaint);
+        }
         if (!chord.getChordNotes().isEmpty()) {
             chord.setChromaticPositions();
             for (ChordNote chordNote : chord.getChordNotes()) {
@@ -348,7 +354,7 @@ public class NotesAndMeasuresDrawer {
         else if (currentNote > 56) currentNote -= 56;
 
         canvas.save();
-        float noteY = MusicUtils.convertPitchToY(currentNote, measure.getClef());
+        float noteY = MusicUtils.convertPitchToY(currentNote, chord.getClef());
         canvas.translate(xPosition, noteY);
 
         float scaleFactor = (staffHeight / 10) / noteHeadOriginalHeight;
@@ -373,17 +379,17 @@ public class NotesAndMeasuresDrawer {
 
         canvas.restore();
 
-        MusicUtils.drawLedgerLines(canvas, xPosition, chordNote, measure.getClef(), staffPaint, changedColorPaintPass, changedColorPaintMiss, GlobalVariables.CHECK_LINE_X - 40, noteStatus.isPassed, noteStatus.isCorrect);
+        MusicUtils.drawLedgerLines(canvas, xPosition, chordNote, chord.getClef(), staffPaint, changedColorPaintPass, changedColorPaintMiss, GlobalVariables.CHECK_LINE_X - 40, noteStatus.isPassed, noteStatus.isCorrect);
 
         float slurDuration = chordNote.calculateTotalSlurredDuration(measures, chordNote);
         if (slurDuration != 0) {
             ChordNote targetChordNote = chordNote.findChordNoteWithTargetSlurPosition(measures, chordNote);
 
             float startX = xPosition + 80;
-            float startY = MusicUtils.convertPitchToY(chordNote.getNoteId(), measure.getClef());
-            float endX = xPosition + (GlobalVariables.MEASURE_WIDTH / GlobalVariables.TOP_SIGNATURE) * slurDuration + 40;
-            float endY = MusicUtils.convertPitchToY(targetChordNote.getNoteId(), measure.getClef());
-            if (MusicUtils.isUpSlur(chordNote.getNoteId(), targetChordNote.getNoteId(), measure.getClef())) {
+            float startY = MusicUtils.convertPitchToY(chordNote.getNoteId(), chord.getClef());
+            float endX = xPosition + GlobalVariables.MEASURE_WIDTH * slurDuration + 40;
+            float endY = MusicUtils.convertPitchToY(targetChordNote.getNoteId(), chord.getClef());
+            if (MusicUtils.isUpSlur(chordNote.getNoteId(), targetChordNote.getNoteId(), chord.getClef())) {
                 drawSlur(canvas, targetChordNote, startX, startY + 110, endX, endY + 110, true);
             } else {
                 drawSlur(canvas, targetChordNote, startX, startY + 180, endX, endY + 180, false);
@@ -392,7 +398,7 @@ public class NotesAndMeasuresDrawer {
     }
 
     private void updateNoteStatus(Chord chord, ChordNote chordNote, float xPosition, Measure measure, int currentNote, NoteStatus noteStatus, Paint currentNotePaint) {
-        float checkLineX = getCheckLineX(measure, currentNote, chordNote);
+        float checkLineX = getCheckLineX(chord, currentNote, chordNote);
 
         if (xPosition <= checkLineX && !noteStatus.isPassed) {
             noteStatus.isPassed = true;
@@ -453,14 +459,14 @@ public class NotesAndMeasuresDrawer {
         canvas.drawPath(slurPath, slurPaint);
     }
 
-    private float getCheckLineX(Measure measure, int currentNote, ChordNote chordNote) {
+    private float getCheckLineX(Chord chord, int currentNote, ChordNote chordNote) {
         boolean isChromatic = chordNote.getNoteId() > 65 && chordNote.getNoteId() < 169 || chordNote.getNoteId() > 112;
         float checkLineX = GlobalVariables.CHECK_LINE_X - (isChromatic ? 64 : 40);
 
         if (!isChromatic) {
-            if (measure.getClef() == 0 && MusicUtils.calculateLedgerLinesGClef(currentNote) > 0) {
+            if (chord.getClef() == 0 && MusicUtils.calculateLedgerLinesGClef(currentNote) > 0) {
                 checkLineX = GlobalVariables.CHECK_LINE_X - 64;
-            } else if (measure.getClef() != 0 && MusicUtils.calculateLedgerLinesFClef(currentNote) > 0) {
+            } else if (chord.getClef() != 0 && MusicUtils.calculateLedgerLinesFClef(currentNote) > 0) {
                 checkLineX = GlobalVariables.CHECK_LINE_X - 64;
             }
         }

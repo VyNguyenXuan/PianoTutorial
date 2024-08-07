@@ -70,11 +70,7 @@ public class Sheet {
         List<Measure> measures = new ArrayList<>();
 
         for (int i = 0; i < measureStrings.length; i++) {
-            boolean isFClef = measureStrings[i].startsWith("F ");
-            int clefValue = isFClef ? 1 : 0;
-            if (isFClef) {
-                measureStrings[i] = measureStrings[i].substring(2);
-            }
+
             String[] chordStrings = measureStrings[i].split(" ");
             List<Chord> chords = new ArrayList<>();
             List<String> naturalSignNotes = new ArrayList<>();
@@ -120,14 +116,13 @@ public class Sheet {
                     duration = Float.parseFloat(chordStrings[j].substring(underscoreIndex + 1));
                 }
 
-                chords.add(new Chord(j + 1, duration, i + 1, j + 1, chordNotes));
+                chords.add(new Chord(j + 1, duration, i + 1, j + 1, 0, chordNotes));
             }
-            measures.add(new Measure(i + 1, id, i + 1, clefValue, chords));
+            measures.add(new Measure(i + 1, id, i + 1, chords));
         }
 
         return measures;
     }
-
 
 
     public int getId() {

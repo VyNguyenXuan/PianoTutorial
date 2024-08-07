@@ -7,19 +7,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class Chord {
-    @SerializedName("id")
     private int id;
 
-    @SerializedName("duration")
     private float duration;
 
-    @SerializedName("measureId")
     private int measureId;
 
-    @SerializedName("position")
     private int position;
 
-    @SerializedName("chordNotes")
+    private int clef;
+
     private List<ChordNote> chordNotes;
 
     public Chord() {
@@ -27,15 +24,17 @@ public class Chord {
         duration = 0;
         measureId = 0;
         position = 0;
+        int clef = 0;
         chordNotes = new ArrayList<>();
     }
 
-    public Chord(int id, float duration, int measureId, int position, List<ChordNote> chordNotes) {
+    public Chord(int id, float duration, int measureId, int position, int clef, List<ChordNote> chordNotes) {
         this.id = id;
         this.duration = duration;
         this.measureId = measureId;
         this.position = position;
         this.chordNotes = chordNotes;
+        this.clef = clef;
         setChromaticPositions();
     }
 
@@ -79,6 +78,14 @@ public class Chord {
         this.chordNotes = chordNotes;
     }
 
+    public int getClef() {
+        return clef;
+    }
+
+    public void setClef(int clef) {
+        this.clef = clef;
+    }
+
     public void setChromaticPositions() {
         int chromaticCounter = 0;
 
@@ -114,8 +121,8 @@ public class Chord {
         }
     }
 
-    public boolean isStemUp(int clefValue) {
-        int middleLinePitch = (clefValue == 0) ? 28 : 16; // 28 : B4 (G clef), 16 : B3 (F clef)
+    public boolean isStemUp() {
+        int middleLinePitch = (clef == 0) ? 28 : 16; // 28 : B4 (G clef), 16 : B3 (F clef)
         int belowMiddleLine = 0;
         int aboveMiddleLine = 0;
 
@@ -185,13 +192,13 @@ public class Chord {
         return chordNotes.size() > 1;
     }
 
-    public List<Integer> getFlipNotes(int clefValue) {
+    public List<Integer> getFlipNotes() {
         List<Integer> flipNotes = new ArrayList<>();
         if (chordNotes.isEmpty()) {
             return flipNotes; // Return empty list if no chord notes
         }
 
-        boolean stemUp = isStemUp(clefValue); // Assuming clefValue is passed as 0
+        boolean stemUp = isStemUp(); // Assuming clefValue is passed as 0
         List<Integer> noteIds = new ArrayList<>();
         for (ChordNote note : chordNotes) {
             noteIds.add(adjustedNoteId(note.getNoteId()));
@@ -221,8 +228,8 @@ public class Chord {
     }
 
 
-    public int findLowestNoteIdWithoutFlip(int clefValue) {
-        List<Integer> flipNotes = getFlipNotes(clefValue);
+    public int findLowestNoteIdWithoutFlip() {
+        List<Integer> flipNotes = getFlipNotes();
         int lowestNoteId = findLowestNote();
 
         // If the lowestNoteId is in flipNotes and has a preceding note
@@ -232,8 +239,8 @@ public class Chord {
         return lowestNoteId; // Otherwise, return the original lowestNoteId
     }
 
-    public int findHighestNoteIdWithoutFlip(int clefValue) {
-        List<Integer> flipNotes = getFlipNotes(clefValue);
+    public int findHighestNoteIdWithoutFlip() {
+        List<Integer> flipNotes = getFlipNotes();
         int highestNoteId = findHighestNote();
 
         // If the highestNoteId is in flipNotes and has a preceding note
