@@ -74,8 +74,16 @@ public class Sheet {
             String[] chordStrings = measureStrings[i].split(" ");
             List<Chord> chords = new ArrayList<>();
             List<String> naturalSignNotes = new ArrayList<>();
+            int clef = 0;
 
             for (int j = 0; j < chordStrings.length; j++) {
+                if (chordStrings[j].startsWith("F:")) {
+                    clef = 1;
+                    chordStrings[j] = chordStrings[j].substring(2);
+                } else {
+                    clef = 0;
+                }
+
                 List<ChordNote> chordNotes = new ArrayList<>();
                 List<String> chordNoteStrings = splitChordString(chordStrings[j]);
 
@@ -105,7 +113,7 @@ public class Sheet {
                     }
 
                     int noteId = NoteMapper.getNoteId(noteName);
-                    int realityNoteId = (naturalSignNotes.contains(noteName.substring(0, 1))) ? getNoteIdFromFlatToSharp(noteId) : realityNoteId(noteId, keySignature, getKeySignatureList(keySignature));
+                    int realityNoteId = (naturalSignNotes.contains(noteName.substring(0, 1))) ? noteId : realityNoteId(noteId, keySignature, getKeySignatureList(keySignature));
                     String realityNoteName = NoteMapper.getNoteName(realityNoteId);
                     chordNotes.add(new ChordNote(k + 1, noteId, realityNoteId, j + 1, j + 1, noteName, realityNoteName, octave, slurPosition, isNaturalSign));
                 }
@@ -116,13 +124,14 @@ public class Sheet {
                     duration = Float.parseFloat(chordStrings[j].substring(underscoreIndex + 1));
                 }
 
-                chords.add(new Chord(j + 1, duration, i + 1, j + 1, 0, chordNotes));
+                chords.add(new Chord(j + 1, duration, i + 1, j + 1, clef, chordNotes));
             }
             measures.add(new Measure(i + 1, id, i + 1, chords));
         }
 
         return measures;
     }
+
 
 
     public int getId() {

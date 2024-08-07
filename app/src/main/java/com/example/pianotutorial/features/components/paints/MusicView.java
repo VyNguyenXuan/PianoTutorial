@@ -282,6 +282,6 @@ public class MusicView extends View {
     }
 
     public float calculateMeasureDuration(Sheet sheet) {
-        return (float) ((sheet.getTopSignature() / sheet.getBottomSignature()) * 4 * GlobalVariables.MEASURE_WIDTH);
+        return ((float) sheet.getTopSignature() / sheet.getBottomSignature()) * 4 * GlobalVariables.MEASURE_WIDTH;
     }
 }

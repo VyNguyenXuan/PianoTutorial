@@ -1,7 +1,5 @@
 package com.example.pianotutorial.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -207,7 +205,7 @@ public class Chord {
         if (stemUp) {
             Collections.sort(noteIds);
         } else {
-            Collections.sort(noteIds, Collections.reverseOrder());
+            noteIds.sort(Collections.reverseOrder());
         }
 
         int previousNoteId = noteIds.get(0);
