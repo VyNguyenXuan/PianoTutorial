@@ -77,6 +77,7 @@ public class Sheet {
             }
             String[] chordStrings = measureStrings[i].split(" ");
             List<Chord> chords = new ArrayList<>();
+            List<String> naturalSignNotes = new ArrayList<>();
 
             for (int j = 0; j < chordStrings.length; j++) {
                 List<ChordNote> chordNotes = new ArrayList<>();
@@ -87,6 +88,13 @@ public class Sheet {
                     String noteName;
                     int slurPosition = 0;
                     int octave = 0;
+                    boolean isNaturalSign = false;
+
+                    if (chordNoteString.endsWith("=")) {
+                        chordNoteString = chordNoteString.substring(0, chordNoteString.length() - 1);
+                        isNaturalSign = true;
+                        naturalSignNotes.add(chordNoteString.substring(0, 1));
+                    }
 
                     if (chordNoteString.contains("-")) {
                         String[] parts = chordNoteString.split("-");
@@ -101,29 +109,26 @@ public class Sheet {
                     }
 
                     int noteId = NoteMapper.getNoteId(noteName);
-                    int realityNoteId = realityNoteId(noteId, keySignature, getKeySignatureList(keySignature));
-                    String realityNotename = NoteMapper.getNoteName(realityNoteId);
-                    chordNotes.add(new ChordNote(k + 1, noteId, realityNoteId, j + 1, j + 1, noteName, realityNotename, octave, slurPosition));
+                    int realityNoteId = (naturalSignNotes.contains(noteName.substring(0, 1))) ? getNoteIdFromFlatToSharp(noteId) : realityNoteId(noteId, keySignature, getKeySignatureList(keySignature));
+                    String realityNoteName = NoteMapper.getNoteName(realityNoteId);
+                    chordNotes.add(new ChordNote(k + 1, noteId, realityNoteId, j + 1, j + 1, noteName, realityNoteName, octave, slurPosition, isNaturalSign));
                 }
 
                 float duration = 0;
                 int underscoreIndex = chordStrings[j].indexOf('_');
                 if (underscoreIndex != -1) {
                     duration = Float.parseFloat(chordStrings[j].substring(underscoreIndex + 1));
-
                 }
 
-                if (chordStrings[j].startsWith("P")) {
-                    chords.add(new Chord(j + 1, duration, i + 1, j + 1, chordNotes));
-                } else {
-                    chords.add(new Chord(j + 1, duration, i + 1, j + 1, chordNotes));
-                }
+                chords.add(new Chord(j + 1, duration, i + 1, j + 1, chordNotes));
             }
             measures.add(new Measure(i + 1, id, i + 1, clefValue, chords));
         }
 
         return measures;
     }
+
+
 
     public int getId() {
         return id;

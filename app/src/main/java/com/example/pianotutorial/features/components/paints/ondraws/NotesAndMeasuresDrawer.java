@@ -471,6 +471,7 @@ public class NotesAndMeasuresDrawer {
     private void drawChromaticSign(Canvas canvas, ChordNote chordNote, float xPosition, Measure measure, NoteStatus noteStatus, float noteHeadOriginalHeight) {
         Paint chromaticSignPaint;
         Path chromaticSignPath;
+        int position = chordNote.getChromaticPosition();
         if (chordNote.getNoteId() > 56 && chordNote.getNoteId() < 113) { // Flat sign
             chromaticSignPaint = new Paint(FlatSignPaint.create());
             chromaticSignPath = FlatSignPaint.createPath();
@@ -480,6 +481,10 @@ public class NotesAndMeasuresDrawer {
         } else if (chordNote.getNoteId() <= 56 && chordNote.getChromaticPosition() > 0) {
             chromaticSignPaint = new Paint(NaturalSignPaint.create());
             chromaticSignPath = NaturalSignPaint.createPath();
+        } else if (chordNote.isNaturalSign()) {
+            chromaticSignPaint = new Paint(NaturalSignPaint.create());
+            chromaticSignPath = NaturalSignPaint.createPath();
+            position += 1;
         } else {
             return; // No chromatic sign to draw
         }
@@ -491,7 +496,7 @@ public class NotesAndMeasuresDrawer {
             chromaticSignPaint.setAlpha(0);
         }
 
-        MusicUtils.drawChromaticSign(canvas, chromaticSignPaint, chromaticSignPath, noteHeadOriginalHeight, chordNote.getChromaticPosition());
+        MusicUtils.drawChromaticSign(canvas, chromaticSignPaint, chromaticSignPath, noteHeadOriginalHeight, position);
     }
 
     private void drawDottedNotes(Canvas canvas, Paint notePaint, float noteDuration, float noteHeadOriginalHeight, int noteId) {

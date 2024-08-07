@@ -13,6 +13,7 @@ public class ChordNote {
     private int noteOctave;
     private int slurPosition;
     private int chromaticPosition;
+    private boolean isNaturalSign;
 
     public ChordNote() {
         id = 0;
@@ -25,9 +26,10 @@ public class ChordNote {
         noteOctave = 0;
         slurPosition = 0;
         chromaticPosition = 0;
+        isNaturalSign = false;
     }
 
-    public ChordNote(int id, int noteId, int realityNoteId, int chordId, int chordPosition, String noteName, String realityNoteName, int noteOctave, int slurPosition) {
+    public ChordNote(int id, int noteId, int realityNoteId, int chordId, int chordPosition, String noteName, String realityNoteName, int noteOctave, int slurPosition, boolean isNaturalSign) {
         this.id = id;
         this.noteId = noteId;
         this.realityNoteId = realityNoteId;
@@ -38,6 +40,7 @@ public class ChordNote {
         this.noteOctave = noteOctave;
         this.slurPosition = slurPosition;
         this.chromaticPosition = 0;
+        this.isNaturalSign = isNaturalSign;
     }
 
     public int getId() {
@@ -118,6 +121,14 @@ public class ChordNote {
 
     public void setChromaticPosition(int chromaticPosition) {
         this.chromaticPosition = chromaticPosition;
+    }
+
+    public boolean isNaturalSign() {
+        return isNaturalSign;
+    }
+
+    public void setNaturalSign(boolean naturalSign) {
+        isNaturalSign = naturalSign;
     }
 
     public float calculateTotalSlurredDuration(List<Measure> measures, ChordNote startChordNote) {
