@@ -123,9 +123,10 @@ public class MusicUtils {
         return ledgerLines;
     }
 
-    public static void drawChromaticSign(Canvas canvas, Paint chromaticPaint, Path chromaticPath, float noteHeadOriginalHeight, int chromaticPosition) {
+    public static void drawChromaticSign(Canvas canvas, Paint chromaticPaint, Path chromaticPath, float noteHeadOriginalHeight, int chromaticPosition, boolean isFlipNote) {
         if (chromaticPosition > 0) {
             float chromaticX = -noteHeadOriginalHeight * 1.5f + 36 - (chromaticPosition - 1) * 20; // Adjust the x-position as needed
+            chromaticX = (isFlipNote) ? chromaticX - 28 : chromaticX;
             float chromaticY = 58f;
             canvas.save();
             canvas.translate(chromaticX, chromaticY);
@@ -194,7 +195,7 @@ public class MusicUtils {
     public static void drawRest(Canvas canvas, float xPosition, float duration, MusicView musicView) {
         Drawable restDrawable;
         float yPosition;
-        float additionalOffset = 0;
+        float additionalOffset;
 
         // Select the appropriate drawable and y-position based on the duration
         if (duration == 4) {

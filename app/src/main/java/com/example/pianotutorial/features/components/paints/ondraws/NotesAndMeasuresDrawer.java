@@ -376,7 +376,7 @@ public class NotesAndMeasuresDrawer {
 
         canvas.drawPath(notePath, currentNotePaint);
 
-        drawChromaticSign(canvas, chordNote, xPosition, noteStatus, noteHeadOriginalHeight);
+        drawChromaticSign(canvas, chord, chordNote, xPosition, noteStatus, noteHeadOriginalHeight, beamValues);
         drawDottedNotes(canvas, currentNotePaint, noteDuration, noteHeadOriginalHeight, chordNote.getNoteId());
 
         canvas.restore();
@@ -423,43 +423,51 @@ public class NotesAndMeasuresDrawer {
 
     private void drawSlur(Canvas canvas, ChordNote chordNote, float startX, float startY, float endX, float endY, boolean isUpwards) {
         Paint slurPaint = new Paint();
-        slurPaint.setColor(0xFF000000); // Màu đen
+        slurPaint.setColor(0xFF000000); // Black color
         slurPaint.setStyle(Paint.Style.FILL);
         slurPaint.setAntiAlias(true);
 
         Path slurPath = new Path();
         float length = endX - startX;
-        float curvature = length / 8; // Adjust this factor to control curvature
+        float curvature = length / 6; // Increased curvature for smoother appearance
         float controlX1 = startX + length / 4;
         float controlX2 = startX + 3 * length / 4;
         float controlY1, controlY2, lowerControlY1, lowerControlY2;
 
+        // Adjusting the curvature to make the slur smoother and more pronounced
         if (isUpwards) {
             controlY1 = startY - curvature;
             controlY2 = startY - curvature;
-            lowerControlY1 = startY - (curvature - 15);
-            lowerControlY2 = startY - (curvature - 15);
+            lowerControlY1 = startY - (curvature - 10);
+            lowerControlY2 = startY - (curvature - 10);
         } else {
             controlY1 = startY + curvature;
             controlY2 = startY + curvature;
-            lowerControlY1 = startY + (curvature - 15);
-            lowerControlY2 = startY + (curvature - 15);
+            lowerControlY1 = startY + (curvature - 10);
+            lowerControlY2 = startY + (curvature - 10);
         }
 
+        // Creating the slur path
         slurPath.moveTo(startX, startY);
         slurPath.cubicTo(controlX1, controlY1, controlX2, controlY2, endX, endY);
         slurPath.cubicTo(controlX2, lowerControlY2, controlX1, lowerControlY1, startX, startY);
         slurPath.close();
 
+        // Checking if the note has been passed and adjusting the color accordingly
         NoteStatus noteStatus = noteStatuses.computeIfAbsent(chordNote, k -> new NoteStatus());
         if (noteStatus.isPassed) {
             slurPaint.setColor(noteStatus.isCorrect ? changedColorPaintPass.getColor() : changedColorPaintMiss.getColor());
         }
+
+        // Making the slur fade as it approaches the check line
         if (endX < GlobalVariables.CHECK_LINE_X - 160) {
             slurPaint.setAlpha(0);
         }
+
+        // Drawing the slur on the canvas
         canvas.drawPath(slurPath, slurPaint);
     }
+
 
     private float getCheckLineX(Chord chord, int currentNote, ChordNote chordNote) {
         boolean isChromatic = chordNote.getNoteId() > 65 && chordNote.getNoteId() < 169 || chordNote.getNoteId() > 112;
@@ -476,10 +484,24 @@ public class NotesAndMeasuresDrawer {
         return checkLineX;
     }
 
-    private void drawChromaticSign(Canvas canvas, ChordNote chordNote, float xPosition, NoteStatus noteStatus, float noteHeadOriginalHeight) {
+    private void drawChromaticSign(Canvas canvas, Chord chord, ChordNote chordNote, float xPosition, NoteStatus noteStatus, float noteHeadOriginalHeight, List<BeamValue> beamValues) {
         Paint chromaticSignPaint;
         Path chromaticSignPath;
+        boolean isFlipNote = false;
         int position = chordNote.getChromaticPosition();
+        if (MusicUtils.isChordToBeam(beamValues, chord)) {
+            if (MusicUtils.isBeamStemUp(beamValues, chord) == 0) {
+                if (!chord.getFlipNotes(chord.isStemUp()).isEmpty()) {
+                    isFlipNote = true;
+                }
+            }
+        } else {
+            if (!chord.isStemUp()) {
+                if (!chord.getFlipNotes(chord.isStemUp()).isEmpty()) {
+                    isFlipNote = true;
+                }
+            }
+        }
         if (chordNote.getNoteId() > 56 && chordNote.getNoteId() < 113) { // Flat sign
             chromaticSignPaint = new Paint(FlatSignPaint.create());
             chromaticSignPath = FlatSignPaint.createPath();
@@ -504,7 +526,7 @@ public class NotesAndMeasuresDrawer {
             chromaticSignPaint.setAlpha(0);
         }
 
-        MusicUtils.drawChromaticSign(canvas, chromaticSignPaint, chromaticSignPath, noteHeadOriginalHeight, position);
+        MusicUtils.drawChromaticSign(canvas, chromaticSignPaint, chromaticSignPath, noteHeadOriginalHeight, position, isFlipNote);
     }
 
     private void drawDottedNotes(Canvas canvas, Paint notePaint, float noteDuration, float noteHeadOriginalHeight, int noteId) {
