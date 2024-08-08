@@ -68,9 +68,9 @@ public class Measure {
         this.beams = beams;
     }
 
-    public List<ChordNote> currentChordNotes() {
+    /*public List<ChordNote> currentChordNotes() {
         List<ChordNote> noteList = new ArrayList<>();
-        if(!chords.isEmpty()){
+        if (!chords.isEmpty()) {
             for (Chord chord : chords) {
                 int noteId;
                 if (chord.getChordNotes().size() == 1) {
@@ -79,9 +79,9 @@ public class Measure {
                     boolean stemUp = chord.isStemUp();
                     noteId = stemUp ? chord.findHighestNoteIdWithoutFlip() : chord.findLowestNoteIdWithoutFlip();
                 }
-                if(!chord.getChordNotes().isEmpty()){
-                    for(ChordNote note:chord.getChordNotes()){
-                        if(note.getNoteId()==noteId){
+                if (!chord.getChordNotes().isEmpty()) {
+                    for (ChordNote note : chord.getChordNotes()) {
+                        if (note.getNoteId() == noteId) {
                             noteList.add(note);
                         }
                     }
@@ -89,7 +89,7 @@ public class Measure {
             }
         }
         return noteList;
-    }
+    }*/
 
     public float currentDuration(Chord currentChord) {
         float currentDuration = 0;
@@ -113,16 +113,21 @@ public class Measure {
             Chord chord2 = chords.get(i + 1);
 
             // Kiểm tra nếu cả hai chord có thể beamed và có duration bằng nhau
-            if (chord1.getDuration() == chord2.getDuration() && (!chord1.getChordNotes().isEmpty())) {
-                if(chord1.getDuration() < 1 && chord1.getDuration() >= 0.5){
-                    beamValues.add(new BeamValue(chord1,chord2));
-                    i++;
+            if (!chord1.getChordNotes().isEmpty() && !chord2.getChordNotes().isEmpty()) {
+                if (chord1.getClef() == chord2.getClef()) {
+                    if (chord1.getDuration() == chord2.getDuration() && (!chord1.getChordNotes().isEmpty())) {
+                        if (chord1.getDuration() < 1 && chord1.getDuration() >= 0.5) {
+                            beamValues.add(new BeamValue(chord1, chord2));
+                            i++;
+                        } else if (chord1.getDuration() < 0.5 && chord1.getDuration() >= 0.25) {
+                            beamValues.add(new BeamValue(chord1, chord2));
+                            i++;
+                        }
+                    }
                 }
-                else if(chord1.getDuration() < 0.5 && chord1.getDuration() >= 0.25){
-                    beamValues.add(new BeamValue(chord1,chord2));
-                    i++;
-                }
+
             }
+
         }
         return beamValues;
     }

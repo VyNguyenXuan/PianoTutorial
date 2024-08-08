@@ -157,7 +157,7 @@ public class NotesAndMeasuresDrawer {
                 if (beamValue.isBeamedNoteStemUp()) {
                     int highestNoteId = beamValue.findHighestBeamNoteId();
                     yPosition = (startValue.getClef() == 0) ? MusicUtils.convertPitchToY(highestNoteId, 0) : MusicUtils.convertPitchToY(highestNoteId, 1);
-                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
+                    if (startValue.findHighestNoteIdWithoutFlip(true) == endValue.findHighestNoteIdWithoutFlip(true)) {
                         beamPath.moveTo(firstXPosition - 60, yPosition + 12);
                         beamPath.lineTo(lastXPosition - 55, yPosition + 12);
                         beamPath.lineTo(lastXPosition - 55, yPosition - 12);
@@ -171,7 +171,7 @@ public class NotesAndMeasuresDrawer {
                         beamPath.close();
                         Matrix matrix = new Matrix();
                         matrix.setRotate(-8, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip()) {
+                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip(true)) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, 24);
                         }
@@ -181,7 +181,7 @@ public class NotesAndMeasuresDrawer {
                 } else {
                     int lowestNoteId = beamValue.findLowestBeamNoteId();
                     yPosition = (startValue.getClef() == 0) ? MusicUtils.convertPitchToY(lowestNoteId - 13, 0) : MusicUtils.convertPitchToY(lowestNoteId - 13, 1);
-                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
+                    if (startValue.findLowestNoteIdWithoutFlip(false) == endValue.findLowestNoteIdWithoutFlip(false)) {
                         beamPath.moveTo(firstXPosition - 109, yPosition - 12);
                         beamPath.lineTo(lastXPosition - 104, yPosition - 12);
                         beamPath.lineTo(lastXPosition - 104, yPosition + 12);
@@ -195,7 +195,7 @@ public class NotesAndMeasuresDrawer {
                         beamPath.close();
                         Matrix matrix = new Matrix();
                         matrix.setRotate(8, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip()) {
+                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip(false)) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, -24);
                         }
@@ -205,8 +205,8 @@ public class NotesAndMeasuresDrawer {
             } else {
                 if (beamValue.isBeamedNoteStemUp()) {
                     int highestNoteId = beamValue.findHighestBeamNoteId();
-                    yPosition = MusicUtils.convertPitchToY(highestNoteId, 0);
-                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
+                    yPosition = (startValue.getClef() == 0) ? MusicUtils.convertPitchToY(highestNoteId, 0) : MusicUtils.convertPitchToY(highestNoteId, 1);
+                    if (startValue.findHighestNoteIdWithoutFlip(true) == endValue.findHighestNoteIdWithoutFlip(true)) {
                         beamPath.moveTo(firstXPosition + 16, yPosition + 28);
                         beamPath.lineTo(lastXPosition + 21, yPosition + 28);
                         beamPath.lineTo(lastXPosition + 21, yPosition + 4);
@@ -233,7 +233,7 @@ public class NotesAndMeasuresDrawer {
 
                         Matrix matrix = new Matrix();
                         matrix.setRotate(-16, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip()) {
+                        if (highestNoteId == startValue.findHighestNoteIdWithoutFlip(true)) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, 60);
                         }
@@ -242,8 +242,8 @@ public class NotesAndMeasuresDrawer {
 
                 } else {
                     int lowestNoteId = beamValue.findLowestBeamNoteId();
-                    yPosition = MusicUtils.convertPitchToY(lowestNoteId - 13, 0);
-                    if (startValue.findLowestNoteIdWithoutFlip() == endValue.findLowestNoteIdWithoutFlip()) {
+                    yPosition = (startValue.getClef() == 0) ? MusicUtils.convertPitchToY(lowestNoteId - 13, 0) : MusicUtils.convertPitchToY(lowestNoteId - 13, 1);
+                    if (startValue.findLowestNoteIdWithoutFlip(false) == endValue.findLowestNoteIdWithoutFlip(false)) {
                         beamPath.moveTo(firstXPosition - 33, yPosition - 16);
                         beamPath.lineTo(lastXPosition - 28, yPosition - 16);
                         beamPath.lineTo(lastXPosition - 28, yPosition + 8);
@@ -267,7 +267,7 @@ public class NotesAndMeasuresDrawer {
                         beamPath.close();
                         Matrix matrix = new Matrix();
                         matrix.setRotate(16, (firstXPosition + lastXPosition) / 2, yPosition);
-                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip()) {
+                        if (lowestNoteId == startValue.findLowestNoteIdWithoutFlip(false)) {
                             matrix.postScale(1, -1, (firstXPosition + lastXPosition) / 2, yPosition);            // Apply the rotation to the beamPath
                             matrix.postTranslate(0, -60);
                         }

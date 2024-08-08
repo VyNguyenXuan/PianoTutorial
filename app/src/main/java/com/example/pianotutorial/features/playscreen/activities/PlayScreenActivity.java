@@ -76,7 +76,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void setupObservers() {
-        playScreenViewModel.getSheetList().observe(this, currentSheet -> {
+        playScreenViewModel.getCurrentSheet().observe(this, currentSheet -> {
             if (currentSheet != null) {
                 loadMusicView(currentSheet);
             }
@@ -96,16 +96,15 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         playScreenViewModel.getSpeed().observe(this, this::updateSpeed);
     }
 
-    private void loadMusicView(List<Sheet> currentSheet) {
+    private void loadMusicView(Sheet currentSheet) {
         activityPlayscreenBinding.musicView.setVisibility(View.GONE);
 
         handler.post(() -> {
-            int id = 5;
-            GlobalVariables.RIGHT_CLEF = currentSheet.get(id).getRightHandMeasures().get(0).getChords().get(0).getClef();
-            GlobalVariables.LEFT_CLEF = currentSheet.get(id).getLeftHandMeasures().get(0).getChords().get(0).getClef();
-            GlobalVariables.TOP_SIGNATURE = currentSheet.get(id).getTopSignature();
-            GlobalVariables.BOTTOM_SIGNATURE = currentSheet.get(id).getBottomSignature();
-            activityPlayscreenBinding.musicView.setMeasures(currentSheet.get(id));
+            GlobalVariables.RIGHT_CLEF = currentSheet.getRightHandMeasures().get(0).getChords().get(0).getClef();
+            GlobalVariables.LEFT_CLEF = currentSheet.getLeftHandMeasures().get(0).getChords().get(0).getClef();
+            GlobalVariables.TOP_SIGNATURE = currentSheet.getTopSignature();
+            GlobalVariables.BOTTOM_SIGNATURE = currentSheet.getBottomSignature();
+            activityPlayscreenBinding.musicView.setMeasures(currentSheet);
             activityPlayscreenBinding.musicView.startDrawing(System.currentTimeMillis());
 
             // Hide the progress bar and show the MusicView
@@ -284,10 +283,10 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d");
 
 
-        new CountDownTimer(3600, 1200) {
+        new CountDownTimer(300, 100) {
             @Override
             public void onTick(long millisUntilFinished) {
-                int secondsRemaining = (int) (millisUntilFinished / 1200);
+                int secondsRemaining = (int) (millisUntilFinished / 100);
                 countdownTextView.setVisibility(View.VISIBLE); // Countdown from 3 to 1
                 countdownTextView.setText(String.valueOf(secondsRemaining + 1)); // Countdown from 3 to 1
 

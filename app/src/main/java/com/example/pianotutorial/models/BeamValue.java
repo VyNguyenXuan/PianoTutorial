@@ -31,16 +31,16 @@ public class BeamValue {
     public boolean isBeamedNoteStemUp() {
         int middleLinePitch = (startChord.getClef() == 0) ? 28 : 16; // 28 : B4 (G clef), 16 : B3 (F clef)
         int farthestNote = 0;
-        int startNoteId = startChord.isStemUp() ? startChord.findLowestNoteIdWithoutFlip() : startChord.findHighestNoteIdWithoutFlip();
-        int endNoteId = startChord.isStemUp() ? endChord.findLowestNoteIdWithoutFlip() : endChord.findHighestNoteIdWithoutFlip();
+        int startNoteId = startChord.isStemUp() ? startChord.findLowestNoteIdWithoutFlip(startChord.isStemUp()) : startChord.findHighestNoteIdWithoutFlip(startChord.isStemUp());
+        int endNoteId = startChord.isStemUp() ? endChord.findLowestNoteIdWithoutFlip(startChord.isStemUp()) : endChord.findHighestNoteIdWithoutFlip(startChord.isStemUp());
         farthestNote = (Math.abs(startNoteId - middleLinePitch) < Math.abs(endNoteId - middleLinePitch)) ? endNoteId : startNoteId;
         // If the farthest note is below the middle line pitch, return true (stem up); otherwise, return false (stem down)
         return farthestNote < middleLinePitch;
     }
 
     public int findLowestBeamNoteId() {
-        int lowestStartChord = startChord.findLowestNoteIdWithoutFlip();
-        int lowestEndChord = endChord.findLowestNoteIdWithoutFlip();
+        int lowestStartChord = startChord.findLowestNoteIdWithoutFlip(isBeamedNoteStemUp());
+        int lowestEndChord = endChord.findLowestNoteIdWithoutFlip(isBeamedNoteStemUp());
         return Math.min(lowestStartChord, lowestEndChord);
     }
 
@@ -59,8 +59,8 @@ public class BeamValue {
     }
 
     public int findHighestBeamNoteId() {
-        int highestStartChord = startChord.findHighestNoteIdWithoutFlip();
-        int highestEndChord = endChord.findHighestNoteIdWithoutFlip();
+        int highestStartChord = startChord.findHighestNoteIdWithoutFlip(isBeamedNoteStemUp());
+        int highestEndChord = endChord.findHighestNoteIdWithoutFlip(isBeamedNoteStemUp());
         return Math.max(highestStartChord, highestEndChord);
     }
 

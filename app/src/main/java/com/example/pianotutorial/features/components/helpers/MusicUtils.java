@@ -204,16 +204,19 @@ public class MusicUtils {
         } else if (duration == 2) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_whole_rest, null);
             yPosition = 260; // Set appropriate y-position
-            additionalOffset = 300; // Add additional left offset
+            additionalOffset = 0; // Add additional left offset
         } else if (duration == 1) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_quarter_rest, null);
             yPosition = 280; // Set appropriate y-position
+            additionalOffset = 20;
         } else if (duration == 0.5) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_eighth_rest, null);
             yPosition = 282; // Set appropriate y-position
+            additionalOffset = 20;
         } else if (duration == 0.25) {
             restDrawable = ResourcesCompat.getDrawable(musicView.getContext().getResources(), R.drawable.vector_sixteenth_rest, null);
             yPosition = 290; // Set appropriate y-position
+            additionalOffset = 20;
         } else {
             return; // Invalid duration for rest
         }
@@ -251,6 +254,7 @@ public class MusicUtils {
     public static Paint getNotePaint() {
         return WholeNotePaint.create();
     }
+
     public static Path getNotePath(Chord chord, int currentNote, ChordNote chordNote, List<BeamValue> beamValues) {
         if (chord.getClef() == 0) {
             return getGKeyNotePath(currentNote, chordNote, chord, beamValues);
@@ -281,21 +285,21 @@ public class MusicUtils {
         int currentNoteId = chord.adjustedNoteId(chordNote.getNoteId());
         if (isChordToBeam(beamValues, chord)) {
             if (isBeamStemUp(beamValues, chord) == 1) {
-                if (chord.getFlipNotes().contains(currentNoteId)) {
+                if (chord.getFlipNotes(true).contains(currentNoteId)) {
                     return QuarterNotePaintFlip.createPath();
                 } else {
                     List<Chord> chords = getBeamNotes(beamValues, chord);
                     assert chords != null;
                     if (!chords.isEmpty()) {
-                        float diff = Math.abs(chords.get(0).findLowestNoteIdWithoutFlip() - chords.get(1).findLowestNoteIdWithoutFlip());
-                        if (chords.get(0).findLowestNoteIdWithoutFlip() < chords.get(1).findLowestNoteIdWithoutFlip()) {
-                            if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip()) {
+                        float diff = Math.abs(chords.get(0).findHighestNoteIdWithoutFlip(true) - chords.get(1).findLowestNoteIdWithoutFlip(true));
+                        if (chords.get(0).findHighestNoteIdWithoutFlip(true) < chords.get(1).findHighestNoteIdWithoutFlip(true)) {
+                            if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(true)) {
                                 return CustomQuarterNotePaint.createPath(-14f * (diff - 1));
                             } else {
                                 return QuarterNotePaint.createPath();
                             }
                         } else {
-                            if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip()) {
+                            if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(true)) {
                                 return QuarterNotePaint.createPath();
                             } else {
                                 return CustomQuarterNotePaint.createPath(-14f * (diff - 1));
@@ -306,21 +310,21 @@ public class MusicUtils {
                     }
                 }
             } else {
-                if (chord.getFlipNotes().contains(currentNoteId)) {
+                if (chord.getFlipNotes(false).contains(currentNoteId)) {
                     return QuarterNotePaintFlipReverse.createPath();
                 } else {
                     List<Chord> chords = getBeamNotes(beamValues, chord);
                     assert chords != null;
                     if (!chords.isEmpty()) {
-                        float diff = Math.abs(chords.get(0).findHighestNoteIdWithoutFlip() - chords.get(1).findHighestNoteIdWithoutFlip());
-                        if (chords.get(0).findHighestNoteIdWithoutFlip() > chords.get(1).findHighestNoteIdWithoutFlip()) {
-                            if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip()) {
+                        float diff = Math.abs(chords.get(0).findLowestNoteIdWithoutFlip(false) - chords.get(1).findLowestNoteIdWithoutFlip(false));
+                        if (chords.get(0).findLowestNoteIdWithoutFlip(false) > chords.get(1).findLowestNoteIdWithoutFlip(false)) {
+                            if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(false)) {
                                 return CustomQuarterNotePaintReverse.createPath(14f * (diff - 1));//To draw beam
                             } else {
                                 return QuarterNotePaintReverse.createPath();
                             }
                         } else {
-                            if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip()) {
+                            if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(false)) {
                                 return QuarterNotePaintReverse.createPath();
                             } else {
                                 return CustomQuarterNotePaintReverse.createPath(14f * (diff - 1));
@@ -346,7 +350,7 @@ public class MusicUtils {
                 }
             } else {
                 if (chord.isStemUp()) {
-                    if (chord.findLowestNoteIdWithoutFlip() == currentNoteId) {
+                    if (chord.findLowestNoteIdWithoutFlip(true) == currentNoteId) {
                         if (noteDuration < 8 && noteDuration >= 4) {
                             return WholeNotePaint.createPath();
                         } else if (noteDuration < 4 && noteDuration >= 2) {
@@ -358,7 +362,7 @@ public class MusicUtils {
                         } else {
                             return SixteenthNotePaint.createPath();
                         }
-                    } else if (chord.getFlipNotes().contains(currentNoteId)) {
+                    } else if (chord.getFlipNotes(true).contains(currentNoteId)) {
                         if (noteDuration < 8 && noteDuration >= 4) {
                             return WholeNotePaintFlip.createPath();
                         } else if (noteDuration < 4 && noteDuration >= 2) {
@@ -376,7 +380,7 @@ public class MusicUtils {
                         }
                     }
                 } else {
-                    if (chord.findHighestNoteIdWithoutFlip() == currentNoteId) {
+                    if (chord.findHighestNoteIdWithoutFlip(false) == currentNoteId) {
                         if (noteDuration < 8 && noteDuration >= 4) {
                             return WholeNotePaint.createPath();
                         } else if (noteDuration < 4 && noteDuration >= 2) {
@@ -388,7 +392,7 @@ public class MusicUtils {
                         } else {
                             return SixteenthNotePaintReverse.createPath();
                         }
-                    } else if (chord.getFlipNotes().contains(currentNoteId)) {
+                    } else if (chord.getFlipNotes(false).contains(currentNoteId)) {
                         if (noteDuration < 8 && noteDuration >= 4) {
                             return WholeNotePaintFlipReverse.createPath();
                         } else if (noteDuration < 4 && noteDuration >= 2) {

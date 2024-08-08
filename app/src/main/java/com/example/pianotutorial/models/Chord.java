@@ -190,19 +190,18 @@ public class Chord {
         return chordNotes.size() > 1;
     }
 
-    public List<Integer> getFlipNotes() {
+    public List<Integer> getFlipNotes(boolean isStemUp) {
         List<Integer> flipNotes = new ArrayList<>();
         if (chordNotes.isEmpty()) {
             return flipNotes; // Return empty list if no chord notes
         }
 
-        boolean stemUp = isStemUp(); // Assuming clefValue is passed as 0
         List<Integer> noteIds = new ArrayList<>();
         for (ChordNote note : chordNotes) {
             noteIds.add(adjustedNoteId(note.getNoteId()));
         }
 
-        if (stemUp) {
+        if (isStemUp) {
             Collections.sort(noteIds);
         } else {
             noteIds.sort(Collections.reverseOrder());
@@ -226,23 +225,23 @@ public class Chord {
     }
 
 
-    public int findLowestNoteIdWithoutFlip() {
-        List<Integer> flipNotes = getFlipNotes();
+    public int findLowestNoteIdWithoutFlip(boolean isStemUp) {
+        List<Integer> flipNotes = getFlipNotes(isStemUp);
         int lowestNoteId = findLowestNote();
 
         // If the lowestNoteId is in flipNotes and has a preceding note
-        if (flipNotes.contains(lowestNoteId) && flipNotes.indexOf(lowestNoteId) > 0) {
+        if (flipNotes.contains(lowestNoteId)) {
             return lowestNoteId + 1;
         }
         return lowestNoteId; // Otherwise, return the original lowestNoteId
     }
 
-    public int findHighestNoteIdWithoutFlip() {
-        List<Integer> flipNotes = getFlipNotes();
+    public int findHighestNoteIdWithoutFlip(boolean isStemUp) {
+        List<Integer> flipNotes = getFlipNotes(isStemUp);
         int highestNoteId = findHighestNote();
 
         // If the highestNoteId is in flipNotes and has a preceding note
-        if (flipNotes.contains(highestNoteId) && flipNotes.indexOf(highestNoteId) > 0) {
+        if (flipNotes.contains(highestNoteId)) {
             return highestNoteId - 1;
         }
         return highestNoteId; // Otherwise, return the original highestNoteId
