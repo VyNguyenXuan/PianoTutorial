@@ -386,11 +386,11 @@ public class NotesAndMeasuresDrawer {
         float slurDuration = chordNote.calculateTotalSlurredDuration(measures, chordNote);
         if (slurDuration != 0) {
             ChordNote targetChordNote = chordNote.findChordNoteWithTargetSlurPosition(measures, chordNote);
-
+            Chord targetChord = chordNote.findChordWithTargetSlurPosition(measures, chordNote);
             float startX = xPosition + 80;
             float startY = MusicUtils.convertPitchToY(chordNote.getNoteId(), chord.getClef());
             float endX = xPosition + GlobalVariables.MEASURE_WIDTH * slurDuration + 40;
-            float endY = MusicUtils.convertPitchToY(targetChordNote.getNoteId(), chord.getClef());
+            float endY = MusicUtils.convertPitchToY(targetChordNote.getNoteId(), targetChord.getClef());
             if (MusicUtils.isUpSlur(chordNote.getNoteId(), targetChordNote.getNoteId(), chord.getClef())) {
                 drawSlur(canvas, targetChordNote, startX, startY + 110, endX, endY + 110, true);
             } else {

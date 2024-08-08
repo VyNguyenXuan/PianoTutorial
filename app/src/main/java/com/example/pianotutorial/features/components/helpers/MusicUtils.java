@@ -346,7 +346,7 @@ public class MusicUtils {
                 }
             } else {
                 if (chord.isStemUp()) {
-                    if (chord.findHighestNoteIdWithoutFlip() == currentNoteId) {
+                    if (chord.findLowestNoteIdWithoutFlip() == currentNoteId) {
                         if (noteDuration < 8 && noteDuration >= 4) {
                             return WholeNotePaint.createPath();
                         } else if (noteDuration < 4 && noteDuration >= 2) {
@@ -376,7 +376,7 @@ public class MusicUtils {
                         }
                     }
                 } else {
-                    if (chord.findLowestNoteIdWithoutFlip() == currentNoteId) {
+                    if (chord.findHighestNoteIdWithoutFlip() == currentNoteId) {
                         if (noteDuration < 8 && noteDuration >= 4) {
                             return WholeNotePaint.createPath();
                         } else if (noteDuration < 4 && noteDuration >= 2) {

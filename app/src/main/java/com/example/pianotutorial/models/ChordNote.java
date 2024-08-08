@@ -177,5 +177,31 @@ public class ChordNote {
         }
         return null; // Return null if the target slurPosition is not found
     }
+    public Chord findChordWithTargetSlurPosition(List<Measure> measures, ChordNote startChordNote) {
+        boolean slurActive = false;
+        int remainingSlurs = startChordNote.slurPosition;
+
+        for (Measure measure : measures) {
+            for (Chord chord : measure.getChords()) {
+                for (ChordNote chordNote : chord.getChordNotes()) {
+                    if (slurActive || chordNote.equals(startChordNote)) {
+                        slurActive = true;
+
+                        if (chordNote.equals(startChordNote)) {
+                            remainingSlurs = startChordNote.slurPosition;
+                        } else {
+                            remainingSlurs--;
+                        }
+
+                        if (remainingSlurs == 0) {
+                            return chord;
+                        }
+                    }
+                }
+            }
+        }
+        return null; // Return null if the target slurPosition is not found
+    }
+
 
 }
