@@ -15,5 +15,7 @@ public class GlobalVariables {
     public static float C4_CURRENT_NOTE = 257f;
     public static int RIGHT_CLEF = 0;
     public static int LEFT_CLEF = 0;
+    public static int COUNT_CORRECT = 0;
+    public static int COUNT_INCORRECT = 0;
 
 }

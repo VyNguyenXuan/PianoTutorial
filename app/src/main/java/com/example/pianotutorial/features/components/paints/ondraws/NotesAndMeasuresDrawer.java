@@ -50,6 +50,8 @@ public class NotesAndMeasuresDrawer {
         this.soundPlayed = false;
         this.isLeftHand = isLeftHand;
         this.measureDuration = measureDuration;
+        GlobalVariables.COUNT_CORRECT=0;
+        GlobalVariables.COUNT_INCORRECT=0;
 
         if (!measures.isEmpty()) {
             musicView.updateRightClefDrawer(GlobalVariables.RIGHT_CLEF);
@@ -405,11 +407,17 @@ public class NotesAndMeasuresDrawer {
         if (xPosition <= checkLineX && !noteStatus.isPassed) {
             noteStatus.isPassed = true;
             noteStatus.isCorrect = correctNotes != null && correctNotes.contains(chordNote.getRealityNoteName());
+
+            if (noteStatus.isCorrect) {
+                GlobalVariables.COUNT_CORRECT += 1;
+            } else {
+                GlobalVariables.COUNT_INCORRECT += 1;
+            }
         }
 
         if (noteStatus.isPassed) {
             currentNotePaint.setColor(noteStatus.isCorrect ? changedColorPaintPass.getColor() : changedColorPaintMiss.getColor());
-            // Update the color of all notes in the chord if the chord is correct
+            // Cập nhật màu của tất cả các nốt trong hợp âm nếu hợp âm đó chính xác
             if (noteStatus.isCorrect) {
                 for (ChordNote cn : chord.getChordNotes()) {
                     NoteStatus ns = noteStatuses.get(cn);

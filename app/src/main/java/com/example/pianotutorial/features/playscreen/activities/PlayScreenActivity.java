@@ -1,5 +1,9 @@
 package com.example.pianotutorial.features.playscreen.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
@@ -115,7 +119,20 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     private void handlePause() {
         activityPlayscreenBinding.menuIcon.setVisibility(View.VISIBLE);
         activityPlayscreenBinding.playCircleVector.setVisibility(View.VISIBLE); // Countdown from 3 to 1
+
+        // Reset the initial state for the animation
+        activityPlayscreenBinding.opacityView.setAlpha(0f); // Start fully transparent
+        activityPlayscreenBinding.opacityView.setTranslationY(activityPlayscreenBinding.opacityView.getHeight()); // Start below the screen
         activityPlayscreenBinding.opacityView.setVisibility(View.VISIBLE);
+
+        // Slide-in combined with fade-in animation for opacityView
+        activityPlayscreenBinding.opacityView.animate()
+                .translationY(0) // Slide up to its original position
+                .alpha(1f) // Fade in to fully visible
+                .setDuration(500) // Duration of the animation in milliseconds
+                .setListener(null) // No need for a listener since we don't need to reset anything afterward
+                .start();
+
         activityPlayscreenBinding.playIcon.setVisibility(View.GONE);
         GlobalVariables.SPEED = 0;
         if (player != null) {
@@ -124,8 +141,9 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         }
     }
 
+
     private void updateSpeed(float speed) {
-        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d";
+        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff1d4cb7b-9e3b-445e-a3e7-f97fc78e5434_Sao_Sang.mid?alt=media&token=fb758635-1027-43cc-bbff-1a0db24177bb";
 
         int speed1Res = R.drawable.white_border;
         int speed2Res = R.drawable.white_border;
@@ -283,10 +301,10 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d");
 
 
-        new CountDownTimer(300, 100) {
+        new CountDownTimer(3000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                int secondsRemaining = (int) (millisUntilFinished / 100);
+                int secondsRemaining = (int) (millisUntilFinished / 1000);
                 countdownTextView.setVisibility(View.VISIBLE); // Countdown from 3 to 1
                 countdownTextView.setText(String.valueOf(secondsRemaining + 1)); // Countdown from 3 to 1
 
@@ -295,11 +313,26 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             @Override
             public void onFinish() {
                 countdownTextView.setVisibility(View.GONE);
-                activityPlayscreenBinding.opacityView.setVisibility(View.GONE);
+
+                // Slide-out combined with fade-out animation for opacityView
+                activityPlayscreenBinding.opacityView.animate()
+                        .translationY(activityPlayscreenBinding.opacityView.getHeight()) // Slide down
+                        .alpha(0f) // Fade out
+                        .setDuration(500) // Duration of the animation in milliseconds
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                activityPlayscreenBinding.opacityView.setVisibility(View.GONE);
+                                activityPlayscreenBinding.opacityView.setTranslationY(0); // Reset translation
+                                activityPlayscreenBinding.opacityView.setAlpha(1f); // Reset alpha
+                            }
+                        })
+                        .start();
+
                 activityPlayscreenBinding.playIcon.setVisibility(View.VISIBLE);
                 activityPlayscreenBinding.menuIcon.setVisibility(View.GONE);
-
             }
+
         }.start();
     }
 
@@ -325,10 +358,93 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             player.setDataSource(filePath);
             player.prepare();
             activityPlayscreenBinding.musicView.setMediaPlayer(player);
+
+            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    float countCorrect = GlobalVariables.COUNT_CORRECT;
+                    float countIncorrect = GlobalVariables.COUNT_INCORRECT;
+                    float currentPercent = 0f;
+                    if (GlobalVariables.COUNT_INCORRECT != 0) {
+                        currentPercent = countCorrect / (countCorrect + countIncorrect);
+                    }
+                    currentPercent *= 3;
+                    int currentStar = (int) currentPercent;
+                    if (currentStar < 1) {
+                        activityPlayscreenBinding.firstStar.setBackgroundResource(R.drawable.vector_star_score);
+                        activityPlayscreenBinding.secondStar.setBackgroundResource(R.drawable.vector_star_score);
+                        activityPlayscreenBinding.thirdStar.setBackgroundResource(R.drawable.vector_star_score);
+                    } else if (currentStar == 1) {
+                        activityPlayscreenBinding.firstStar.setBackgroundResource(R.drawable.vector_star_score_fill);
+                        activityPlayscreenBinding.secondStar.setBackgroundResource(R.drawable.vector_star_score);
+                        activityPlayscreenBinding.thirdStar.setBackgroundResource(R.drawable.vector_star_score);
+                    } else if (currentStar == 2) {
+                        activityPlayscreenBinding.firstStar.setBackgroundResource(R.drawable.vector_star_score_fill);
+                        activityPlayscreenBinding.secondStar.setBackgroundResource(R.drawable.vector_star_score_fill);
+                        activityPlayscreenBinding.thirdStar.setBackgroundResource(R.drawable.vector_star_score);
+                    } else {
+                        activityPlayscreenBinding.firstStar.setBackgroundResource(R.drawable.vector_star_score_fill);
+                        activityPlayscreenBinding.secondStar.setBackgroundResource(R.drawable.vector_star_score_fill);
+                        activityPlayscreenBinding.thirdStar.setBackgroundResource(R.drawable.vector_star_score_fill);
+                    }
+
+                    activityPlayscreenBinding.firstStar.setScaleX(0f);
+                    activityPlayscreenBinding.firstStar.setScaleY(0f);
+                    activityPlayscreenBinding.secondStar.setScaleX(0f);
+                    activityPlayscreenBinding.secondStar.setScaleY(0f);
+                    activityPlayscreenBinding.thirdStar.setScaleX(0f);
+                    activityPlayscreenBinding.thirdStar.setScaleY(0f);
+
+                    ObjectAnimator scaleXFirstStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.firstStar, "scaleX", 1f);
+                    ObjectAnimator scaleYFirstStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.firstStar, "scaleY", 1f);
+                    ObjectAnimator scaleXSecondStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.secondStar, "scaleX", 1f);
+                    ObjectAnimator scaleYSecondStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.secondStar, "scaleY", 1f);
+                    ObjectAnimator scaleXThirdStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.thirdStar, "scaleX", 1f);
+                    ObjectAnimator scaleYThirdStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.thirdStar, "scaleY", 1f);
+
+                    scaleXFirstStar.setDuration(500);
+                    scaleYFirstStar.setDuration(500);
+                    scaleXSecondStar.setDuration(500);
+                    scaleYSecondStar.setDuration(500);
+                    scaleXThirdStar.setDuration(500);
+                    scaleYThirdStar.setDuration(500);
+
+                    new Handler().postDelayed(() -> {
+                        activityPlayscreenBinding.firstStar.setVisibility(View.VISIBLE);
+                        scaleXFirstStar.start();
+                        scaleYFirstStar.start();
+                    }, 500);
+
+                    new Handler().postDelayed(() -> {
+                        activityPlayscreenBinding.secondStar.setVisibility(View.VISIBLE);
+                        scaleXSecondStar.start();
+                        scaleYSecondStar.start();
+                    }, 1000);
+
+                    new Handler().postDelayed(() -> {
+                        activityPlayscreenBinding.thirdStar.setVisibility(View.VISIBLE);
+                        scaleXThirdStar.start();
+                        scaleYThirdStar.start();
+                    }, 1500);
+
+                    activityPlayscreenBinding.score.setText(GlobalVariables.COUNT_CORRECT + "/" + (GlobalVariables.COUNT_CORRECT + GlobalVariables.COUNT_CORRECT));
+                    activityPlayscreenBinding.totalScoreScreen.setAlpha(0f);
+                    activityPlayscreenBinding.totalScoreScreen.setTranslationY(activityPlayscreenBinding.totalScoreScreen.getHeight());
+                    activityPlayscreenBinding.totalScoreScreen.setVisibility(View.VISIBLE);
+
+                    activityPlayscreenBinding.totalScoreScreen.animate()
+                            .alpha(1f)
+                            .translationY(0)
+                            .setDuration(500)
+                            .start();
+                }
+            });
         } catch (Exception e) {
             Toast.makeText(this, "Could not play audio file", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public void onDeviceOpened(MidiOutputPort midiOutputPort) {

@@ -50,6 +50,11 @@ public class PlayScreenEventHandler {
         playScreenViewModel.getIsPlayed().setValue(!isPlaying);
     }
 
+    public void onPlayAgainClick(View view) {
+        boolean isPlaying = Boolean.TRUE.equals(playScreenViewModel.getIsPlayed().getValue());
+        playScreenViewModel.getIsPlayed().setValue(false);
+    }
+
     public void onSpeed1Click(View view) {
         playScreenViewModel.getSpeed().setValue(0.6f);
     }
