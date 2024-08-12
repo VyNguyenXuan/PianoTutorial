@@ -1,5 +1,6 @@
 package com.example.pianotutorial.features.components.paints.notepaints;
 
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -21,8 +22,8 @@ public class QuarterNotePaint {
         notePath.cubicTo(60.2f, 87.78f, 56.42f, 95.32f, 48.36f, 99.47f);
         notePath.cubicTo(40.3f, 103.51f, 30.85f, 102.64f, 27.32f, 97.39f);
         notePath.moveTo(58, 0);
-        notePath.lineTo(56, 0);
-        notePath.lineTo(56, 88);
+        notePath.lineTo(55, 0);
+        notePath.lineTo(55, 88);
         notePath.lineTo(58, 88);
         notePath.moveTo(27.32f, 97.39f);
         notePath.cubicTo(23.8f, 92.15f, 27.58f, 84.61f, 35.64f, 80.57f);
@@ -30,6 +31,10 @@ public class QuarterNotePaint {
         notePath.cubicTo(60.2f, 87.78f, 56.42f, 95.32f, 48.36f, 99.47f);
         notePath.cubicTo(40.3f, 103.51f, 30.85f, 102.64f, 27.32f, 97.39f);
         notePath.close();
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(1.2f, 1.2f);
+        notePath.transform(scaleMatrix);
 
         return notePath;
     }

@@ -1,5 +1,6 @@
 package com.example.pianotutorial.features.components.paints.notepaints;
 
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -15,11 +16,11 @@ public class CustomQuarterNotePaintReverse {
 
     public static Path createPath(float customY) {
         Path notePath = new Path();
-        notePath.moveTo(28f, 180f + customY);
+        notePath.moveTo(29f, 180f + customY);
         notePath.lineTo(26f, 180f + customY);
         notePath.lineTo(26f, 92f);
-        notePath.lineTo(28f, 92f);
-        notePath.lineTo(28f, 180f + customY);
+        notePath.lineTo(29f, 92f);
+        notePath.lineTo(29f, 180f + customY);
 
         // Second path
         notePath.moveTo(27.32f, 97.39f);
@@ -28,6 +29,9 @@ public class CustomQuarterNotePaintReverse {
         notePath.cubicTo(60.2f, 87.78f, 56.42f, 95.32f, 48.36f, 99.47f);
         notePath.cubicTo(40.3f, 103.51f, 30.85f, 102.64f, 27.32f, 97.39f);
 
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(1.2f, 1.2f);
+        notePath.transform(scaleMatrix);
         return notePath;
     }
 }

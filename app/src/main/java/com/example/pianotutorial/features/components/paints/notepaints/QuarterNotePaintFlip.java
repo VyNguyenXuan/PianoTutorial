@@ -1,5 +1,6 @@
 package com.example.pianotutorial.features.components.paints.notepaints;
 
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -21,6 +22,10 @@ public class QuarterNotePaintFlip {
         notePath.cubicTo(88.2f, 87.78f, 84.42f, 95.32f, 76.36f, 99.47f);
         notePath.cubicTo(68.3f, 103.51f, 58.85f, 102.64f, 55.32f, 97.39f);
         notePath.close();
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(1.2f, 1.2f);
+        notePath.transform(scaleMatrix);
 
         return notePath;
     }

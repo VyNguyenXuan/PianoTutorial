@@ -298,7 +298,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         startUpdatingStaff();
         playScreenEventHandler.onInitial();
         activityPlayscreenBinding.playCircleVector.setVisibility(View.GONE); // Countdown from 3 to 1
-        playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2F0a737cc6-b66c-4a66-b088-e7515d1eedfa_Canon_in_D_easy.mid?alt=media&token=1c21f2c9-63cf-4c90-96ff-1bbf4df89f0d");
+        playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff1d4cb7b-9e3b-445e-a3e7-f97fc78e5434_Sao_Sang.mid?alt=media&token=fb758635-1027-43cc-bbff-1a0db24177bb");
 
 
         new CountDownTimer(3000, 1000) {

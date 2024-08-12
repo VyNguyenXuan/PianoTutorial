@@ -1,5 +1,6 @@
 package com.example.pianotutorial.features.components.paints.notepaints;
 
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -16,11 +17,11 @@ public class HalfNotePaintReverse {
     public static Path createPath() {
         Path notePath = new Path();
         // First path
-        notePath.moveTo(28f, 180f);
+        notePath.moveTo(29f, 180f);
         notePath.lineTo(26f, 180f);
         notePath.lineTo(26f, 92f);
-        notePath.lineTo(28f, 92f);
-        notePath.lineTo(28f, 180f);
+        notePath.lineTo(29f, 92f);
+        notePath.lineTo(29f, 180f);
 
         // Second path
         notePath.moveTo(27.32f, 97.39f);
@@ -39,6 +40,11 @@ public class HalfNotePaintReverse {
         notePath.lineTo(44.96f, 93.68f);
         notePath.cubicTo(52.14f, 90.08f, 56.8f, 85.38f, 55.42f, 83.19f);
 
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(1.2f, 1.2f);
+        notePath.transform(scaleMatrix);
         return notePath;
+
+
     }
 }

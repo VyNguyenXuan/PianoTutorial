@@ -127,7 +127,7 @@ public class MusicUtils {
         if (chromaticPosition > 0) {
             float chromaticX = -noteHeadOriginalHeight * 1.5f + 36 - (chromaticPosition - 1) * 20; // Adjust the x-position as needed
             chromaticX = (isFlipNote) ? chromaticX - 28 : chromaticX;
-            float chromaticY = 58f;
+            float chromaticY = 77f;
             canvas.save();
             canvas.translate(chromaticX, chromaticY);
             float scaleFactor = noteHeadOriginalHeight / 24f; // Adjust the scale as needed
@@ -141,12 +141,12 @@ public class MusicUtils {
     public static void drawDottedNotes(Canvas canvas, Paint notePaint, int dottedNoteCount, float noteHeadOriginalHeight, int noteId) {
         float dotRadius = noteHeadOriginalHeight / 4;
         float dotX = noteHeadOriginalHeight + noteHeadOriginalHeight;
-        float dotY = noteHeadOriginalHeight * 4;
+        float dotY = noteHeadOriginalHeight * 4+18;
         if (MusicUtils.isNoteOnLine(noteId)) {
             dotY -= (float) GlobalVariables.FIXED_HEIGHT / 32; // If isNoteOnLine move up a note
         }
         for (int i = 0; i < dottedNoteCount; i++) {
-            canvas.drawCircle(dotX + (i * noteHeadOriginalHeight) + 30, dotY, dotRadius, notePaint);
+            canvas.drawCircle(dotX + (i * noteHeadOriginalHeight) + 36, dotY, dotRadius, notePaint);
         }
     }
 
@@ -188,7 +188,7 @@ public class MusicUtils {
             if (xPosition < checkLineX - 160 + 24) {
                 paintToUse.setAlpha(0);
             }
-            canvas.drawLine(xPosition + 24, y, xPosition + 110, y, paintToUse);
+            canvas.drawLine(xPosition + 34, y, xPosition + 130, y, paintToUse);
         }
     }
 
@@ -295,7 +295,7 @@ public class MusicUtils {
                         float diff = Math.abs(chords.get(0).findHighestNoteIdWithoutFlip(true) - chords.get(1).findHighestNoteIdWithoutFlip(true));
                         if (chords.get(0).findHighestNoteIdWithoutFlip(true) < chords.get(1).findHighestNoteIdWithoutFlip(true)) {
                             if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(true)) {
-                                return CustomQuarterNotePaint.createPath(-14f * (diff - 1));
+                                return CustomQuarterNotePaint.createPath(-11.67f * (diff - 1));
                             } else {
                                 return QuarterNotePaint.createPath();
                             }
@@ -303,7 +303,7 @@ public class MusicUtils {
                             if (currentNoteId == chords.get(0).findHighestNoteIdWithoutFlip(true)) {
                                 return QuarterNotePaint.createPath();
                             } else {
-                                return CustomQuarterNotePaint.createPath(-14f * (diff - 1));
+                                return CustomQuarterNotePaint.createPath(-11.67f * (diff - 1));
                             }
                         }
                     } else {
@@ -320,7 +320,7 @@ public class MusicUtils {
                         float diff = Math.abs(chords.get(0).findLowestNoteIdWithoutFlip(false) - chords.get(1).findLowestNoteIdWithoutFlip(false));
                         if (chords.get(0).findLowestNoteIdWithoutFlip(false) > chords.get(1).findLowestNoteIdWithoutFlip(false)) {
                             if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(false)) {
-                                return CustomQuarterNotePaintReverse.createPath(14f * (diff - 1));//To draw beam
+                                return CustomQuarterNotePaintReverse.createPath(11.67f * (diff - 1));//To draw beam
                             } else {
                                 return QuarterNotePaintReverse.createPath();
                             }
@@ -328,7 +328,7 @@ public class MusicUtils {
                             if (currentNoteId == chords.get(0).findLowestNoteIdWithoutFlip(false)) {
                                 return QuarterNotePaintReverse.createPath();
                             } else {
-                                return CustomQuarterNotePaintReverse.createPath(14f * (diff - 1));
+                                return CustomQuarterNotePaintReverse.createPath(11.67f * (diff - 1));
                             }
                         }
                     } else {

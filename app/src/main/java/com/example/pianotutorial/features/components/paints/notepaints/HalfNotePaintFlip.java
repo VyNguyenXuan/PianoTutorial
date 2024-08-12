@@ -1,5 +1,6 @@
 package com.example.pianotutorial.features.components.paints.notepaints;
 
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -32,6 +33,10 @@ public class HalfNotePaintFlip {
         notePath.lineTo(72.96f, 93.68f);
         notePath.cubicTo(80.14f, 90.08f, 84.8f, 85.38f, 83.42f, 83.19f);
         notePath.close();
+
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(1.2f, 1.2f);
+        notePath.transform(scaleMatrix);
 
         return notePath;
     }
