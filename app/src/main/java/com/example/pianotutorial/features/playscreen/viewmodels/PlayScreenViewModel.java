@@ -13,8 +13,9 @@ public class PlayScreenViewModel extends ViewModel {
     private final MutableLiveData<Sheet> currentSheet = new MutableLiveData<>();
     private final MutableLiveData<Sheet> currentLeftSheet = new MutableLiveData<>();
     private final MutableLiveData<Float> speed = new MutableLiveData<>(1f);
-    // PlayScreenViewModel.java
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isDone = new MutableLiveData<>(false);
+
 
     public MutableLiveData<Boolean> getIsPlayed() {
         return isPlayed;
@@ -34,5 +35,9 @@ public class PlayScreenViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getIsLoading() {
         return isLoading;
+    }
+
+    public MutableLiveData<Boolean> getIsDone() {
+        return isDone;
     }
 }

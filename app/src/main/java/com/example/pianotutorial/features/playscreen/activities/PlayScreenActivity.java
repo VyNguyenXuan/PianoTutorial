@@ -86,18 +86,41 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
             }
         });
 
+        playScreenViewModel.getIsDone().observe(this, isDone -> {
+            if (isDone) {
+                // Slide-out combined with fade-out animation for opacityView
+                activityPlayscreenBinding.totalScoreScreen.animate()
+                        .translationY(activityPlayscreenBinding.totalScoreScreen.getHeight()) // Slide down
+                        .alpha(0f) // Fade out
+                        .setDuration(500) // Duration of the animation in milliseconds
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                activityPlayscreenBinding.totalScoreScreen.setVisibility(View.GONE);
+                                activityPlayscreenBinding.totalScoreScreen.setTranslationY(0); // Reset translation
+                                activityPlayscreenBinding.totalScoreScreen.setAlpha(1f); // Reset alpha
+                            }
+                        })
+                        .start();
+            }
+        });
+
         playScreenViewModel.getIsPlayed().observe(this, isPlayed -> {
             if (isPlayed != null) {
+                playScreenViewModel.getIsDone().setValue(false);
                 if (!isPlayed) {
                     handlePause();
                     startUpdatingStaff();
+
                 } else {
                     startCountdown(this);
                 }
             }
         });
 
-        playScreenViewModel.getSpeed().observe(this, this::updateSpeed);
+        playScreenViewModel.getSpeed().
+
+                observe(this, this::updateSpeed);
     }
 
     private void loadMusicView(Sheet currentSheet) {
@@ -363,6 +386,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                 @SuppressLint("SetTextI18n")
                 @Override
                 public void onCompletion(MediaPlayer mp) {
+                    playScreenViewModel.getIsPlayed().setValue(false);
                     float countCorrect = GlobalVariables.COUNT_CORRECT;
                     float countIncorrect = GlobalVariables.COUNT_INCORRECT;
                     float currentPercent = 0f;
@@ -403,32 +427,32 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                     ObjectAnimator scaleXThirdStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.thirdStar, "scaleX", 1f);
                     ObjectAnimator scaleYThirdStar = ObjectAnimator.ofFloat(activityPlayscreenBinding.thirdStar, "scaleY", 1f);
 
-                    scaleXFirstStar.setDuration(500);
-                    scaleYFirstStar.setDuration(500);
-                    scaleXSecondStar.setDuration(500);
-                    scaleYSecondStar.setDuration(500);
-                    scaleXThirdStar.setDuration(500);
-                    scaleYThirdStar.setDuration(500);
+                    scaleXFirstStar.setDuration(300);
+                    scaleYFirstStar.setDuration(300);
+                    scaleXSecondStar.setDuration(300);
+                    scaleYSecondStar.setDuration(300);
+                    scaleXThirdStar.setDuration(300);
+                    scaleYThirdStar.setDuration(300);
 
                     new Handler().postDelayed(() -> {
                         activityPlayscreenBinding.firstStar.setVisibility(View.VISIBLE);
                         scaleXFirstStar.start();
                         scaleYFirstStar.start();
-                    }, 500);
+                    }, 300);
 
                     new Handler().postDelayed(() -> {
                         activityPlayscreenBinding.secondStar.setVisibility(View.VISIBLE);
                         scaleXSecondStar.start();
                         scaleYSecondStar.start();
-                    }, 1000);
+                    }, 600);
 
                     new Handler().postDelayed(() -> {
                         activityPlayscreenBinding.thirdStar.setVisibility(View.VISIBLE);
                         scaleXThirdStar.start();
                         scaleYThirdStar.start();
-                    }, 1500);
+                    }, 900);
 
-                    activityPlayscreenBinding.score.setText(GlobalVariables.COUNT_CORRECT + "/" + (GlobalVariables.COUNT_CORRECT + GlobalVariables.COUNT_CORRECT));
+                    activityPlayscreenBinding.score.setText(GlobalVariables.COUNT_CORRECT + "/" + (GlobalVariables.COUNT_CORRECT + GlobalVariables.COUNT_INCORRECT));
                     activityPlayscreenBinding.totalScoreScreen.setAlpha(0f);
                     activityPlayscreenBinding.totalScoreScreen.setTranslationY(activityPlayscreenBinding.totalScoreScreen.getHeight());
                     activityPlayscreenBinding.totalScoreScreen.setVisibility(View.VISIBLE);
@@ -438,6 +462,8 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                             .translationY(0)
                             .setDuration(500)
                             .start();
+                    GlobalVariables.COUNT_CORRECT = 0;
+                    GlobalVariables.COUNT_INCORRECT = 0;
                 }
             });
         } catch (Exception e) {
