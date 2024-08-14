@@ -19,24 +19,30 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.FragmentRegisterBinding;
+import com.example.pianotutorial.features.ui.viewmodel.RegisterViewModel;
 
 public class RegisterFragment extends Fragment {
 
-    private FragmentRegisterBinding fragmentRegisterBinding;
+    private RegisterViewModel viewModel;
+    private FragmentRegisterBinding Binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        fragmentRegisterBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false);
+        Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false);
+        viewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
 
+        Binding.setViewModel(viewModel);
+        Binding.setLifecycleOwner(this);
 
-        fragmentRegisterBinding.backBtn.setOnClickListener(v -> {
-            if (getActivity() != null){
+        viewModel.getNavigateBackToMainMenu().observe(getViewLifecycleOwner(), navigate ->{
+            if(navigate) {
                 getActivity().onBackPressed();
+                viewModel.doneNavigatingBack();
             }
-
         });
 
 //        TextView CoTk = view.findViewById(R.id.co_tk);
@@ -61,6 +67,6 @@ public class RegisterFragment extends Fragment {
 //
 //        CoTk.setText(spannableString);
 //        CoTk.setMovementMethod(LinkMovementMethod.getInstance());
-        return fragmentRegisterBinding.getRoot();
+        return Binding.getRoot();
     }
 }

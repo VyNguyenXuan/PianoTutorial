@@ -19,67 +19,77 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavHost;
+import androidx.navigation.fragment.NavHostFragment;
 
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.FragmentLoginBinding;
 import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
+import com.example.pianotutorial.features.ui.viewmodel.LoginViewModel;
 
 public class LoginFragment extends Fragment {
-
-    private FragmentLoginBinding fragmentLoginBinding;
-
+    private LoginViewModel viewModel;
+    private FragmentLoginBinding Binding;
+//
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState){
-        fragmentLoginBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+        Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
+        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-        fragmentLoginBinding.backBtn.setOnClickListener(v -> {
-            if (getActivity() != null){
-                Intent intent = new Intent(getActivity(), MainMenu.class);
-                startActivity(intent);
+        Binding.setViewModel(viewModel);
+        Binding.setLifecycleOwner(this);
+        viewModel.getNavigateBackToMainMenu().observe(getViewLifecycleOwner(), navigate -> {
+            if (navigate) {
+                getActivity().onBackPressed();
+                viewModel.doneNavigatingBack();
             }
         });
 
-        //
-        fragmentLoginBinding.forgotPassword.setOnClickListener(v -> {
-                if(getActivity() != null){
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.loginstart, new ForgotPasswordFragment()).addToBackStack(null).commit();
-                }
-        });
-
-        ///
-        TextView txtChuacotk = fragmentLoginBinding.txtChuacotk;
-        String text = getString(R.string.not_have_account);
-        SpannableString spannableString = new SpannableString(text);
-
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View widget) {
-                if(getActivity() != null){
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.loginstart, new RegisterFragment()).addToBackStack(null).commit();
-                }
+        viewModel.getNavigateToForgotPassword().observe(getViewLifecycleOwner(), navigate -> {
+            if (navigate != null && navigate){
+                navigateToForgotPassword();
+                viewModel.doneNavigateToForgotPassword();
             }
-        };
-
-        int startIndex = text.indexOf("Đăng kí ngay");
-        int endIndex = startIndex + "Đăng kí ngay".length();
-
-        spannableString.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        txtChuacotk.setText(spannableString);
-        txtChuacotk.setMovementMethod(LinkMovementMethod.getInstance());
-
-        ////
-        fragmentLoginBinding.loginBtn.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
-                startActivity(intent);
         });
 
-        return fragmentLoginBinding.getRoot();
+//        String text = getString(R.string.not_have_account);
+//        SpannableString spannableString = new SpannableString(text);
+//        ClickableSpan clickableSpan = new ClickableSpan() {
+//            @Override
+//            public void onClick(@NonNull View widget) {
+//                viewModel.onRegisterLinkClicked();
+//            }
+//        };
+//
+//        int startIndex = text.indexOf("Đăng kí ngay");
+//        int endIndex = startIndex + "Đăng kí ngay".length();
+//
+//        spannableString.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        Binding.txtChuacotk.setText(spannableString);
+//
+//        viewModel.navigateToRegister.observe(getViewLifecycleOwner(), navigate -> {
+//            if(navigate != null && navigate){
+//                NavHostFragment.findNavController(LoginFragment.this)
+//                        .navigate(R.id.action_loginFragment_to_registerFragment);
+//                viewModel.doneNavigatingToRegister();
+//            }
+//        });
+//
+        return Binding.getRoot();
+    }
+    private void navigateToForgotPassword() {
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new ForgotPasswordFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Binding = null;
     }
 
 }
