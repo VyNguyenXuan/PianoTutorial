@@ -1,6 +1,8 @@
 package com.example.pianotutorial.features.ui;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
@@ -56,13 +58,15 @@ public class LoginFragment extends Fragment {
         });
 
         viewModel.getNavigateToNavigationBar().observe(getViewLifecycleOwner(), navigate -> {
-            if (navigate != null && navigate){
+            if (navigate != null && navigate) {
+                showLoadingIndicator();
                 Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
                 startActivity(intent);
+
+                new Handler(Looper.getMainLooper()).postDelayed(this::hideLoadingIndicator, 1000);
                 viewModel.doneNavigatingToNavigationBar();
             }
         });
-
 //        String text = getString(R.string.not_have_account);
 //        SpannableString spannableString = new SpannableString(text);
 //        ClickableSpan clickableSpan = new ClickableSpan() {
@@ -87,6 +91,13 @@ public class LoginFragment extends Fragment {
 //        });
 //
         return Binding.getRoot();
+    }
+    private void showLoadingIndicator() {
+        Binding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoadingIndicator() {
+        Binding.progressBar.setVisibility(View.GONE);
     }
     private void navigateToForgotPassword() {
         requireActivity().getSupportFragmentManager().beginTransaction()
