@@ -5,6 +5,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blackGrey">#121212</color>
     <color name="green">#4AC776</color>
+    <color name="green50">#CC4AC776</color>
     <color name="defaultColor">#FFFAFAFA</color>
     <color name="darkGrey">#FF808089</color>
     <color name="lightGrey">#FFF2F4F5</color>

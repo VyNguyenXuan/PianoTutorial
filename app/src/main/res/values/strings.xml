@@ -49,6 +49,11 @@
     <string name="hard">Hard</string>
     <string name="score">Score:</string>
     <string name="songComplete">Hoàn thành bài hát!</string>
+    <string name="listenToMusic">Nghe nhạc</string>
+    <string name="playPiano">Chơi đàn</string>
+    <string name="autoScroll">Tự động cuộn</string>
+
+
 
 
 

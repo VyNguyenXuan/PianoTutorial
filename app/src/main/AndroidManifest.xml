@@ -20,8 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-        tools:targetApi="31"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
 
         <activity
             android:name=".features.MidiActivity"
@@ -29,12 +29,23 @@
             android:theme="@style/Theme.PianoTutorial"></activity>
         <activity
             android:name=".features.navigation_bar.activities.NavigationBarActivity"
-            android:exported="false"
-            android:theme="@style/Theme.PianoTutorial"></activity>
+            android:exported="true"
+            android:theme="@style/Theme.PianoTutorial">
+
+        </activity>
         <activity
             android:name=".features.course_detail.activities.CourseDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.PianoTutorial"></activity>
+        <activity
+            android:name=".features.sheetsceen.activities.SheetActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PianoTutorial">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".features.playscreen.activities.PlayScreenActivity"
             android:exported="false"
@@ -43,13 +54,10 @@
         </activity>
         <activity
             android:name=".features.ui.MainMenu"
-            android:exported="true"
+            android:exported="false"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
     </application>
