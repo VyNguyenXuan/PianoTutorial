@@ -55,6 +55,14 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        viewModel.getNavigateToNavigationBar().observe(getViewLifecycleOwner(), navigate -> {
+            if (navigate != null && navigate){
+                Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
+                startActivity(intent);
+                viewModel.doneNavigatingToNavigationBar();
+            }
+        });
+
 //        String text = getString(R.string.not_have_account);
 //        SpannableString spannableString = new SpannableString(text);
 //        ClickableSpan clickableSpan = new ClickableSpan() {
