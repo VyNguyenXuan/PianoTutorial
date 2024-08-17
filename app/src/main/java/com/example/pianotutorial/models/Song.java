@@ -1,40 +1,17 @@
 package com.example.pianotutorial.models;
 
-import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class Song {
-    @SerializedName("id")
     private int id;
-
-    @SerializedName("title")
     private String title;
-
-    @SerializedName("composer")
     private String composer;
+    private List<String> genres;
+    private String createdTime;
+    private String lastUpdatedTime;
+    private String image;
 
-    @SerializedName("genre")
-    private String genre;
-
-    @SerializedName("artistId")
-    private int artistId;
-
-    @SerializedName("artist")
-    private Artist artist;
-
-    @SerializedName("sheets")
-    private List<Sheet> sheets;
-
-    public Song(int id, String title, String composer, String genre, int artistId, Artist artist, List<Sheet> sheets) {
-        this.id = id;
-        this.title = title;
-        this.composer = composer;
-        this.genre = genre;
-        this.artistId = artistId;
-        this.artist = artist;
-        this.sheets = sheets;
-    }
-
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -59,35 +36,35 @@ public class Song {
         this.composer = composer;
     }
 
-    public String getGenre() {
-        return genre;
+    public List<String> getGenres() {
+        return genres;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
     }
 
-    public int getArtistId() {
-        return artistId;
+    public String getCreatedTime() {
+        return createdTime;
     }
 
-    public void setArtistId(int artistId) {
-        this.artistId = artistId;
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public Artist getArtist() {
-        return artist;
+    public String getLastUpdatedTime() {
+        return lastUpdatedTime;
     }
 
-    public void setArtist(Artist artist) {
-        this.artist = artist;
+    public void setLastUpdatedTime(String lastUpdatedTime) {
+        this.lastUpdatedTime = lastUpdatedTime;
     }
 
-    public List<Sheet> getSheets() {
-        return sheets;
+    public String getImage() {
+        return image;
     }
 
-    public void setSheets(List<Sheet> sheets) {
-        this.sheets = sheets;
+    public void setImage(String image) {
+        this.image = image;
     }
 }

@@ -2,7 +2,7 @@ package com.example.pianotutorial.constants;
 
 public class GlobalVariables {
 
-    public static final String BASE_URL = "https://www.pianoai.somee.com/";
+    public static final String BASE_URL = "https://api-piano-dev.amazingtech.vn/";
     public static int WHITE_KEYS_COUNT = 35;
     public static int TOP_SIGNATURE = 0;
     public static int BOTTOM_SIGNATURE = 0;

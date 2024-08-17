@@ -27,11 +27,10 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/roundedImageView"
+                android:id="@+id/song_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:src="@drawable/image_vietnam" />
+                android:scaleType="fitXY"/>
         </androidx.cardview.widget.CardView>
 
         <TextView
@@ -40,7 +39,6 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
             android:paddingHorizontal="8dp"
-            android:text="Quốc ca Việt Nam"
             android:textColor="@color/blackGrey"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -50,17 +48,35 @@
 
         <TextView
             android:id="@+id/author_name"
-
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter"
-            android:paddingHorizontal="8dp"
-            android:text="Văn Cao"
+            android:layout_marginStart="8dp"
             android:textColor="@color/darkGrey"
             android:textSize="12sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/card_view"
+            app:layout_constraintTop_toBottomOf="@+id/song_title" />
+        <TextView
+            android:id="@+id/spacing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
+            android:text=" - Artist: "
+            android:textColor="@color/darkGrey"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/author_name"
+            app:layout_constraintTop_toBottomOf="@+id/song_title" />
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
+            android:textColor="@color/darkGrey"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/spacing"
             app:layout_constraintTop_toBottomOf="@+id/song_title" />
 
         <LinearLayout
