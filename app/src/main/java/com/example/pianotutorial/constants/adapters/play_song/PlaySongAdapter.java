@@ -1,18 +1,26 @@
 package com.example.pianotutorial.constants.adapters.play_song;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pianotutorial.R;
+import com.example.pianotutorial.constants.adapters.popup_sheet.PopupSheetAdapter;
 import com.example.pianotutorial.databinding.ItemPlaySongBinding;
+import com.example.pianotutorial.databinding.PopupSongDetailBinding;
 import com.example.pianotutorial.models.Song;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -57,9 +65,18 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             playSongViewHolder.binding.authorName.setText(song.getComposer());
             playSongViewHolder.binding.artistName.setText(song.getComposer());
             playSongViewHolder.binding.executePendingBindings();
+
+            // Set click listener for the item
+            playSongViewHolder.itemView.setOnClickListener(v -> {
+                if (context instanceof FragmentActivity) {
+                    FragmentActivity activity = (FragmentActivity) context;
+                    showPopup(activity, song);
+                }
+            });
         }
         // No binding is required for loading view holder
     }
+
 
     @Override
     public int getItemCount() {
@@ -92,10 +109,58 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public void clearSongs() {
-        songList.clear();
-        notifyDataSetChanged(); // Notify the adapter that the data set has changed
+    private void showPopup(FragmentActivity activity, Song song) {
+        // Inflate the popup layout using DataBindingUtil
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        PopupSongDetailBinding popupBinding = DataBindingUtil.inflate(inflater, R.layout.popup_song_detail, null, false);
+
+        // Set the song details in the popup
+        popupBinding.songTitle.setText(song.getTitle());
+        popupBinding.authorName.setText(song.getComposer());
+
+        // Setup the RecyclerView in the popup
+        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+
+        PopupSheetAdapter adapter = new PopupSheetAdapter(numbers);
+        popupBinding.recyclerViewSheetPopup.setLayoutManager(new LinearLayoutManager(context));
+        popupBinding.recyclerViewSheetPopup.setAdapter(adapter);
+
+        // Setup the PopupWindow
+        PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(),
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true);
+
+        // Create a dimmed background overlay
+        View rootView = activity.findViewById(android.R.id.content);
+        ViewGroup rootViewGroup = (ViewGroup) rootView;
+
+        View dimOverlay = new View(activity);
+        dimOverlay.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        dimOverlay.setBackgroundColor(0x80000000); // Black color with 50% opacity
+
+        // Add the dim overlay to the root view
+        rootViewGroup.addView(dimOverlay);
+
+        // Close button action
+        popupBinding.closePopup.setOnClickListener(v -> {
+            popupWindow.dismiss();
+            rootViewGroup.removeView(dimOverlay); // Remove the dim overlay when popup is dismissed
+        });
+
+        // Set dismiss listener to remove dim overlay when clicking outside the popup
+        popupWindow.setOnDismissListener(() -> rootViewGroup.removeView(dimOverlay));
+
+        // Show the popup
+        if (rootView != null) {
+            popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+        }
     }
+
+
+
 
     private Song getItem(int position) {
         return songList.get(position);

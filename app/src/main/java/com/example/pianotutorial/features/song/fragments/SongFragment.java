@@ -1,12 +1,16 @@
 package com.example.pianotutorial.features.song.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.adapters.play_song.PlaySongAdapter;
 import com.example.pianotutorial.databinding.FragmentSongBinding;
+import com.example.pianotutorial.databinding.PopupSongDetailBinding;
 import com.example.pianotutorial.features.song.eventhandlers.SongEventHandler;
 import com.example.pianotutorial.features.song.viewmodels.SongViewModel;
 import com.example.pianotutorial.models.Genre;
@@ -48,7 +53,18 @@ public class SongFragment extends Fragment {
         songEventHandler.onInitial();
 
         playSongAdapter = new PlaySongAdapter(getContext(), new ArrayList<>());
-        _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (playSongAdapter.getItemViewType(position) == PlaySongAdapter.VIEW_TYPE_LOADING) {
+                    return 2; // Chiếm toàn bộ chiều rộng (2 cột)
+                } else {
+                    return 1; // Chiếm 1 cột
+                }
+            }
+        });
+        _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(layoutManager);
         _fragmentSongBinding.recyclerViewPlaySong.setAdapter(playSongAdapter);
 
         // Observe songRespond LiveData
@@ -74,9 +90,19 @@ public class SongFragment extends Fragment {
 
         songViewModel.getSelectedGenreIndex().observe(getViewLifecycleOwner(), selectedGenreIndex -> {
             String keyword = _fragmentSongBinding.searchBar.getQuery().toString();
-            int pageSize= songViewModel.pageSize;
+            int pageSize = songViewModel.pageSize;
             playSongAdapter = new PlaySongAdapter(getContext(), new ArrayList<>());
-            _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if (playSongAdapter.getItemViewType(position) == PlaySongAdapter.VIEW_TYPE_LOADING) {
+                        return 2; // Chiếm toàn bộ chiều rộng (2 cột)
+                    } else {
+                        return 1; // Chiếm 1 cột
+                    }
+                }
+            });
+            _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(layoutManager);
             _fragmentSongBinding.recyclerViewPlaySong.setAdapter(playSongAdapter);
             if (selectedGenreIndex > 0) {
                 Integer genreId = Objects.requireNonNull(songViewModel.getGenreResponse().getValue()).getData().get(selectedGenreIndex - 1).getId();
@@ -96,7 +122,7 @@ public class SongFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 Integer selectedGenreIndex = songViewModel.getSelectedGenreIndex().getValue();
-                int pageSize= songViewModel.pageSize;
+                int pageSize = songViewModel.pageSize;
                 Integer genreId = null;
 
                 if (selectedGenreIndex != null && selectedGenreIndex > 0) {
@@ -106,7 +132,17 @@ public class SongFragment extends Fragment {
                             .getId();
                 }
                 playSongAdapter = new PlaySongAdapter(getContext(), new ArrayList<>());
-                _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(new GridLayoutManager(getContext(), 2));
+                layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        if (playSongAdapter.getItemViewType(position) == PlaySongAdapter.VIEW_TYPE_LOADING) {
+                            return 2; // Chiếm toàn bộ chiều rộng (2 cột)
+                        } else {
+                            return 1; // Chiếm 1 cột
+                        }
+                    }
+                });
+                _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(layoutManager);
                 _fragmentSongBinding.recyclerViewPlaySong.setAdapter(playSongAdapter);
                 songEventHandler.FilterSong(genreId, 1, pageSize, newText);
                 return true;
@@ -129,7 +165,6 @@ public class SongFragment extends Fragment {
 
         return _fragmentSongBinding.getRoot();
     }
-
 
     private void loadMoreItemsWithDelay() {
         songViewModel.isLoading = true;
