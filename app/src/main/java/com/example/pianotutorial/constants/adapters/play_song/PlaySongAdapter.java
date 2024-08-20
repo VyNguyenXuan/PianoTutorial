@@ -1,59 +1,104 @@
 package com.example.pianotutorial.constants.adapters.play_song;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.ItemPlaySongBinding;
-import com.example.pianotutorial.features.playscreen.activities.PlayScreenActivity;
 import com.example.pianotutorial.models.Song;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PlaySongAdapter extends RecyclerView.Adapter<PlaySongAdapter.PlaySongViewHolder> {
+public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static final int VIEW_TYPE_ITEM = 0;
+    public static final int VIEW_TYPE_LOADING = 1;
+
     private final Context context;
     private final List<Song> songList;
+    private boolean isLoadingAdded = false;
 
     public PlaySongAdapter(Context context, List<Song> songList) {
         this.context = context;
-        this.songList = songList;
+        this.songList = songList != null ? songList : new ArrayList<>();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == songList.size() - 1 && isLoadingAdded) ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
     @NonNull
     @Override
-    public PlaySongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemPlaySongBinding binding = ItemPlaySongBinding
-                .inflate(LayoutInflater.from(parent.getContext()), parent, false);
-        return new PlaySongViewHolder(binding);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_ITEM) {
+            ItemPlaySongBinding binding = ItemPlaySongBinding
+                    .inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new PlaySongViewHolder(binding);
+        } else {
+            // Inflate the loading view layout
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.item_loading, parent, false);
+            return new LoadingViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull PlaySongViewHolder holder, int position) {
-        Song song = songList.get(position);
-        Bitmap bitmap = decodeBase64(song.getImage());
-        Glide.with(context)
-                .load(bitmap)
-                .placeholder(R.drawable.img_default) // Optional placeholder
-                .into(holder.binding.songImage);
-        holder.binding.songTitle.setText(song.getTitle());
-        holder.binding.authorName.setText(song.getComposer());
-        holder.binding.artistName.setText(song.getComposer());
-        holder.binding.executePendingBindings();
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == VIEW_TYPE_ITEM) {
+            Song song = songList.get(position);
+            PlaySongViewHolder playSongViewHolder = (PlaySongViewHolder) holder;
+            playSongViewHolder.binding.songTitle.setText(song.getTitle());
+            playSongViewHolder.binding.authorName.setText(song.getComposer());
+            playSongViewHolder.binding.artistName.setText(song.getComposer());
+            playSongViewHolder.binding.executePendingBindings();
+        }
+        // No binding is required for loading view holder
     }
 
     @Override
     public int getItemCount() {
         return songList.size();
+    }
+
+    public void addSongs(List<Song> newSongs) {
+        int startPosition = songList.size();
+        songList.addAll(newSongs);
+        notifyItemRangeInserted(startPosition, newSongs.size());
+    }
+
+    public void addLoadingFooter() {
+        if (!isLoadingAdded) {
+            isLoadingAdded = true;
+            songList.add(new Song()); // Adding a dummy item
+            notifyItemInserted(songList.size() - 1);
+        }
+    }
+
+    public void removeLoadingFooter() {
+        if (isLoadingAdded) {
+            isLoadingAdded = false;
+
+            int position = songList.size() - 1;
+            if (position >= 0) {
+                songList.remove(position);
+                notifyItemRemoved(position);
+            }
+        }
+    }
+
+    public void clearSongs() {
+        songList.clear();
+        notifyDataSetChanged(); // Notify the adapter that the data set has changed
+    }
+
+    private Song getItem(int position) {
+        return songList.get(position);
     }
 
     public static class PlaySongViewHolder extends RecyclerView.ViewHolder {
@@ -65,9 +110,9 @@ public class PlaySongAdapter extends RecyclerView.Adapter<PlaySongAdapter.PlaySo
         }
     }
 
-    // Helper method to decode a Base64 string into a Bitmap
-    private Bitmap decodeBase64(String base64Str) {
-        byte[] decodedBytes = Base64.decode(base64Str, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    public static class LoadingViewHolder extends RecyclerView.ViewHolder {
+        public LoadingViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
     }
 }

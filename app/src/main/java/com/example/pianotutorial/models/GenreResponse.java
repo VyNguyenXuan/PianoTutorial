@@ -1,9 +1,11 @@
 package com.example.pianotutorial.models;
 
-public class SongRespond {
+import java.util.List;
+
+public class GenreResponse {
     private String message;
     private int statusCode;
-    private SongResponseByGenre data;
+    private List<Genre> data;
 
     // Getters and Setters
     public String getMessage() {
@@ -22,11 +24,11 @@ public class SongRespond {
         this.statusCode = statusCode;
     }
 
-    public SongResponseByGenre getData() {
+    public List<Genre> getData() {
         return data;
     }
 
-    public void setData(SongResponseByGenre data) {
+    public void setData(List<Genre> data) {
         this.data = data;
     }
 }
