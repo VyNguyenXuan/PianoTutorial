@@ -68,16 +68,15 @@ public class PlayScreenEventHandler {
         playScreenViewModel.getSpeed().setValue(1f);
     }
 
-    public void navigateToCourseDetail(View view) {
+    public void navigateBack(View view) {
         ProgressBar progressBar = ((Activity) context).findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Intent intent = new Intent(context, NavigationBarActivity.class);
-            context.startActivity(intent);
-            ((Activity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             ((Activity) context).finish();
+            ((Activity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }, 1000);
     }
+
 }
 

@@ -39,8 +39,9 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
     @Override
     public void onBindViewHolder(@NonNull CourseDetailViewHolder holder, int position) {
         int value = integerList.get(position);
+        ProgressBar progressBar = holder.binding.progressBar;
+
         holder.binding.courseButton.setOnClickListener(v -> {
-            ProgressBar progressBar = holder.binding.progressBar;
             progressBar.setVisibility(View.VISIBLE);
 
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -48,8 +49,10 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
                 intent.putExtra("ITEM_VALUE", value);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
             }, 500);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                progressBar.setVisibility(View.GONE);
+            }, 3000);
         });
 
         holder.binding.executePendingBindings();

@@ -49,6 +49,7 @@ public class TopCourseAdapter extends RecyclerView.Adapter<TopCourseAdapter.TopC
                 Intent intent = new Intent(context, CourseDetailActivity.class);
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                progressBar.setVisibility(View.GONE);
             }, 1000);
             holder.binding.executePendingBindings();
         });

@@ -239,7 +239,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:background="@drawable/vector_icon_button"
-            android:onClick="@{eventHandler::navigateToCourseDetail}"
+            android:onClick="@{eventHandler::navigateBack}"
             app:layout_constraintStart_toEndOf="@id/play_icon"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -408,7 +408,7 @@
                     android:layout_width="56dp"
                     android:layout_height="56dp"
                     android:background="@drawable/vector_icon_button"
-                    android:onClick="@{eventHandler::navigateToCourseDetail}">
+                    android:onClick="@{eventHandler::navigateBack}">
 
                     <View
                         android:layout_width="38dp"

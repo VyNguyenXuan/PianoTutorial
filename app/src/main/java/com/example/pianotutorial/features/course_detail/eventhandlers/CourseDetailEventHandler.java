@@ -23,10 +23,8 @@ public class CourseDetailEventHandler {
         progressBar.setVisibility(View.VISIBLE);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Intent intent = new Intent(_context, NavigationBarActivity.class);
-            _context.startActivity(intent);
-            ((Activity) _context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             ((Activity) _context).finish();
+            ((Activity) _context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }, 1000);
     }
 }
