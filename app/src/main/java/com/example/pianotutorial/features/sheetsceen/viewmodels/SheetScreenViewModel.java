@@ -12,6 +12,8 @@ public class SheetScreenViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isAutoScroll = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isPlayed = new MutableLiveData<>(false);
     private final MutableLiveData<Float> scrollSpeed = new MutableLiveData<>(1f);
+    private final MutableLiveData<Integer> musicSeekBarProgress = new MutableLiveData<>(0);
+
 
     public MutableLiveData<Boolean> getIsShowTopBar() {
         return isShowTopBar;
@@ -35,5 +37,9 @@ public class SheetScreenViewModel extends ViewModel {
 
     public MutableLiveData<Sheet> getCurrentSheet() {
         return currentSheet;
+    }
+
+    public MutableLiveData<Integer> getMusicSeekBarProgress() {
+        return musicSeekBarProgress;
     }
 }

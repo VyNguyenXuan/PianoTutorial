@@ -29,7 +29,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.databinding.ActivityPlayscreenBinding;
-import com.example.pianotutorial.features.components.helpers.DownloadTask;
 import com.example.pianotutorial.features.components.helpers.MidiAware;
 import com.example.pianotutorial.features.components.helpers.MidiNotesReceiver;
 import com.example.pianotutorial.features.components.helpers.Note;
@@ -71,6 +70,10 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         countdownTextView = activityPlayscreenBinding.getRoot().findViewById(R.id.countdownText);
 
+        if (getIntent().getExtras() != null) {
+            int sheetId = getIntent().getExtras().getInt("sheetId", -1); // Default to -1 if not found
+            playScreenEventHandler.getSheetById(sheetId);
+        }
         setupObservers();
         initializeMIDI();
 
@@ -110,8 +113,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                 playScreenViewModel.getIsDone().setValue(false);
                 if (!isPlayed) {
                     handlePause();
-                    startUpdatingStaff();
-
                 } else {
                     startCountdown(this);
                 }
@@ -159,15 +160,12 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.playIcon.setVisibility(View.GONE);
         GlobalVariables.SPEED = 0;
         if (player != null) {
-            player.stop();
-            player.reset();
+            player.pause();
         }
     }
 
 
     private void updateSpeed(float speed) {
-        String fileURL = "https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff1d4cb7b-9e3b-445e-a3e7-f97fc78e5434_Sao_Sang.mid?alt=media&token=fb758635-1027-43cc-bbff-1a0db24177bb";
-
         int speed1Res = R.drawable.white_border;
         int speed2Res = R.drawable.white_border;
         int speed3Res = R.drawable.white_border;
@@ -188,9 +186,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         }
 
         if (player != null) player.stop();
-        playAudio(fileURL);
-        setPlayerPlaybackSpeed(player, speed);
-        player.pause();
 
         activityPlayscreenBinding.speed1Layout.setBackgroundResource(speed1Res);
         activityPlayscreenBinding.speed2Layout.setBackgroundResource(speed2Res);
@@ -199,18 +194,13 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.speed1Text.setTextColor(ContextCompat.getColor(this, speed1TextColor));
         activityPlayscreenBinding.speed2Text.setTextColor(ContextCompat.getColor(this, speed2TextColor));
         activityPlayscreenBinding.speed3Text.setTextColor(ContextCompat.getColor(this, speed3TextColor));
-
-
-        // Start the download task
-        DownloadTask downloadTask = new DownloadTask(this);
-        downloadTask.execute(fileURL);
-        startUpdatingStaff();
     }
 
     private void setPlayerPlaybackSpeed(MediaPlayer player, float speed) {
         PlaybackParams params = new PlaybackParams();
         params.setSpeed(speed);
         player.setPlaybackParams(params);
+        player.pause();
     }
 
     private void initializeMIDI() {
@@ -219,19 +209,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         midiManager.registerDeviceCallback(deviceCallback, null);
         checkForMidiDevices();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (midi != null) midi.start();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (midi != null) midi.stop();
-        if (player != null) player.stop();
     }
 
     @Override
@@ -318,10 +295,15 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
     private void startCountdown(Context context) {
         GlobalVariables.SPEED = Objects.requireNonNull(playScreenViewModel.getSpeed().getValue());
+        loadMusicView(playScreenViewModel.getCurrentSheet().getValue());
         startUpdatingStaff();
-        playScreenEventHandler.onInitial();
+
         activityPlayscreenBinding.playCircleVector.setVisibility(View.GONE); // Countdown from 3 to 1
-        playAudio("https://firebasestorage.googleapis.com/v0/b/pianoaiapi.appspot.com/o/Midi%2Ff1d4cb7b-9e3b-445e-a3e7-f97fc78e5434_Sao_Sang.mid?alt=media&token=fb758635-1027-43cc-bbff-1a0db24177bb");
+        String fileURL = playScreenViewModel.getCurrentSheet().getValue() != null
+                ? playScreenViewModel.getCurrentSheet().getValue().getSheetFile()
+                : "";
+        playAudio(fileURL);
+        setPlayerPlaybackSpeed(player, GlobalVariables.SPEED);
 
 
         new CountDownTimer(3000, 1000) {

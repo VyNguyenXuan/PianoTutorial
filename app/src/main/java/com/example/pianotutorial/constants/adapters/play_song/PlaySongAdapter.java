@@ -37,7 +37,7 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.context = context;
         this.songList = songList != null ? songList : new ArrayList<>();
         this.playSongViewModel = new PlaySongViewModel();
-        this.playSongServiceHandler = new PlaySongServiceHandler(context, playSongViewModel);
+        this.playSongServiceHandler = new PlaySongServiceHandler(context,playSongViewModel);
     }
 
     @Override

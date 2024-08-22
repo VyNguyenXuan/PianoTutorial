@@ -40,10 +40,9 @@ public class PlayScreenEventHandler {
         Sheet sheet = new Sheet(1, songId, "Nothing", topSignature, bottomSignature, 1, "Piano", "", keySignature, rightSymbol, leftSymbol);
         playScreenViewModel.getCurrentSheet().setValue(sheet);
     }
-    /*public void onInitial(int sheetId,int leftSheetId) {
-        playScreenServiceHandler.getSheetById(sheetId);
-        playScreenServiceHandler.getLeftSheetById(sheetId);
-    }*/
+    public void getSheetById(int SheetId){
+        playScreenServiceHandler.getSheetById(SheetId);
+    }
 
     public void onPlayIconClick(View view) {
         boolean isPlaying = Boolean.TRUE.equals(playScreenViewModel.getIsPlayed().getValue());

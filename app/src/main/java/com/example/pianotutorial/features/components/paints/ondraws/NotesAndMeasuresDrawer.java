@@ -94,7 +94,15 @@ public class NotesAndMeasuresDrawer {
         float staffHeight = GlobalVariables.FIXED_HEIGHT;
         float noteHeadOriginalHeight = 22;
 
-        float currentX = GlobalVariables.CHECK_LINE_X + width - (currentTime * 0.4f * GlobalVariables.SPEED);
+        int totalMeasures = measures.size();
+        float totalWidth = totalMeasures * GlobalVariables.MEASURE_WIDTH;
+        float totalDuration = 1f;
+        if (player != null) {
+            totalDuration = player.getDuration();
+        }
+        float scrollSpeedFactor = totalWidth / totalDuration;
+
+        float currentX = GlobalVariables.CHECK_LINE_X + 3000 * GlobalVariables.SPEED - (currentTime * scrollSpeedFactor * GlobalVariables.SPEED * GlobalVariables.TOP_SIGNATURE);
 
 
         for (int i = 0; i < measures.size(); i++) {

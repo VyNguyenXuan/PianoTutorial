@@ -1,10 +1,13 @@
 package com.example.pianotutorial.features.sheetsceen.activities;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +22,7 @@ import com.example.pianotutorial.databinding.ActivitySheetScreenBinding;
 import com.example.pianotutorial.features.sheetsceen.eventhandlers.SheetScreenEventHandler;
 import com.example.pianotutorial.features.sheetsceen.viewmodels.SheetScreenViewModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,9 @@ public class SheetScreenActivity extends AppCompatActivity {
     private ActivitySheetScreenBinding activitySheetScreenBinding;
     private SheetScreenEventHandler sheetScreenEventHandler;
     private SheetScreenViewModel sheetScreenViewModel;
+    private MediaPlayer mediaPlayer;
+    private Handler handler = new Handler();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,9 +59,18 @@ public class SheetScreenActivity extends AppCompatActivity {
             sheetScreenEventHandler.getSheetById(sheetId);
         }
 
+        mediaPlayer = new MediaPlayer();
+
         // Use sheetId as needed in your activity (e.g., to load sheet details)
         sheetScreenViewModel.getCurrentSheet().observe(this, currentSheet -> {
             activitySheetScreenBinding.title1.setText(currentSheet.getInstrumentName());
+
+            try {
+                mediaPlayer.setDataSource(currentSheet.getSheetFile());
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                Toast.makeText(this, "Không tìm thấy bài nhạc!", Toast.LENGTH_SHORT).show();
+            }
         });
 
         sheetScreenViewModel.getIsShowTopBar().observe(this, isShowTopBar -> {
@@ -67,7 +83,8 @@ public class SheetScreenActivity extends AppCompatActivity {
                 activitySheetScreenBinding.topBar.startAnimation(slideOut);
                 slideOut.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) { }
+                    public void onAnimationStart(Animation animation) {
+                    }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
@@ -75,7 +92,8 @@ public class SheetScreenActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animation animation) { }
+                    public void onAnimationRepeat(Animation animation) {
+                    }
                 });
             }
         });
@@ -96,7 +114,8 @@ public class SheetScreenActivity extends AppCompatActivity {
                 activitySheetScreenBinding.musicSeekBarLayout.startAnimation(fadeOut);
                 fadeOut.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) { }
+                    public void onAnimationStart(Animation animation) {
+                    }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
@@ -104,7 +123,8 @@ public class SheetScreenActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onAnimationRepeat(Animation animation) { }
+                    public void onAnimationRepeat(Animation animation) {
+                    }
                 });
                 sheetScreenViewModel.getIsPlayed().setValue(false);
             }
@@ -121,8 +141,13 @@ public class SheetScreenActivity extends AppCompatActivity {
         sheetScreenViewModel.getIsPlayed().observe(this, isPlayed -> {
             if (isPlayed) {
                 activitySheetScreenBinding.playIcon.setBackgroundResource(R.drawable.vector_pause);
+                mediaPlayer.start();
+                updateSeekBar();
+
             } else {
                 activitySheetScreenBinding.playIcon.setBackgroundResource(R.drawable.vector_play);
+                mediaPlayer.pause();
+
             }
         });
 
@@ -139,15 +164,56 @@ public class SheetScreenActivity extends AppCompatActivity {
             }
 
             @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+
+
+        sheetScreenViewModel.getScrollSpeed().observe(this, scrollSpeed -> {
+            String formattedScrollSpeed = String.format("x%.1f", scrollSpeed);
+            activitySheetScreenBinding.scollValue.setText(formattedScrollSpeed);
+        });
+
+        sheetScreenViewModel.getMusicSeekBarProgress().observe(this, progress -> {
+            activitySheetScreenBinding.musicSeekBar.setProgress(progress);
+            // Convert progress (milliseconds) to minutes and seconds
+            int minutes = (progress / 1000) / 60;
+            int seconds = (progress / 1000) % 60;
+
+            // Format the time as "MM:SS"
+            String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+
+            // Update the TextView with the formatted time
+            activitySheetScreenBinding.textViewTime.setText(timeFormatted);
+
+        });
+
+        activitySheetScreenBinding.musicSeekBar.setMax(mediaPlayer.getDuration());
+        activitySheetScreenBinding.musicSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    // Update ViewModel when user changes the SeekBar manually
+                    sheetScreenViewModel.getMusicSeekBarProgress().setValue(progress);
+                    mediaPlayer.seekTo(progress);
+                }
+            }
+
+            @Override
             public void onStartTrackingTouch(SeekBar seekBar) { }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
-        sheetScreenViewModel.getScrollSpeed().observe(this, scrollSpeed -> {
-            String formattedScrollSpeed = String.format("x%.1f", scrollSpeed);
-            activitySheetScreenBinding.scollValue.setText(formattedScrollSpeed);
+        // Update SeekBar as the music plays
+        mediaPlayer.setOnCompletionListener(mp -> {
+            sheetScreenViewModel.getIsPlayed().setValue(false);
         });
 
         // Initialize data
@@ -163,5 +229,22 @@ public class SheetScreenActivity extends AppCompatActivity {
         // Set the adapter and LinearLayoutManager
         activitySheetScreenBinding.recyclerViewSheet.setLayoutManager(new LinearLayoutManager(this));
         activitySheetScreenBinding.recyclerViewSheet.setAdapter(sheetAdapter);
+    }
+
+    private void updateSeekBar() {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            sheetScreenViewModel.getMusicSeekBarProgress().setValue(mediaPlayer.getCurrentPosition());
+            activitySheetScreenBinding.musicSeekBar.setProgress(mediaPlayer.getCurrentPosition());
+            handler.postDelayed(this::updateSeekBar, 1000);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }
