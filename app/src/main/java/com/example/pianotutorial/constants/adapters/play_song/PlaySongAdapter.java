@@ -30,10 +30,14 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final Context context;
     private final List<Song> songList;
     private boolean isLoadingAdded = false;
+    private final PlaySongViewModel playSongViewModel;
+    private final PlaySongServiceHandler playSongServiceHandler;
 
     public PlaySongAdapter(Context context, List<Song> songList) {
         this.context = context;
         this.songList = songList != null ? songList : new ArrayList<>();
+        this.playSongViewModel = new PlaySongViewModel();
+        this.playSongServiceHandler = new PlaySongServiceHandler(context, playSongViewModel);
     }
 
     @Override
@@ -77,7 +81,6 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         // No binding is required for loading view holder
     }
 
-
     @Override
     public int getItemCount() {
         return songList.size();
@@ -100,7 +103,6 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void removeLoadingFooter() {
         if (isLoadingAdded) {
             isLoadingAdded = false;
-
             int position = songList.size() - 1;
             if (position >= 0) {
                 songList.remove(position);
@@ -118,12 +120,17 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         popupBinding.songTitle.setText(song.getTitle());
         popupBinding.authorName.setText(song.getComposer());
 
-        // Setup the RecyclerView in the popup
-        List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
+        // Fetch the sheet data based on the song ID
+        playSongServiceHandler.getListSheetBySongId(song.getId());
 
-        PopupSheetAdapter adapter = new PopupSheetAdapter(numbers);
-        popupBinding.recyclerViewSheetPopup.setLayoutManager(new LinearLayoutManager(context));
-        popupBinding.recyclerViewSheetPopup.setAdapter(adapter);
+        // Observe the data from the ViewModel and update the RecyclerView when the data is available
+        playSongViewModel.getSheetList().observe(activity, sheetList -> {
+            if (sheetList != null) {
+                PopupSheetAdapter adapter = new PopupSheetAdapter(context, sheetList);
+                popupBinding.recyclerViewSheetPopup.setLayoutManager(new LinearLayoutManager(context));
+                popupBinding.recyclerViewSheetPopup.setAdapter(adapter);
+            }
+        });
 
         // Setup the PopupWindow
         PopupWindow popupWindow = new PopupWindow(popupBinding.getRoot(),
@@ -154,13 +161,8 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         popupWindow.setOnDismissListener(() -> rootViewGroup.removeView(dimOverlay));
 
         // Show the popup
-        if (rootView != null) {
-            popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
-        }
+        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
     }
-
-
-
 
     private Song getItem(int position) {
         return songList.get(position);

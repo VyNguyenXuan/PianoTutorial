@@ -41,7 +41,7 @@
             android:exported="false"
             android:theme="@style/Theme.PianoTutorial"></activity>
         <activity
-            android:name=".features.sheetsceen.activities.SheetActivity"
+            android:name=".features.sheetsceen.activities.SheetScreenActivity"
             android:exported="false"
             android:theme="@style/Theme.PianoTutorial">
         </activity>
