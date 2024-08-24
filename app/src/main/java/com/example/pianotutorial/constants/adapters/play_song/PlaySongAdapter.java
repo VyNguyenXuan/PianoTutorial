@@ -1,5 +1,6 @@
 package com.example.pianotutorial.constants.adapters.play_song;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.adapters.popup_sheet.PopupSheetAdapter;
 import com.example.pianotutorial.databinding.ItemPlaySongBinding;
 import com.example.pianotutorial.databinding.PopupSongDetailBinding;
+import com.example.pianotutorial.models.Sheet;
 import com.example.pianotutorial.models.Song;
 
 import java.util.ArrayList;
@@ -30,6 +32,9 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final Context context;
     private final List<Song> songList;
     private boolean isLoadingAdded = false;
+    private boolean easy = false;
+    private boolean medium = false;
+    private boolean hard = false;
     private final PlaySongViewModel playSongViewModel;
     private final PlaySongServiceHandler playSongServiceHandler;
 
@@ -37,7 +42,7 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.context = context;
         this.songList = songList != null ? songList : new ArrayList<>();
         this.playSongViewModel = new PlaySongViewModel();
-        this.playSongServiceHandler = new PlaySongServiceHandler(context,playSongViewModel);
+        this.playSongServiceHandler = new PlaySongServiceHandler(context, playSongViewModel);
     }
 
     @Override
@@ -64,7 +69,31 @@ public class PlaySongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_ITEM) {
             Song song = songList.get(position);
+
             PlaySongViewHolder playSongViewHolder = (PlaySongViewHolder) holder;
+
+            playSongServiceHandler.getListSheetBySongId(song.getId());
+
+            // Observe the data from the ViewModel and update the RecyclerView when the data is available
+            playSongViewModel.getSheetList().observe((FragmentActivity) context, sheetList -> {
+                if (sheetList != null) {
+
+                    for (Sheet sheet : sheetList) {
+                        if (sheet.getLevel() == 1) {
+                            easy = true;
+                        } else if (sheet.getLevel() == 2) {
+                            medium = true;
+                        } else if (sheet.getLevel() == 3) {
+                            hard = true;
+                        }
+                    }
+
+                }
+            });
+            playSongViewHolder.binding.easy.setVisibility((easy) ? View.VISIBLE : View.GONE);
+            playSongViewHolder.binding.medium.setVisibility((medium) ? View.VISIBLE : View.GONE);
+            playSongViewHolder.binding.hard.setVisibility((hard) ? View.VISIBLE : View.GONE);
+
             playSongViewHolder.binding.songTitle.setText(song.getTitle());
             playSongViewHolder.binding.authorName.setText(song.getComposer());
             playSongViewHolder.binding.artistName.setText(song.getComposer());

@@ -6,7 +6,7 @@
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="360dp"
+            android:layout_width="480dp"
             android:layout_height="240dp"
             app:cardCornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -50,6 +50,7 @@
                                 android:id="@+id/song_image"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
+                                android:contentDescription="TODO"
                                 android:scaleType="fitXY"
                                 android:src="@drawable/background_gradient" />
                         </androidx.cardview.widget.CardView>

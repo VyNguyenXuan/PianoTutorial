@@ -54,6 +54,16 @@ public class SongFragment extends Fragment {
 
         playSongAdapter = new PlaySongAdapter(getContext(), new ArrayList<>());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (playSongAdapter.getItemViewType(position) == PlaySongAdapter.VIEW_TYPE_LOADING) {
+                    return 2; // Chiếm toàn bộ chiều rộng (2 cột)
+                } else {
+                    return 1; // Chiếm 1 cột
+                }
+            }
+        });
         _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(layoutManager);
         _fragmentSongBinding.recyclerViewPlaySong.setAdapter(playSongAdapter);
 
@@ -83,6 +93,16 @@ public class SongFragment extends Fragment {
             String keyword = _fragmentSongBinding.searchBar.getQuery().toString();
             int pageSize = songViewModel.pageSize;
             playSongAdapter = new PlaySongAdapter(getContext(), new ArrayList<>());
+            layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if (playSongAdapter.getItemViewType(position) == PlaySongAdapter.VIEW_TYPE_LOADING) {
+                        return 2; // Chiếm toàn bộ chiều rộng (2 cột)
+                    } else {
+                        return 1; // Chiếm 1 cột
+                    }
+                }
+            });
             _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(layoutManager);
             _fragmentSongBinding.recyclerViewPlaySong.setAdapter(playSongAdapter);
             if (selectedGenreIndex > 0) {
@@ -123,6 +143,7 @@ public class SongFragment extends Fragment {
                         }
                     }
                 });
+
                 _fragmentSongBinding.recyclerViewPlaySong.setLayoutManager(layoutManager);
                 _fragmentSongBinding.recyclerViewPlaySong.setAdapter(playSongAdapter);
                 songEventHandler.FilterSong(genreId, 1, pageSize, newText);

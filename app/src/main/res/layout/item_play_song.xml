@@ -40,7 +40,8 @@
             android:fontFamily="@font/inter"
             android:paddingHorizontal="8dp"
             android:textColor="@color/blackGrey"
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:maxLines="1"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/card_view"
@@ -158,10 +159,9 @@
         </LinearLayout>
 
         <View
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="4dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="2dp"
             android:background="@drawable/vector_add_to_list"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

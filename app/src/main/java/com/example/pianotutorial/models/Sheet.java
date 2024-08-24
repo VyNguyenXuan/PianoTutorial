@@ -11,6 +11,12 @@ public class Sheet {
     @SerializedName("id")
     private int id;
 
+    @SerializedName("name")
+    private String name;
+
+    @SerializedName("level")
+    private int level;
+
     @SerializedName("songId")
     private int songId;
 
@@ -45,8 +51,10 @@ public class Sheet {
 
     private List<Measure> leftHandMeasures;
 
-    public Sheet(int id, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, int keySignature, String rightSymbol, String leftSymbol) {
+    public Sheet(int id, String name, int level, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, int keySignature, String rightSymbol, String leftSymbol) {
         this.id = id;
+        this.name = name;
+        this.level=level;
         this.songId = songId;
         this.songTitle = songTitle;
         this.topSignature = topSignature;
@@ -236,6 +244,22 @@ public class Sheet {
 
     public void setLeftHandMeasures(List<Measure> leftHandMeasures) {
         this.leftHandMeasures = leftHandMeasures;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public List<String> splitChordString(String chordString) {

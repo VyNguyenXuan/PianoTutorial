@@ -20,7 +20,7 @@ public class SongViewModel extends ViewModel {
     public int currentPage = 1;
     public boolean isLoading = false;
     public boolean isLastPage = false;
-    public int pageSize = 6;
+    public int pageSize = 20;
 
     public MutableLiveData<SongResponse> getSongRespond() {
         return songRespond;

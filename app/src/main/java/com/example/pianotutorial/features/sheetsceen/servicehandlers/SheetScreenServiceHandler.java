@@ -7,8 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.example.pianotutorial.constants.ErrorHandling;
 import com.example.pianotutorial.constants.RetrofitClient;
-import com.example.pianotutorial.features.playscreen.services.PlayScreenService;
-import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
 import com.example.pianotutorial.features.sheetsceen.services.SheetScreenService;
 import com.example.pianotutorial.features.sheetsceen.viewmodels.SheetScreenViewModel;
 import com.example.pianotutorial.models.Sheet;
@@ -30,6 +28,7 @@ public class SheetScreenServiceHandler {
 
     public void getSheetById(int sheetId) {
         Call<Sheet> call = sheetScreenService.getSheetById(sheetId);
+
         call.enqueue(new Callback<Sheet>() {
             @Override
             public void onResponse(@NonNull Call<Sheet> call, @NonNull Response<Sheet> response) {

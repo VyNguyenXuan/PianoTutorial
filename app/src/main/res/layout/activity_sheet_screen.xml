@@ -15,11 +15,13 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_sheet"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/slide_in_buttom"
@@ -48,6 +50,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/top_bar"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
@@ -295,6 +298,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/music_seek_bar_layout"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_height="32dp"
                 android:background="@color/green50"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -325,11 +329,12 @@
 
                 <TextView
                     android:id="@+id/text_view_time"
-                    android:layout_width="wrap_content"
+                    android:layout_width="56dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:fontFamily="@font/inter"
                     android:text="00:00"
+                    android:gravity="center"
                     android:textColor="@android:color/white"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"

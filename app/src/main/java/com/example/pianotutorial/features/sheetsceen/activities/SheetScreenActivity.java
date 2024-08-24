@@ -32,7 +32,8 @@ public class SheetScreenActivity extends AppCompatActivity {
     private SheetScreenEventHandler sheetScreenEventHandler;
     private SheetScreenViewModel sheetScreenViewModel;
     private MediaPlayer mediaPlayer;
-    private Handler handler = new Handler();
+    private final Handler handler = new Handler();
+    private Runnable autoScrollRunnable;
 
 
     @Override
@@ -63,12 +64,11 @@ public class SheetScreenActivity extends AppCompatActivity {
 
         // Use sheetId as needed in your activity (e.g., to load sheet details)
         sheetScreenViewModel.getCurrentSheet().observe(this, currentSheet -> {
-            activitySheetScreenBinding.title1.setText(currentSheet.getInstrumentName());
 
             try {
                 mediaPlayer.setDataSource(currentSheet.getSheetFile());
                 mediaPlayer.prepare();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Toast.makeText(this, "Không tìm thấy bài nhạc!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -133,8 +133,11 @@ public class SheetScreenActivity extends AppCompatActivity {
         sheetScreenViewModel.getIsAutoScroll().observe(this, isAutoScroll -> {
             if (isAutoScroll) {
                 activitySheetScreenBinding.autoScrollButton.setBackgroundResource(R.drawable.vector_scroll_speed_pause);
+                startAutoScroll();
+
             } else {
                 activitySheetScreenBinding.autoScrollButton.setBackgroundResource(R.drawable.vector_scroll_speed_play);
+                stopAutoScroll();
             }
         });
 
@@ -180,7 +183,6 @@ public class SheetScreenActivity extends AppCompatActivity {
         });
 
         sheetScreenViewModel.getMusicSeekBarProgress().observe(this, progress -> {
-            activitySheetScreenBinding.musicSeekBar.setProgress(progress);
             // Convert progress (milliseconds) to minutes and seconds
             int minutes = (progress / 1000) / 60;
             int seconds = (progress / 1000) % 60;
@@ -193,14 +195,20 @@ public class SheetScreenActivity extends AppCompatActivity {
 
         });
 
-        activitySheetScreenBinding.musicSeekBar.setMax(mediaPlayer.getDuration());
+        activitySheetScreenBinding.musicSeekBar.setMax(1000);
         activitySheetScreenBinding.musicSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    // Update ViewModel when user changes the SeekBar manually
-                    sheetScreenViewModel.getMusicSeekBarProgress().setValue(progress);
-                    mediaPlayer.seekTo(progress);
+                if (fromUser && mediaPlayer != null) {
+                    int duration = mediaPlayer.getDuration();
+                    // Convert percentage back to milliseconds
+                    int newProgress = (int) ((progress / 1000.0) * duration);
+
+                    // Update ViewModel with new progress
+                    sheetScreenViewModel.getMusicSeekBarProgress().setValue(newProgress);
+
+                    // Seek the media player to the new position
+                    mediaPlayer.seekTo(newProgress);
                 }
             }
 
@@ -211,10 +219,9 @@ public class SheetScreenActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
+
         // Update SeekBar as the music plays
-        mediaPlayer.setOnCompletionListener(mp -> {
-            sheetScreenViewModel.getIsPlayed().setValue(false);
-        });
+        mediaPlayer.setOnCompletionListener(mp -> sheetScreenViewModel.getIsPlayed().setValue(false));
 
         // Initialize data
         List<String> imageUrlList = new ArrayList<>();
@@ -233,18 +240,67 @@ public class SheetScreenActivity extends AppCompatActivity {
 
     private void updateSeekBar() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            sheetScreenViewModel.getMusicSeekBarProgress().setValue(mediaPlayer.getCurrentPosition());
-            activitySheetScreenBinding.musicSeekBar.setProgress(mediaPlayer.getCurrentPosition());
-            handler.postDelayed(this::updateSeekBar, 1000);
+            int duration = mediaPlayer.getDuration();
+            int currentPosition = mediaPlayer.getCurrentPosition();
+            if (duration > 0) {
+                int percentageProgress = (int) ((currentPosition / (float) duration) * 1000);
+                sheetScreenViewModel.getMusicSeekBarProgress().setValue(currentPosition);
+                activitySheetScreenBinding.musicSeekBar.setProgress(percentageProgress);
+            }
+            handler.postDelayed(this::updateSeekBar, 16);
         }
+    }
+
+    private float accumulatedScroll = 0f; // Variable to store the accumulated scroll value (including the fractional part)
+
+    private void startAutoScroll() {
+        autoScrollRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (sheetScreenViewModel.getIsAutoScroll().getValue() != null &&
+                        sheetScreenViewModel.getIsAutoScroll().getValue()) {
+
+                    float scrollSpeedFactor = sheetScreenViewModel.getScrollSpeed().getValue();
+                    // Calculate the scroll distance based on scrollSpeedFactor
+
+                    // Add scrollDistance to accumulatedScroll
+                    accumulatedScroll += scrollSpeedFactor;
+
+                    // Extract the integer part of accumulatedScroll for scrolling
+                    int scrollAmount = (int) accumulatedScroll;
+
+                    if (scrollAmount != 0) {
+                        // Perform the scroll with the integer part
+                        activitySheetScreenBinding.recyclerViewSheet.scrollBy(0, scrollAmount);
+
+                        // Subtract the scrolled integer amount from accumulatedScroll
+                        accumulatedScroll -= scrollAmount;
+                    }
+
+                    // Continue scrolling after a delay
+                    handler.postDelayed(this, 16);
+                }
+            }
+        };
+
+        // Start the scrolling process
+        handler.postDelayed(autoScrollRunnable, 16);
+    }
+
+
+
+    private void stopAutoScroll() {
+        handler.removeCallbacks(autoScrollRunnable);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopAutoScroll();
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
     }
+
 }

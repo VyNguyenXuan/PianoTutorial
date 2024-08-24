@@ -7,6 +7,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public interface SheetScreenService {
-    @GET("/api/Sheets/{sheetId}")
-    Call<Sheet> getSheetById(@Path("sheetId") int sheetId);
+    @GET("/api/Sheets/{id}")
+    Call<Sheet> getSheetById(@Path("id") int sheetId);
 }
