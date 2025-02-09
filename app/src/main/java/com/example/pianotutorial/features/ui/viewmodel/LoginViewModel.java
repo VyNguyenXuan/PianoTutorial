@@ -20,32 +20,51 @@ public class LoginViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _navigateBackToMainMenu = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToForgotPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToRegister = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _navigateToNavbar = new MutableLiveData<>();
 
-    public LiveData<Boolean> getNavigateBackToMainMenu(){
+    public LiveData<Boolean> getNavigateBackToMainMenu() {
         return _navigateBackToMainMenu;
     }
-    public void onBackClicked(){
+
+    public void onBackClicked() {
         _navigateBackToMainMenu.setValue(true);
     }
-    public void doneNavigatingBack(){
+
+    public void doneNavigatingBack() {
         _navigateBackToMainMenu.setValue(false);
     }
 
-    public LiveData<Boolean> getNavigateToForgotPassword(){
+    public LiveData<Boolean> getNavigateToForgotPassword() {
         return _navigateToForgotPassword;
     }
-    public void onForgotPasswordClicked(){
+
+    public void onForgotPasswordClicked() {
         _navigateToForgotPassword.setValue(true);
     }
-    public void doneNavigateToForgotPassword(){
+
+    public void doneNavigateToForgotPassword() {
         _navigateToForgotPassword.setValue(false);
     }
 
+    public LiveData<Boolean> getNavigateToNavbar() {
+        return _navigateToNavbar;
+    }
+
+    public void onNavigateToNavbar() {
+        _navigateToNavbar.setValue(true);
+    }
+
+    public void doneNavigateToNavbar() {
+        _navigateToNavbar.setValue(false);
+    }
+
     public LiveData<Boolean> navigateToRegister = _navigateToRegister;
-    public void onRegisterLinkClicked(){
+
+    public void onRegisterLinkClicked() {
         _navigateToRegister.setValue(true);
     }
-    public void doneNavigatingToRegister(){
+
+    public void doneNavigatingToRegister() {
         _navigateToRegister.setValue(false);
     }
 }

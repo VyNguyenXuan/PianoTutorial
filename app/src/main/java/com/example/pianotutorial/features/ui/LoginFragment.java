@@ -32,7 +32,7 @@ import com.example.pianotutorial.features.ui.viewmodel.LoginViewModel;
 public class LoginFragment extends Fragment {
     private LoginViewModel viewModel;
     private FragmentLoginBinding Binding;
-//
+    //
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -54,7 +54,12 @@ public class LoginFragment extends Fragment {
                 viewModel.doneNavigateToForgotPassword();
             }
         });
-
+        viewModel.getNavigateToNavbar().observe(getViewLifecycleOwner(), navigate -> {
+            if (navigate != null && navigate){
+                navigateToNavbar();
+                viewModel.doneNavigateToNavbar();
+            }
+        });
 //        String text = getString(R.string.not_have_account);
 //        SpannableString spannableString = new SpannableString(text);
 //        ClickableSpan clickableSpan = new ClickableSpan() {
@@ -85,6 +90,10 @@ public class LoginFragment extends Fragment {
                 .replace(R.id.fragment_container, new ForgotPasswordFragment())
                 .addToBackStack(null)
                 .commit();
+    }
+    private void navigateToNavbar() {
+        Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
+        startActivity(intent);
     }
     @Override
     public void onDestroyView() {
