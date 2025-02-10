@@ -60,6 +60,13 @@ public class LoginFragment extends Fragment {
                 viewModel.doneNavigateToNavigationBar();
             }
         });
+        viewModel.getNavigateToRegister().observe(getViewLifecycleOwner(), nav -> {
+            if (nav != null && nav){
+                navigateToRegister();
+                viewModel.doneNavigatingToRegister();
+            }
+        });
+
 //        String text = getString(R.string.not_have_account);
 //        SpannableString spannableString = new SpannableString(text);
 //        ClickableSpan clickableSpan = new ClickableSpan() {
@@ -94,6 +101,12 @@ public class LoginFragment extends Fragment {
     private void navigateToNavigationBar() {
         Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
         startActivity(intent);
+    }
+    private void navigateToRegister(){
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new RegisterFragment())
+                .addToBackStack(null)
+                .commit();
     }
     @Override
     public void onDestroyView() {

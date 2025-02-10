@@ -49,6 +49,9 @@ public class LoginViewModel extends ViewModel {
     public LiveData<Boolean> getNavigateToForgotPassword() {
         return _navigateToForgotPassword;
     }
+    public LiveData<Boolean> getNavigateToRegister(){
+        return _navigateToRegister;
+    }
 
     public void onForgotPasswordClicked() {
         _navigateToForgotPassword.setValue(true);
@@ -60,8 +63,6 @@ public class LoginViewModel extends ViewModel {
 
 
 
-
-    public LiveData<Boolean> navigateToRegister = _navigateToRegister;
 
     public void onRegisterLinkClicked() {
         _navigateToRegister.setValue(true);
