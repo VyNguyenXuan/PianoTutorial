@@ -20,8 +20,20 @@ public class LoginViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _navigateBackToMainMenu = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToForgotPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToRegister = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> _navigateToNavbar = new MutableLiveData<>();
-
+    private final MutableLiveData<Boolean> _navigateToNavigationBar = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>();
+    public LiveData<Boolean> getIsLoading(){
+        return _isLoading;
+    }
+    public LiveData<Boolean> getNavigateToNavigationBar() {
+        return _navigateToNavigationBar;
+    }
+    public void onLogClicked() {
+        _navigateToNavigationBar.setValue(true);
+    }
+    public void doneNavigateToNavigationBar() {
+        _navigateToNavigationBar.setValue(false);
+    }
     public LiveData<Boolean> getNavigateBackToMainMenu() {
         return _navigateBackToMainMenu;
     }
@@ -46,17 +58,8 @@ public class LoginViewModel extends ViewModel {
         _navigateToForgotPassword.setValue(false);
     }
 
-    public LiveData<Boolean> getNavigateToNavbar() {
-        return _navigateToNavbar;
-    }
 
-    public void onNavigateToNavbar() {
-        _navigateToNavbar.setValue(true);
-    }
 
-    public void doneNavigateToNavbar() {
-        _navigateToNavbar.setValue(false);
-    }
 
     public LiveData<Boolean> navigateToRegister = _navigateToRegister;
 

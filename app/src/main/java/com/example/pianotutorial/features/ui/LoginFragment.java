@@ -54,10 +54,10 @@ public class LoginFragment extends Fragment {
                 viewModel.doneNavigateToForgotPassword();
             }
         });
-        viewModel.getNavigateToNavbar().observe(getViewLifecycleOwner(), navigate -> {
+        viewModel.getNavigateToNavigationBar().observe(getViewLifecycleOwner(), navigate -> {
             if (navigate != null && navigate){
-                navigateToNavbar();
-                viewModel.doneNavigateToNavbar();
+                navigateToNavigationBar();
+                viewModel.doneNavigateToNavigationBar();
             }
         });
 //        String text = getString(R.string.not_have_account);
@@ -91,7 +91,7 @@ public class LoginFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
-    private void navigateToNavbar() {
+    private void navigateToNavigationBar() {
         Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
         startActivity(intent);
     }

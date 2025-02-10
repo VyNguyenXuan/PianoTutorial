@@ -251,7 +251,7 @@
                 android:text="@string/lbl_dangnhap"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:onClick="@{() -> viewModel.onLoginClicked()}"/>
+                android:onClick="@{() -> viewModel.onLogClicked()}"/>
 
         </LinearLayout>
 
