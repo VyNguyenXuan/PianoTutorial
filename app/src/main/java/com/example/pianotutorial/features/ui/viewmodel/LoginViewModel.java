@@ -17,18 +17,18 @@ import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
 
 public class LoginViewModel extends ViewModel {
-    private final MutableLiveData<Boolean> _navigateBackToMainMenu = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _zzzzBackToMainMenu = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToForgotPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToRegister = new MutableLiveData<>();
 
     public LiveData<Boolean> getNavigateBackToMainMenu(){
-        return _navigateBackToMainMenu;
+        return _zzzzBackToMainMenu;
     }
     public void onBackClicked(){
-        _navigateBackToMainMenu.setValue(true);
+        _zzzzBackToMainMenu.setValue(true);
     }
     public void doneNavigatingBack(){
-        _navigateBackToMainMenu.setValue(false);
+        _zzzzBackToMainMenu.setValue(false);
     }
 
     public LiveData<Boolean> getNavigateToForgotPassword(){
