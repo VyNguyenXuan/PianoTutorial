@@ -32,7 +32,7 @@ import com.example.pianotutorial.features.ui.viewmodel.LoginViewModel;
 public class LoginFragment extends Fragment {
     private LoginViewModel viewModel;
     private FragmentLoginBinding Binding;
-//
+    //
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -52,6 +52,18 @@ public class LoginFragment extends Fragment {
             if (navigate != null && navigate){
                 navigateToForgotPassword();
                 viewModel.doneNavigateToForgotPassword();
+            }
+        });
+        viewModel.getNavigateToNavigationBar().observe(getViewLifecycleOwner(), navigate -> {
+            if (navigate != null && navigate){
+                navigateToNavigationBar();
+                viewModel.doneNavigateToNavigationBar();
+            }
+        });
+        viewModel.getNavigateToRegister().observe(getViewLifecycleOwner(), nav -> {
+            if (nav != null && nav){
+                navigateToRegister();
+                viewModel.doneNavigatingToRegister();
             }
         });
 
@@ -83,6 +95,16 @@ public class LoginFragment extends Fragment {
     private void navigateToForgotPassword() {
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new ForgotPasswordFragment())
+                .addToBackStack(null)
+                .commit();
+    }
+    private void navigateToNavigationBar() {
+        Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
+        startActivity(intent);
+    }
+    private void navigateToRegister(){
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new RegisterFragment())
                 .addToBackStack(null)
                 .commit();
     }

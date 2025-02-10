@@ -17,35 +17,58 @@ import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
 
 public class LoginViewModel extends ViewModel {
-    private final MutableLiveData<Boolean> _zzzzBackToMainMenu = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _navigateBackToMainMenu = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToForgotPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToRegister = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _navigateToNavigationBar = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _isLoading = new MutableLiveData<>();
+    public LiveData<Boolean> getIsLoading(){
+        return _isLoading;
+    }
+    public LiveData<Boolean> getNavigateToNavigationBar() {
+        return _navigateToNavigationBar;
+    }
+    public void onLogClicked() {
+        _navigateToNavigationBar.setValue(true);
+    }
+    public void doneNavigateToNavigationBar() {
+        _navigateToNavigationBar.setValue(false);
+    }
+    public LiveData<Boolean> getNavigateBackToMainMenu() {
+        return _navigateBackToMainMenu;
+    }
 
-    public LiveData<Boolean> getNavigateBackToMainMenu(){
-        return _zzzzBackToMainMenu;
-    }
-    public void onBackClicked(){
-        _zzzzBackToMainMenu.setValue(true);
-    }
-    public void doneNavigatingBack(){
-        _zzzzBackToMainMenu.setValue(false);
+    public void onBackClicked() {
+        _navigateBackToMainMenu.setValue(true);
     }
 
-    public LiveData<Boolean> getNavigateToForgotPassword(){
+    public void doneNavigatingBack() {
+        _navigateBackToMainMenu.setValue(false);
+    }
+
+    public LiveData<Boolean> getNavigateToForgotPassword() {
         return _navigateToForgotPassword;
     }
-    public void onForgotPasswordClicked(){
+    public LiveData<Boolean> getNavigateToRegister(){
+        return _navigateToRegister;
+    }
+
+    public void onForgotPasswordClicked() {
         _navigateToForgotPassword.setValue(true);
     }
-    public void doneNavigateToForgotPassword(){
+
+    public void doneNavigateToForgotPassword() {
         _navigateToForgotPassword.setValue(false);
     }
 
-    public LiveData<Boolean> navigateToRegister = _navigateToRegister;
-    public void onRegisterLinkClicked(){
+
+
+
+    public void onRegisterLinkClicked() {
         _navigateToRegister.setValue(true);
     }
-    public void doneNavigatingToRegister(){
+
+    public void doneNavigatingToRegister() {
         _navigateToRegister.setValue(false);
     }
 }
