@@ -17,7 +17,7 @@ import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
 
 public class LoginViewModel extends ViewModel {
-    private final MutableLiveData<Boolean> _anavigateBackToMainMenu = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> _navigateBackToMainMenu = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToForgotPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToRegister = new MutableLiveData<>();
     private final MutableLiveData<Boolean> _navigateToNavigationBar = new MutableLiveData<>();
