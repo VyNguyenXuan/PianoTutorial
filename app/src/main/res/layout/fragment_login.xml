@@ -8,7 +8,11 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.pianotutorial.features.ui.viewmodel.LoginViewModel" />
+            type="com.example.pianotutorial.features.authetication.viewmodels.LoginViewModel" />
+        <variable
+            name="eventhandler"
+            type="com.example.pianotutorial.features.authetication.eventhandlers.LoginEventHandler" />
+
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -234,7 +238,7 @@
                 android:text="@string/forgot_password"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:onClick="@{() -> viewModel.onForgotPasswordClicked()}"/>
+                android:onClick="@{() -> eventhandler::navigateToForgotPassword}"/>
 
             <Button
                 android:id="@+id/login_btn"
@@ -251,7 +255,7 @@
                 android:text="@string/lbl_dangnhap"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:onClick="@{() -> viewModel.onLogClicked()}"/>
+                android:onClick="@{() -> eventhandler::navigateToNavigationBar}"/>
 
         </LinearLayout>
 
@@ -270,7 +274,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            android:onClick="@{() -> viewModel.onBackClicked()}"/>
+            android:onClick="@{() -> eventhandler::navigateBack}"/>
 
 
 
@@ -290,7 +294,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginwith"
             app:layout_constraintVertical_bias="0.123"
-            android:onClick="@{() -> viewModel.onRegisterLinkClicked()}"/>
+            android:onClick="@{() -> eventhandler::navigateToRegister}"/>
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
