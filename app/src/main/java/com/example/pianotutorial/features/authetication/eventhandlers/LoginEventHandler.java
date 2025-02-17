@@ -7,18 +7,18 @@ import android.view.View;
 import com.example.pianotutorial.features.authetication.fragments.LoginFragment;
 import com.example.pianotutorial.features.authetication.fragments.RegisterFragment;
 import com.example.pianotutorial.features.authetication.viewmodels.LoginViewModel;
-import com.example.pianotutorial.features.authetication.viewmodels.MainMenuViewModel;
+import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
 import com.example.pianotutorial.features.authetication.fragments.ForgotPasswordFragment;
 
 public class LoginEventHandler {
     private final LoginViewModel loginViewModel;
-    private final MainMenuViewModel mainMenuViewModel;
+    private final AuthViewModel authViewModel;
     Context context;
 
-    public LoginEventHandler(LoginViewModel viewModel, MainMenuViewModel mainMenuViewModel, Context context) {
+    public LoginEventHandler(LoginViewModel viewModel, AuthViewModel authViewModel, Context context) {
         this.loginViewModel = viewModel;
-        this.mainMenuViewModel = mainMenuViewModel;
+        this.authViewModel = authViewModel;
         this.context = context;
     }
 
@@ -26,16 +26,16 @@ public class LoginEventHandler {
         Intent intent = new Intent(context, NavigationBarActivity.class);
         context.startActivity(intent);}
     public void navigateToForgotPassword(View view) {
-        mainMenuViewModel.getAuthFragment().setValue(new ForgotPasswordFragment());
-        mainMenuViewModel.setPreviousFragment(new LoginFragment());
+        authViewModel.getAuthFragment().setValue(new ForgotPasswordFragment());
+        authViewModel.setPreviousFragment(new LoginFragment());
     }
     public void navigateToRegister(View view){
-        mainMenuViewModel.getAuthFragment().setValue(new RegisterFragment());
-        mainMenuViewModel.setPreviousFragment(new LoginFragment());
+        authViewModel.getAuthFragment().setValue(new RegisterFragment());
+        authViewModel.setPreviousFragment(new LoginFragment());
     }
     public void navigateBack(View view) {
-        mainMenuViewModel.getAuthFragment().setValue(mainMenuViewModel.getPreviousFragment());
-        mainMenuViewModel.setPreviousFragment(new ForgotPasswordFragment());
+        authViewModel.getAuthFragment().setValue(authViewModel.getPreviousFragment());
+        authViewModel.setPreviousFragment(new ForgotPasswordFragment());
 
     }
 

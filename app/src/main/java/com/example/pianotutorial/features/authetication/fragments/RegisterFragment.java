@@ -12,9 +12,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.FragmentRegisterBinding;
-import com.example.pianotutorial.features.authetication.eventhandlers.LoginEventHandler;
 import com.example.pianotutorial.features.authetication.eventhandlers.RegisterEventHandler;
-import com.example.pianotutorial.features.authetication.viewmodels.MainMenuViewModel;
+import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.RegisterViewModel;
 
 public class RegisterFragment extends Fragment {
@@ -22,17 +21,17 @@ public class RegisterFragment extends Fragment {
     private RegisterViewModel viewModel;
     private FragmentRegisterBinding Binding;
     private RegisterEventHandler eventHandler;
-    private MainMenuViewModel mainMenuViewModel;
+    private AuthViewModel authViewModel;
 
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_register, container, false);
         viewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
-        mainMenuViewModel = new ViewModelProvider(requireActivity()).get(MainMenuViewModel.class);
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
         Binding.setViewModel(viewModel);
         Binding.setLifecycleOwner(this);
-        eventHandler = new RegisterEventHandler(viewModel,mainMenuViewModel,getContext());
+        eventHandler = new RegisterEventHandler(viewModel, authViewModel,getContext());
         Binding.setEventHandler(eventHandler);
 
 

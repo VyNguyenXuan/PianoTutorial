@@ -13,21 +13,21 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.FragmentForgotpasswordBinding;
 import com.example.pianotutorial.features.authetication.eventhandlers.ForgotPasswordEventHandler;
+import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.ForgotPasswordViewModel;
-import com.example.pianotutorial.features.authetication.viewmodels.MainMenuViewModel;
 
 public class ForgotPasswordFragment extends Fragment {
 
     private FragmentForgotpasswordBinding Binding;
-    private MainMenuViewModel mainMenuViewModel;
+    private AuthViewModel authViewModel;
     private ForgotPasswordViewModel viewModel;
     private ForgotPasswordEventHandler eventHandler;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgotpassword, container, false);
         viewModel = new ViewModelProvider(this).get(ForgotPasswordViewModel.class);
-        mainMenuViewModel = new ViewModelProvider(requireActivity()).get(MainMenuViewModel.class);
-        eventHandler = new ForgotPasswordEventHandler(viewModel,mainMenuViewModel,getContext());
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+        eventHandler = new ForgotPasswordEventHandler(viewModel, authViewModel,getContext());
         Binding.setViewModel(viewModel);
         Binding.setLifecycleOwner(this);
         Binding.setEventHandler(eventHandler);

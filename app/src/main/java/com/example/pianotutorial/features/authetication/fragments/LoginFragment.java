@@ -14,23 +14,23 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.FragmentLoginBinding;
+import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.LoginViewModel;
 import com.example.pianotutorial.features.authetication.eventhandlers.LoginEventHandler;
-import com.example.pianotutorial.features.authetication.viewmodels.MainMenuViewModel;
 
 public class LoginFragment extends Fragment {
     private LoginViewModel viewModel;
     private LoginEventHandler eventHandler;
     private FragmentLoginBinding Binding;
-    private MainMenuViewModel mainMenuViewModel;
+    private AuthViewModel authViewModel;
     //
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login, container, false);
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-        mainMenuViewModel = new ViewModelProvider(requireActivity()).get(MainMenuViewModel.class);
-        eventHandler = new LoginEventHandler(viewModel,mainMenuViewModel,getContext());
+        authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
+        eventHandler = new LoginEventHandler(viewModel, authViewModel,getContext());
         Binding.setEventhandler(eventHandler);
         Binding.setViewModel(viewModel);
         Binding.setLifecycleOwner(this);
