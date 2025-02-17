@@ -42,7 +42,7 @@
 
         </activity>
         <activity
-            android:name=".features.ui.MainMenu"
+            android:name=".features.authetication.activities.MainMenuActivity"
             android:exported="true"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">

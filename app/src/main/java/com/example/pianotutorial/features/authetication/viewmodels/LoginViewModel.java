@@ -1,20 +1,8 @@
-package com.example.pianotutorial.features.ui.viewmodel;
+package com.example.pianotutorial.features.authetication.viewmodels;
 
-import android.content.Context;
-import android.content.Intent;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ClickableSpan;
-import android.view.View;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
-import com.example.pianotutorial.R;
-import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
 
 public class LoginViewModel extends ViewModel {
     private final MutableLiveData<Boolean> _navigateBackToMainMenu = new MutableLiveData<>();

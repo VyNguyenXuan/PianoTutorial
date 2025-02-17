@@ -5,7 +5,10 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.pianotutorial.features.ui.viewmodel.CheckEmailViewModel" />
+            type="com.example.pianotutorial.features.authetication.viewmodels.CheckEmailViewModel" />
+        <variable
+            name="eventHandler"
+            type="com.example.pianotutorial.features.authetication.eventhandlers.CheckEmailEventHandler" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,7 +17,21 @@
         android:id="@+id/check_email"
         android:orientation="vertical"
         android:background="@color/main_background">
-
+        <ImageView
+            android:id="@+id/back_btn"
+            style="@style/btnSolidRounded"
+            android:layout_width="45.5dp"
+            android:layout_height="45.5dp"
+            android:layout_marginTop="40dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/title"
+            app:layout_constraintHorizontal_bias="0.193"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            android:onClick="@{() -> eventHandler::navigateBack}"/>
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -79,6 +96,13 @@
                 android:inputType="number"
                 android:maxLength="1" />
 
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CheckEmail" />
+
             <EditText
                 android:id="@+id/input_code_three"
                 android:layout_width="80dp"
@@ -124,6 +148,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.485"
             app:layout_constraintStart_toStartOf="parent"
+            android:onClick="@{() -> eventHandler::navigateToLogin}"
             />
 
         <TextView
