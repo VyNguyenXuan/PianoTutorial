@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.example.pianotutorial.features.authetication.fragments.LoginFragment;
+import com.example.pianotutorial.features.authetication.fragments.MainMenuFragment;
 import com.example.pianotutorial.features.authetication.fragments.RegisterFragment;
 import com.example.pianotutorial.features.authetication.viewmodels.LoginViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
@@ -34,7 +35,7 @@ public class LoginEventHandler {
         authViewModel.setPreviousFragment(new LoginFragment());
     }
     public void navigateBack(View view) {
-        authViewModel.getAuthFragment().setValue(authViewModel.getPreviousFragment());
+        authViewModel.getAuthFragment().setValue(new MainMenuFragment());
         authViewModel.setPreviousFragment(new ForgotPasswordFragment());
 
     }

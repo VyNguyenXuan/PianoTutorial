@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import com.example.pianotutorial.features.authetication.fragments.CheckEmailFragment;
+import com.example.pianotutorial.features.authetication.fragments.LoginFragment;
 import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.CheckEmailViewModel;
 
@@ -21,7 +22,7 @@ public class CheckEmailEventHandler {
         authViewModel.setPreviousFragment(new CheckEmailFragment());
     }
     public void navigateToLogin(View view){
-        authViewModel.getAuthFragment().setValue(authViewModel.getPreviousFragment());
+        authViewModel.getAuthFragment().setValue(new LoginFragment());
         authViewModel.setPreviousFragment(new CheckEmailFragment());
     }
 }

@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.example.pianotutorial.features.authetication.fragments.CheckEmailFragment;
 import com.example.pianotutorial.features.authetication.fragments.ForgotPasswordFragment;
+import com.example.pianotutorial.features.authetication.fragments.LoginFragment;
 import com.example.pianotutorial.features.authetication.viewmodels.ForgotPasswordViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 
@@ -18,7 +19,7 @@ public class ForgotPasswordEventHandler {
         this.context = context;
     }
     public void navigateBack(View view) {
-        authViewModel.getAuthFragment().setValue(authViewModel.getPreviousFragment());
+        authViewModel.getAuthFragment().setValue(new LoginFragment());
         authViewModel.setPreviousFragment(new ForgotPasswordFragment());
     }
     public void navigateToCheckEmail(View view){
