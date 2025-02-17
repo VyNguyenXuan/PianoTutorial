@@ -2,25 +2,26 @@ package com.example.pianotutorial.features.authetication.eventhandlers;
 import android.content.Context;
 import android.view.View;
 
-import androidx.annotation.Nullable;
-
 import com.example.pianotutorial.features.authetication.fragments.LoginFragment;
 import com.example.pianotutorial.features.authetication.fragments.RegisterFragment;
+import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.MainMenuViewModel;
-import com.example.pianotutorial.features.authetication.viewmodels.RegisterViewModel;
 
 public class MainMenuEventHandler {
-    private final MainMenuViewModel mainMenuViewModel;
+    private final MainMenuViewModel viewModel;
+    private final AuthViewModel authViewModel;
     Context context;
-    public MainMenuEventHandler(MainMenuViewModel viewModel, Context context) {
-        this.mainMenuViewModel = viewModel;
+    public MainMenuEventHandler(MainMenuViewModel viewModel, AuthViewModel authViewModel, Context context) {
+        this.viewModel = viewModel;
+        this.authViewModel = authViewModel;
         this.context = context;
     }
+
     public void navigateToRegister(View view){
-        mainMenuViewModel.getAuthFragment().setValue(new RegisterFragment());
+        authViewModel.getAuthFragment().setValue(new RegisterFragment());
     }
 
     public void navigateToLogin(View view){
-        mainMenuViewModel.getAuthFragment().setValue(new LoginFragment());
+        authViewModel.getAuthFragment().setValue(new LoginFragment());
     }
 }

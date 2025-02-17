@@ -6,24 +6,24 @@ import android.view.View;
 import com.example.pianotutorial.features.authetication.fragments.CheckEmailFragment;
 import com.example.pianotutorial.features.authetication.fragments.ForgotPasswordFragment;
 import com.example.pianotutorial.features.authetication.viewmodels.ForgotPasswordViewModel;
-import com.example.pianotutorial.features.authetication.viewmodels.MainMenuViewModel;
+import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 
 public class ForgotPasswordEventHandler {
     private final ForgotPasswordViewModel forgotPasswordViewModel;
-    private final MainMenuViewModel mainMenuViewModel;
+    private final AuthViewModel authViewModel;
     Context context;
-    public ForgotPasswordEventHandler(ForgotPasswordViewModel viewModel, MainMenuViewModel mainMenuViewModel, Context context) {
+    public ForgotPasswordEventHandler(ForgotPasswordViewModel viewModel, AuthViewModel authViewModel, Context context) {
         this.forgotPasswordViewModel = viewModel;
-        this.mainMenuViewModel = mainMenuViewModel;
+        this.authViewModel = authViewModel;
         this.context = context;
     }
     public void navigateBack(View view) {
-        mainMenuViewModel.getAuthFragment().setValue(mainMenuViewModel.getPreviousFragment());
-        mainMenuViewModel.setPreviousFragment(new ForgotPasswordFragment());
+        authViewModel.getAuthFragment().setValue(authViewModel.getPreviousFragment());
+        authViewModel.setPreviousFragment(new ForgotPasswordFragment());
     }
     public void navigateToCheckEmail(View view){
-        mainMenuViewModel.getAuthFragment().setValue(new CheckEmailFragment());
-        mainMenuViewModel.setPreviousFragment(new ForgotPasswordFragment());
+        authViewModel.getAuthFragment().setValue(new CheckEmailFragment());
+        authViewModel.setPreviousFragment(new ForgotPasswordFragment());
     }
 
 

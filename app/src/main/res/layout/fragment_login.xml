@@ -238,7 +238,7 @@
                 android:text="@string/forgot_password"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:onClick="@{() -> eventhandler::navigateToForgotPassword}"/>
+                android:onClick="@{eventhandler::navigateToForgotPassword}"/>
 
             <Button
                 android:id="@+id/login_btn"
@@ -255,7 +255,7 @@
                 android:text="@string/lbl_dangnhap"
                 android:textColor="@color/white"
                 android:textSize="15sp"
-                android:onClick="@{() -> eventhandler::navigateToNavigationBar}"/>
+                android:onClick="@{eventhandler::navigateToNavigationBar}"/>
 
         </LinearLayout>
 
@@ -274,7 +274,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            android:onClick="@{() -> eventhandler::navigateBack}"/>
+            android:onClick="@{eventhandler::navigateBack}"/>
 
 
 
@@ -294,7 +294,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginwith"
             app:layout_constraintVertical_bias="0.123"
-            android:onClick="@{() -> eventhandler::navigateToRegister}"/>
+            android:onClick="@{eventhandler::navigateToRegister}"/>
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
