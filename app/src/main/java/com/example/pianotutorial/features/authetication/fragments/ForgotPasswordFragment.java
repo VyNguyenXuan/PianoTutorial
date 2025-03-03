@@ -1,9 +1,11 @@
 package com.example.pianotutorial.features.authetication.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -15,6 +17,11 @@ import com.example.pianotutorial.databinding.FragmentForgotpasswordBinding;
 import com.example.pianotutorial.features.authetication.eventhandlers.ForgotPasswordEventHandler;
 import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.ForgotPasswordViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 public class ForgotPasswordFragment extends Fragment {
 
@@ -22,6 +29,8 @@ public class ForgotPasswordFragment extends Fragment {
     private AuthViewModel authViewModel;
     private ForgotPasswordViewModel viewModel;
     private ForgotPasswordEventHandler eventHandler;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private static final String TAG = "ForgotPassActivity";
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_forgotpassword, container, false);
@@ -32,26 +41,24 @@ public class ForgotPasswordFragment extends Fragment {
         Binding.setLifecycleOwner(this);
         Binding.setEventHandler(eventHandler);
 
-        viewModel.getNavigateBackToLogin().observe(getViewLifecycleOwner(), navigate -> {
-            if (navigate) {
-                getActivity().onBackPressed();
-                viewModel.doneNavigatingToLogin();
+        viewModel.getIsValid().observe(getViewLifecycleOwner(), isValid -> {
+            if (isValid) {
+                mAuth.sendPasswordResetEmail(Objects.requireNonNull(viewModel.getEmail().getValue())).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getActivity(), "Chúng tôi đã gửi mail đến hộp thư của bạn để đổi mật khẩu!", Toast.LENGTH_SHORT).show();
+                            authViewModel.getAuthFragment().setValue(new LoginFragment());
+                            authViewModel.setPreviousFragment(new ForgotPasswordFragment());
+
+                    } else {
+                            Log.e(TAG, "Failed to send password reset email", task.getException());
+                            Toast.makeText(getActivity(), "Không thể gửi mail. Hãy kiểm tra lại địa chỉ email.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
-
-        viewModel.getNavigateToCheckEmail().observe(getViewLifecycleOwner(), navigate -> {
-            if (navigate != null && navigate){
-                navigateToCheckEmail();
-                viewModel.doneNavigatingToCheckEmail();
-            }
-        });
-
         return Binding.getRoot();
-    }
-    private void navigateToCheckEmail() {
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new CheckEmailFragment())
-                .addToBackStack(null)
-                .commit();
     }
 }

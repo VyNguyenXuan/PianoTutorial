@@ -1,9 +1,12 @@
 package com.example.pianotutorial.features.authetication.fragments;
 
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,13 +20,28 @@ import com.example.pianotutorial.databinding.FragmentLoginBinding;
 import com.example.pianotutorial.features.authetication.viewmodels.AuthViewModel;
 import com.example.pianotutorial.features.authetication.viewmodels.LoginViewModel;
 import com.example.pianotutorial.features.authetication.eventhandlers.LoginEventHandler;
+import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Objects;
 
 public class LoginFragment extends Fragment {
     private LoginViewModel viewModel;
     private LoginEventHandler eventHandler;
     private FragmentLoginBinding Binding;
     private AuthViewModel authViewModel;
+    private FirebaseAuth mAuth;
+    private static final String TAG = "LoginActivity";
     //
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance(); // Khởi tạo FirebaseAuth
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,@Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
@@ -34,69 +52,30 @@ public class LoginFragment extends Fragment {
         Binding.setEventhandler(eventHandler);
         Binding.setViewModel(viewModel);
         Binding.setLifecycleOwner(this);
-        viewModel.getNavigateBackToMainMenu().observe(getViewLifecycleOwner(), navigate -> {
-            if (navigate) {
-                getActivity().onBackPressed();
-                viewModel.doneNavigatingBack();
+
+        viewModel.getIsValid().observe(getViewLifecycleOwner(), isValid -> {
+            if (isValid) {
+                mAuth.signInWithEmailAndPassword(Objects.requireNonNull(viewModel.getEmail().getValue()), Objects.requireNonNull(viewModel.getPassword().getValue()))
+                        .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "signInWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    Toast.makeText(getActivity(), "Đăng Nhập Thành công", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), NavigationBarActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                } else {
+                                    Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                    Toast.makeText(getActivity(), "Sai Tài Khoản Hoặc Mật khẩu!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
 
-        viewModel.getNavigateToForgotPassword().observe(getViewLifecycleOwner(), navigate -> {
-            if (navigate != null && navigate){
-                navigateToForgotPassword();
-                viewModel.doneNavigateToForgotPassword();
-            }
-        });
 
-
-        viewModel.getNavigateToRegister().observe(getViewLifecycleOwner(), nav -> {
-            if (nav != null && nav){
-                navigateToRegister();
-                viewModel.doneNavigatingToRegister();
-            }
-        });
-
-//        String text = getString(R.string.not_have_account);
-//        SpannableString spannableString = new SpannableString(text);
-//        ClickableSpan clickableSpan = new ClickableSpan() {
-//            @Override
-//            public void onClick(@NonNull View widget) {
-//                viewModel.onRegisterLinkClicked();
-//            }
-//        };
-//
-//        int startIndex = text.indexOf("Đăng kí ngay");
-//        int endIndex = startIndex + "Đăng kí ngay".length();
-//
-//        spannableString.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        Binding.txtChuacotk.setText(spannableString);
-//
-//        viewModel.navigateToRegister.observe(getViewLifecycleOwner(), navigate -> {
-//            if(navigate != null && navigate){
-//                NavHostFragment.findNavController(LoginFragment.this)
-//                        .navigate(R.id.action_loginFragment_to_registerFragment);
-//                viewModel.doneNavigatingToRegister();
-//            }
-//        });
-//
         return Binding.getRoot();
     }
-    private void navigateToForgotPassword() {
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new ForgotPasswordFragment())
-                .addToBackStack(null)
-                .commit();
-    }
-    private void navigateToRegister(){
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new RegisterFragment())
-                .addToBackStack(null)
-                .commit();
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Binding = null;
-    }
-
 }

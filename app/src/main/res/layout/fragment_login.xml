@@ -176,7 +176,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/enter_email"
                     style="@style/Widget.AppCompat.AutoCompleteTextView"
                     android:layout_width="match_parent"
@@ -186,8 +186,9 @@
                     android:fontFamily="@font/inter"
                     android:gravity="start|center_vertical"
                     android:hint="Email"
+                    android:text="@={viewModel.email}"
                     android:includeFontPadding="false"
-                    android:inputType="text|textAutoComplete|textCapCharacters|textCapSentences|textCapWords"
+                    android:inputType="text|textAutoComplete"
                     android:maxLines="1"
                     android:paddingLeft="13dp"
                     android:paddingRight="13dp"
@@ -207,7 +208,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/container_email">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/enter_password"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -215,6 +216,7 @@
                     android:fontFamily="@font/inter"
                     android:gravity="start|center_vertical"
                     android:hint="@string/input_pass"
+                    android:text="@={viewModel.password}"
                     android:inputType="textPassword"
                     android:paddingLeft="13dp"
                     android:paddingRight="13dp"
@@ -295,11 +297,14 @@
             app:layout_constraintTop_toBottomOf="@+id/loginwith"
             app:layout_constraintVertical_bias="0.123"
             android:onClick="@{eventhandler::navigateToRegister}"/>
+
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

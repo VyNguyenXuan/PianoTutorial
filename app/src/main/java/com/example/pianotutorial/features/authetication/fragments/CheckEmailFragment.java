@@ -29,10 +29,12 @@ public class CheckEmailFragment extends Fragment {
         Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_check_email, container, false);
         viewModel = new ViewModelProvider(this).get(CheckEmailViewModel.class);
         authViewModel = new ViewModelProvider(requireActivity()).get(AuthViewModel.class);
-        eventHandler = new CheckEmailEventHandler(viewModel, authViewModel,getContext());
+        eventHandler = new CheckEmailEventHandler(viewModel, authViewModel, getContext());
         Binding.setViewModel(viewModel);
         Binding.setLifecycleOwner(this);
         Binding.setEventHandler(eventHandler);
+
+//        String username = Binding.inputCodeOne.getText().toString();
 
         return Binding.getRoot();
     }

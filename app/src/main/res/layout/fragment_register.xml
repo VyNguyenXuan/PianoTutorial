@@ -47,8 +47,8 @@
 
         <TextView
             android:id="@+id/dangkivaoviano"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="518dp"
+            android:layout_height="66dp"
             android:layout_gravity="center|top"
             android:fontFamily="@font/inter"
             android:singleLine="true"
@@ -232,54 +232,27 @@
             android:id="@+id/text_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/loginwith_container"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dangkivaoviano"
-            app:layout_constraintVertical_bias="0.6">
+            app:layout_constraintTop_toBottomOf="@+id/dangkivaoviano">
 
             <FrameLayout
                 android:layout_width="335dp"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false">
+                android:layout_height="60dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="20dp">
 
-                <EditText
-                    android:id="@+id/enter_usernam"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_gravity="top|start"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/nhap_email"
-                    android:fontFamily="@font/inter"
-                    android:hint="@string/username"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:paddingLeft="13dp"
-                    android:paddingRight="13dp"
-                    android:singleLine="true"
-                    android:textColor="@color/gray_900_01"
-                    android:textColorHint="@color/hintTextColor"
-                    android:textSize="20sp" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="335dp"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false">
-
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/enter_email"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:layout_gravity="top|start"
-                    android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/nhap_email"
                     android:fontFamily="@font/inter"
-                    android:gravity="start|center_vertical"
                     android:hint="Email"
-                    android:includeFontPadding="false"
+                    android:text="@={viewModel.email}"
                     android:maxLines="1"
                     android:paddingLeft="13dp"
                     android:paddingRight="13dp"
@@ -292,18 +265,19 @@
             <FrameLayout
                 android:id="@+id/container_nhappass"
                 android:layout_width="335dp"
-                android:layout_height="wrap_content">
+                android:layout_height="60dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="20dp">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/enter_password"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_gravity="top|start"
-                    android:layout_marginTop="5dp"
+                    android:text="@={viewModel.password}"
                     android:layout_marginBottom="5dp"
                     android:background="@drawable/nhap_email"
                     android:fontFamily="@font/inter"
-                    android:gravity="start|center_vertical"
                     android:hint="@string/input_pass"
                     android:inputType="textPassword"
                     android:paddingLeft="13dp"
@@ -319,13 +293,11 @@
                 android:layout_width="335dp"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/verify_password"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:layout_gravity="top|start"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:text="@={viewModel.repass}"
                     android:background="@drawable/nhap_email"
                     android:fontFamily="@font/inter"
                     android:gravity="start|center_vertical"

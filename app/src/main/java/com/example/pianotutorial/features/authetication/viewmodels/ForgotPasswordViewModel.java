@@ -11,9 +11,6 @@ public class ForgotPasswordViewModel extends ViewModel {
     public LiveData<Boolean> getNavigateBackToLogin(){
         return _navigateBackToLogin;
     }
-    public void onBackClicked(){
-        _navigateBackToLogin.setValue(true);
-    }
     public void doneNavigatingToLogin(){
         _navigateBackToLogin.setValue(false);
     }
@@ -21,10 +18,17 @@ public class ForgotPasswordViewModel extends ViewModel {
     public LiveData<Boolean> getNavigateToCheckEmail() {
         return _navigateToCheckEmail;
     }
-    public void onContinueClicked(){
-        _navigateToCheckEmail.setValue(true);
-    }
     public void doneNavigatingToCheckEmail(){
         _navigateToCheckEmail.setValue(false);
+    }
+
+    public MutableLiveData<String> email = new MutableLiveData<>();
+
+    public MutableLiveData<String> getEmail() {
+        return email;
+    }
+    public MutableLiveData<Boolean> isValid = new MutableLiveData<>(Boolean.FALSE);
+    public MutableLiveData<Boolean> getIsValid(){
+        return isValid;
     }
 }
