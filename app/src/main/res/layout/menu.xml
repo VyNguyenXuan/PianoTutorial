@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
-
-        <variable
-            name="activityNavigationBarEventHandler"
-            type="com.example.pianotutorial.features.navigation_bar.evenhandlers.NavigationBarEventHandler" />
-
     </data>
     <RelativeLayout
         android:layout_width="match_parent"
