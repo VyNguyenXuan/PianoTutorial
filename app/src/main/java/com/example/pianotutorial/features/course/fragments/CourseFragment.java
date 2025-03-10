@@ -36,7 +36,7 @@ public class CourseFragment extends Fragment {
     }
 
     private void setupViewPager2() {
-        List<String> topCourses = Arrays.asList("Course 1", "Course 2", "Course 3");
+        List<String> topCourses = Arrays.asList("Course 1", "Course 2", "Course 3","Course 4");
         TopCourseAdapter topCourseAdapter = new TopCourseAdapter(topCourses, getContext());
         _fragmentCourseBinding.viewPager2Top.setAdapter(topCourseAdapter);
 
