@@ -9,12 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.ActivityEditProfileBinding;
-import com.example.pianotutorial.features.course.fragments.CourseFragment;
-import com.example.pianotutorial.features.menu.fragments.MenuFragment;
-import com.example.pianotutorial.features.music.fragments.MusicFragment;
-import com.example.pianotutorial.features.navigation_bar.eventhandlers.NavigationBarEventHandler;
-import com.example.pianotutorial.features.navigation_bar.viewmodels.NavigationBarViewModel;
-import com.example.pianotutorial.features.song.fragments.SongFragment;
 
 public class EditProfileActivity extends AppCompatActivity {
     private ActivityEditProfileBinding activityEditProfileBinding;
@@ -25,6 +19,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 this,
                 R.layout.activity_edit_profile
         );
+        activityEditProfileBinding.executePendingBindings();
 
 
     }

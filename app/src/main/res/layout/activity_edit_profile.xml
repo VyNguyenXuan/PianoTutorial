@@ -2,13 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
-
         <variable
-            name="editProfileEventHandler"
-            type="com.example.pianotutorial.features.edit_profile.eventhandlers.EditProfileEventHandler"/>
+            name="viewmodel"
+            type="com.example.pianotutorial.features.edit_profile.viewmodels.EditProfileViewModel" />
         <variable
-            name="editProfileViewModel"
-            type="com.example.pianotutorial.features.edit_profile.viewmodels.EditProfileViewModel"/>
+            name="eventHandler"
+            type="com.example.pianotutorial.features.edit_profile.eventhandlers.EditProfileEventHandler" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
 
@@ -45,9 +44,7 @@
             app:layout_constraintEnd_toStartOf="@+id/suathongtin"
             app:layout_constraintHorizontal_bias="0.261"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            android:onClick="@{() -> viewModel.onBackClicked()}"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rich_image_container"

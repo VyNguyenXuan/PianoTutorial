@@ -29,7 +29,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.constants.GlobalVariables;
 import com.example.pianotutorial.databinding.ActivityPlayscreenBinding;
-import com.example.pianotutorial.features.components.helpers.DownloadTask;
 import com.example.pianotutorial.features.components.helpers.MidiAware;
 import com.example.pianotutorial.features.components.helpers.MidiNotesReceiver;
 import com.example.pianotutorial.features.components.helpers.Note;
@@ -202,12 +201,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
         activityPlayscreenBinding.speed1Text.setTextColor(ContextCompat.getColor(this, speed1TextColor));
         activityPlayscreenBinding.speed2Text.setTextColor(ContextCompat.getColor(this, speed2TextColor));
         activityPlayscreenBinding.speed3Text.setTextColor(ContextCompat.getColor(this, speed3TextColor));
-
-
-        // Start the download task
-        DownloadTask downloadTask = new DownloadTask(this);
-        downloadTask.execute(fileURL);
-        startUpdatingStaff();
     }
 
     private void setPlayerPlaybackSpeed(MediaPlayer player, float speed) {

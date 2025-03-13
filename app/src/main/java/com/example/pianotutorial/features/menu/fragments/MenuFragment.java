@@ -22,6 +22,14 @@ public class MenuFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         _fragmentMenuBiding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false);
-_fragmentMenuBiding.setEventhandler(menuEventHandler);
+
+        // Initialize the MenuEventHandler with context
+        menuEventHandler = new MenuEventHandler(requireContext());
+
+        // Set the event handler
+        _fragmentMenuBiding.setEventhandler(menuEventHandler);
+        _fragmentMenuBiding.executePendingBindings(); // Ensure data binding executes immediately
+
         return _fragmentMenuBiding.getRoot();
-    }}
+    }
+}
