@@ -21,13 +21,23 @@ public class SheetList {
         // Data for second Sheet
         int songId2 = 2;
         int topSignature2 = 3;
-        int bottomSignature2 = 4;
-        int keySignature2 = 1;
-        String sheetFile2 = "";
-        String rightSymbol2 = "E:F3#D3C3#E3_1.0 E:F3B3A3_1.0 D:G3B3A3_0.75 D:D3#F3#_0.5";
-        String leftSymbol2 = "F4_0.5 P_0.5 F:G4_0.5 C4_0.5 D5_1.0";
+        int bottomSignature2 = 8;
+        int keySignature2 = 2;
+        String sheetFile2 = "https://www.dropbox.com/scl/fi/bbklc7egbw333lssexsfx/Fr_Elise_-_Beethoven_-_for_beginner_piano.mid?rlkey=71wt7rm5nxuladqrqx5hnzl0e&st=o3g19xtu&dl=0";
+        String rightSymbol2 = "E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 E4_0.5 F4_0.5 / E4_0.5 D4_0.5 C4_0.5 C4_0.5 / " +
+                "E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 E4_0.5 F4_0.5 / E4_0.5 D4_0.5 C4_0.5 C4_0.5 / " +
+                "C4_1.0 C4_1.0 G4_0.5 G4_0.5 / A4_0.5 A4_0.5 G4_0.5 G4_0.5 / F4_0.5 F4_0.5 F4_0.5 F4_0.5 / E4_0.5 E4_0.5 D4_0.5 D4_0.5 / " +
+                "C4_1.0 C4_1.0 G4_0.5 G4_0.5 / A4_0.5 A4_0.5 G4_0.5 G4_0.5 / F4_0.5 F4_0.5 F4_0.5 F4_0.5 / E4_0.5 E4_0.5 D4_0.5 D4_0.5 / " +
+                "E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 E4_0.5 F4_0.5 / E4_0.5 D4_0.5 C4_0.5 C4_0.5 / " +
+                "E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 D4_0.5 D4_0.5 / E4_0.5 E4_0.5 E4_0.5 F4_0.5 / E4_0.5 D4_0.5 C4_0.5 C4_0.5 ";
+        String leftSymbol2 = "G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 G2_0.5 A2_0.5 / G2_0.5 F2_0.5 E2_0.5 E2_0.5 / " +
+                "G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 G2_0.5 A2_0.5 / G2_0.5 F2_0.5 E2_0.5 E2_0.5 / " +
+                "G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 G2_0.5 A2_0.5 / G2_0.5 F2_0.5 E2_0.5 E2_0.5 / " +
+                "G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 G2_0.5 A2_0.5 / G2_0.5 F2_0.5 E2_0.5 E2_0.5 / " +
+                "G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 G2_0.5 A2_0.5 / G2_0.5 F2_0.5 E2_0.5 E2_0.5 / " +
+                "G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 F2_0.5 F2_0.5 / G2_0.5 G2_0.5 G2_0.5 A2_0.5 / G2_0.5 F2_0.5 E2_0.5 E2_0.5 ";
 
-        Sheet sheet2 = new Sheet(2, songId2, "Song 2", topSignature2, bottomSignature2, 1, "Piano", sheetFile2, keySignature2, rightSymbol2, leftSymbol2);
+        Sheet sheet2 = new Sheet(2, songId2, "Für Elise", topSignature2, bottomSignature2, 1, "Piano", sheetFile2, keySignature2, rightSymbol2, leftSymbol2);
         sheetList.add(sheet2);
 
         // Data for third Sheet

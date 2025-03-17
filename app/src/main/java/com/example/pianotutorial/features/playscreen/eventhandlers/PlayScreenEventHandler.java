@@ -34,7 +34,7 @@ public class PlayScreenEventHandler {
         SheetList sheetList = new SheetList();
         List<Sheet> sheets = sheetList.sheetList();
         if (sheets != null && !sheets.isEmpty()) {
-            Sheet firstSheet = sheets.get(0); // Get the first Sheet in the list
+            Sheet firstSheet = sheets.get(1); // Get the first Sheet in the list
             playScreenViewModel.getCurrentSheet().setValue(firstSheet); // Set the first sheet to the ViewModel
         }
     }
