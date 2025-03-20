@@ -12,9 +12,6 @@ import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.navigation_bar.activities.NavigationBarActivity;
 import com.example.pianotutorial.features.playscreen.servicehandlers.PlayScreenServiceHandler;
 import com.example.pianotutorial.features.playscreen.viewmodels.PlayScreenViewModel;
-import com.example.pianotutorial.models.Sheet;
-
-import java.util.List;
 
 public class PlayScreenEventHandler {
 
@@ -30,13 +27,8 @@ public class PlayScreenEventHandler {
         playScreenServiceHandler = new PlayScreenServiceHandler(context, playScreenViewModel);
     }
 
-    public void onInitial() {
-        SheetList sheetList = new SheetList();
-        List<Sheet> sheets = sheetList.sheetList();
-        if (sheets != null && !sheets.isEmpty()) {
-            Sheet firstSheet = sheets.get(0); // Get the first Sheet in the list
-            playScreenViewModel.getCurrentSheet().setValue(firstSheet); // Set the first sheet to the ViewModel
-        }
+    public void getSheetById(int sheetId){
+        playScreenServiceHandler.getSheetById(sheetId);
     }
 
     public void onPlayIconClick(View view) {

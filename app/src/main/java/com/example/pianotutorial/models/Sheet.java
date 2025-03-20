@@ -29,8 +29,11 @@ public class Sheet {
     @SerializedName("instrumentName")
     private String instrumentName;
 
-    @SerializedName("sheetFile")
+    @SerializedName("midiFile")
     private String sheetFile;
+
+    @SerializedName("backgroundMusicFile")
+    private String backgroundMusicFile;
 
     @SerializedName("keySignature")
     private int keySignature;
@@ -45,7 +48,7 @@ public class Sheet {
 
     private List<Measure> leftHandMeasures;
 
-    public Sheet(int id, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, int keySignature, String rightSymbol, String leftSymbol) {
+    public Sheet(int id, int songId, String songTitle, int topSignature, int bottomSignature, int instrumentId, String instrumentName, String sheetFile, int keySignature, String rightSymbol, String leftSymbol, String backgroundMusicFile) {
         this.id = id;
         this.songId = songId;
         this.songTitle = songTitle;
@@ -54,6 +57,7 @@ public class Sheet {
         this.instrumentId = instrumentId;
         this.instrumentName = instrumentName;
         this.sheetFile = sheetFile;
+        this.backgroundMusicFile = backgroundMusicFile;
         this.keySignature = keySignature;
         this.rightSymbol = rightSymbol;
         this.leftSymbol = leftSymbol;
@@ -131,7 +135,6 @@ public class Sheet {
 
         return measures;
     }
-
 
 
     public int getId() {
@@ -236,6 +239,14 @@ public class Sheet {
 
     public void setLeftHandMeasures(List<Measure> leftHandMeasures) {
         this.leftHandMeasures = leftHandMeasures;
+    }
+
+    public String getBackgroundMusicFile() {
+        return backgroundMusicFile;
+    }
+
+    public void setBackgroundMusicFile(String backgroundMusicFile) {
+        this.backgroundMusicFile = backgroundMusicFile;
     }
 
     public List<String> splitChordString(String chordString) {

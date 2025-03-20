@@ -5,12 +5,14 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.media.midi.MidiDevice;
 import android.media.midi.MidiDeviceInfo;
 import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -42,7 +44,6 @@ import org.billthefarmer.mididriver.MidiConstants;
 import org.billthefarmer.mididriver.MidiDriver;
 import org.billthefarmer.mididriver.ReverbConstants;
 
-import java.util.List;
 import java.util.Objects;
 
 public class PlayScreenActivity extends AppCompatActivity implements MidiAware, CompoundButton.OnCheckedChangeListener, MidiDriver.OnMidiStartListener, NoteActionListener {
@@ -71,7 +72,10 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         countdownTextView = activityPlayscreenBinding.getRoot().findViewById(R.id.countdownText);
 
-        playScreenEventHandler.onInitial();
+        Intent intent = getIntent();
+        int sheetId = intent.getIntExtra("SHEET_ID",0);
+        playScreenEventHandler.getSheetById(sheetId);
+
         setupObservers();
         initializeMIDI();
 
@@ -204,9 +208,26 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
     }
 
     private void setPlayerPlaybackSpeed(MediaPlayer player, float speed) {
-        PlaybackParams params = new PlaybackParams();
-        params.setSpeed(speed);
-        player.setPlaybackParams(params);
+        if (player == null) {
+            Log.e("MediaPlayer", "MediaPlayer is null, cannot set playback speed.");
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                if (player.isPlaying()) { // Chỉ thay đổi tốc độ khi đang phát
+                    PlaybackParams params = new PlaybackParams();
+                    params.setSpeed(speed);
+                    player.setPlaybackParams(params);
+                } else {
+                    Log.e("MediaPlayer", "MediaPlayer is not playing. Cannot set playback speed.");
+                }
+            } catch (IllegalStateException e) {
+                Log.e("MediaPlayer", "Error setting playback speed: " + e.getMessage());
+            }
+        } else {
+            Log.e("MediaPlayer", "PlaybackParams not supported on this Android version.");
+        }
     }
 
     private void initializeMIDI() {

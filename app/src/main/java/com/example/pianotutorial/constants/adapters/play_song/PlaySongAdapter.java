@@ -9,19 +9,21 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.pianotutorial.R;
 import com.example.pianotutorial.databinding.ItemPlaySongBinding;
 import com.example.pianotutorial.features.playscreen.activities.PlayScreenActivity;
+import com.example.pianotutorial.models.Song;
 
 import java.util.List;
 
 public class PlaySongAdapter extends RecyclerView.Adapter<PlaySongAdapter.PlaySongViewHolder> {
     private final Context context;
-    private final List<Integer> integerList;
+    private final List<Song> songList;
 
-    public PlaySongAdapter(Context context, List<Integer> integerList) {
+    public PlaySongAdapter(Context context, List<Song> songList) {
         this.context = context;
-        this.integerList = integerList;
+        this.songList = songList;
     }
 
     @NonNull
@@ -34,10 +36,17 @@ public class PlaySongAdapter extends RecyclerView.Adapter<PlaySongAdapter.PlaySo
 
     @Override
     public void onBindViewHolder(@NonNull PlaySongViewHolder holder, int position) {
-        int value = integerList.get(position);
+        Song song = songList.get(position);
+        holder.binding.songTitle.setText(song.getTitle()); // Hiển thị tên bài hát
+        holder.binding.authorName.setText(song.getComposer()); // Hiển thị tên tác giả
+
+        Glide.with(holder.itemView.getContext())
+                .load(song.getSheets().get(0).getBackgroundMusicFile())  // URL hình ảnh
+                .into(holder.binding.roundedImageView);  // Gán vào ImageView
+
         holder.binding.courseButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, PlayScreenActivity.class);
-            intent.putExtra("ITEM_VALUE", value);
+            intent.putExtra("SHEET_ID", song.getSheets().get(0).getId()); // Truyền ID bài hát thay vì số nguyên
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
@@ -47,7 +56,7 @@ public class PlaySongAdapter extends RecyclerView.Adapter<PlaySongAdapter.PlaySo
 
     @Override
     public int getItemCount() {
-        return integerList.size();
+        return songList.size();
     }
 
     public static class PlaySongViewHolder extends RecyclerView.ViewHolder {
