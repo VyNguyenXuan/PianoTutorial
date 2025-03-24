@@ -1,4 +1,4 @@
-package com.example.pianotutorial.features.navigation_bar.evenhandlers;
+package com.example.pianotutorial.features.navigation_bar.eventhandlers;
 import android.content.Context;
 
 import com.example.pianotutorial.features.course.fragments.CourseFragment;
@@ -30,6 +30,11 @@ public class NavigationBarEventHandler {
             _navigationBarViewModel.getCustomerFragment().setValue(new SongFragment());
         }
     }
-
+    public void openMenu(View view) {
+            _navigationBarViewModel.getIsMenuVisible().setValue(true);
+    }
+    public void closeMenu(View view) {
+        _navigationBarViewModel.getIsMenuVisible().setValue(false);
+    }
 
 }

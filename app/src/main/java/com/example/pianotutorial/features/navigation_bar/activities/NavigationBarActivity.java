@@ -12,8 +12,9 @@ import com.example.pianotutorial.R;
 import com.example.pianotutorial.features.course.fragments.CourseFragment;
 import com.example.pianotutorial.databinding.ActivityNavigationBarBinding;
 import com.example.pianotutorial.features.music.fragments.MusicFragment;
-import com.example.pianotutorial.features.navigation_bar.evenhandlers.NavigationBarEventHandler;
+import com.example.pianotutorial.features.navigation_bar.eventhandlers.NavigationBarEventHandler;
 import com.example.pianotutorial.features.navigation_bar.viewmodels.NavigationBarViewModel;
+import com.example.pianotutorial.features.menu.fragments.MenuFragment;
 import com.example.pianotutorial.features.song.fragments.SongFragment;
 import androidx.appcompat.content.res.AppCompatResources;
 
@@ -30,6 +31,11 @@ public class NavigationBarActivity extends AppCompatActivity {
                 this,
                 R.layout.activity_navigation_bar
         );
+
+        _transaction = getSupportFragmentManager().beginTransaction();
+        _transaction.replace(R.id.menu_fragment, MenuFragment.class, null);
+        _transaction.addToBackStack(null);
+        _transaction.commit();
 
         _navigationBarViewModel = new ViewModelProvider(this).get(NavigationBarViewModel.class);
         _navigationBarEventHandler = new NavigationBarEventHandler(_navigationBarViewModel, this);
@@ -50,6 +56,13 @@ public class NavigationBarActivity extends AppCompatActivity {
                 updateUIForMusicFragment();
             } else if (customerFragment instanceof SongFragment) {
                 updateUIForSongFragment();
+            }
+        });
+        _navigationBarViewModel.getIsMenuVisible().observe(this, isMenuVisible -> {
+            if (isMenuVisible) {
+                _activityNavigationBarBinding.menuFragment.setVisibility(View.VISIBLE);
+            } else {
+                _activityNavigationBarBinding.menuFragment.setVisibility(View.GONE);
             }
         });
     }
