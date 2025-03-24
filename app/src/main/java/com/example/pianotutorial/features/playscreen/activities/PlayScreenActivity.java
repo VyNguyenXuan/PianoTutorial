@@ -74,6 +74,7 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         Intent intent = getIntent();
         int sheetId = intent.getIntExtra("SHEET_ID",0);
+        sheetFile = intent.getStringExtra("SHEET_FILE");
         playScreenEventHandler.getSheetById(sheetId);
 
         setupObservers();

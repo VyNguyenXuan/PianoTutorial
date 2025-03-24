@@ -46,7 +46,8 @@ public class PlaySongAdapter extends RecyclerView.Adapter<PlaySongAdapter.PlaySo
 
         holder.binding.courseButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, PlayScreenActivity.class);
-            intent.putExtra("SHEET_ID", song.getSheets().get(0).getId()); // Truyền ID bài hát thay vì số nguyên
+            intent.putExtra("SHEET_ID", song.getSheets().get(0).getId());
+            intent.putExtra("SHEET_FILE", song.getSheets().get(0).getSheetFile());
             context.startActivity(intent);
             ((Activity) context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
