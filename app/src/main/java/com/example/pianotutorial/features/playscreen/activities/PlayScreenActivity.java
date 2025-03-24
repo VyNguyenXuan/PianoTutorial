@@ -74,7 +74,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
 
         Intent intent = getIntent();
         int sheetId = intent.getIntExtra("SHEET_ID",0);
-        sheetFile = intent.getStringExtra("SHEET_FILE");
         playScreenEventHandler.getSheetById(sheetId);
 
         setupObservers();
@@ -484,7 +483,6 @@ public class PlayScreenActivity extends AppCompatActivity implements MidiAware, 
                 }
             });
         } catch (Exception e) {
-            Toast.makeText(this, "Could not play audio file", Toast.LENGTH_SHORT).show();
         }
     }
 
